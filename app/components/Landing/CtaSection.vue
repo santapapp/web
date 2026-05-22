@@ -63,7 +63,7 @@ const contentRef = ref<HTMLElement | null>(null)
 const contentVisible = ref(false)
 
 const { stop } = useIntersectionObserver(contentRef, ([e]) => {
-  if (e.isIntersecting) { contentVisible.value = true; stop() }
+  if (e && e.isIntersecting) { contentVisible.value = true; stop() }
 }, { threshold: 0.2 })
 </script>
 

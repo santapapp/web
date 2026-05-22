@@ -97,15 +97,15 @@ const stepsVisible = ref(false)
 const ctaVisible = ref(false)
 
 const { stop: s1 } = useIntersectionObserver(headerRef, ([e]) => {
-  if (e.isIntersecting) { headerVisible.value = true; s1() }
+  if (e && e.isIntersecting) { headerVisible.value = true; s1() }
 }, { threshold: 0.2 })
 
 const { stop: s2 } = useIntersectionObserver(stepsRef, ([e]) => {
-  if (e.isIntersecting) { stepsVisible.value = true; s2() }
+  if (e && e.isIntersecting) { stepsVisible.value = true; s2() }
 }, { threshold: 0.15 })
 
 const { stop: s3 } = useIntersectionObserver(ctaRef, ([e]) => {
-  if (e.isIntersecting) { ctaVisible.value = true; s3() }
+  if (e && e.isIntersecting) { ctaVisible.value = true; s3() }
 }, { threshold: 0.5 })
 </script>
 

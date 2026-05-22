@@ -3,6 +3,9 @@
    Token source: docs/style.md
    ============================================================ */
 
+/* ── Google Fonts ──────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
 /*
   Tailwind CSS v4 — inject utility classes.
   @nuxt/ui (v4) uses @tailwindcss/vite plugin which processes any CSS file

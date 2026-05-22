@@ -89,11 +89,11 @@ const headerVisible = ref(false)
 const cardsVisible = ref(false)
 
 const { stop: s1 } = useIntersectionObserver(headerRef, ([e]) => {
-  if (e.isIntersecting) { headerVisible.value = true; s1() }
+  if (e && e.isIntersecting) { headerVisible.value = true; s1() }
 }, { threshold: 0.2 })
 
 const { stop: s2 } = useIntersectionObserver(cardsRef, ([e]) => {
-  if (e.isIntersecting) { cardsVisible.value = true; s2() }
+  if (e && e.isIntersecting) { cardsVisible.value = true; s2() }
 }, { threshold: 0.1 })
 </script>
 

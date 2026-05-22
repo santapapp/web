@@ -5,5 +5,6 @@
     <main class="app-main">
       <slot />
     </main>
+    <LandingFooterCta />
   </div>
 </template>

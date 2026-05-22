@@ -5,13 +5,14 @@
   -->
 
   <!-- ── DESKTOP: two separate floating pills ─────────────── -->
-  <div class="hidden md:flex fixed top-3 left-3 right-3 z-50 items-center justify-between pointer-events-none">
+  <!-- Inset further to remain perfectly inside the hero section margins -->
+  <div class="hidden md:flex fixed top-9 left-11 right-11 z-50 items-center justify-between pointer-events-none">
 
     <!-- Logo pill (left) -->
     <NuxtLink
       class="pointer-events-auto inline-flex items-center gap-2 no-underline
-             px-3 py-2 rounded-sm transition-all duration-250 ease-out"
-      :class="desktopGlass"
+             px-3 py-2 rounded-md transition-all duration-250 ease-out"
+      :class="desktopLogoGlass"
       to="/"
       aria-label="Santap — Beranda"
     >
@@ -26,9 +27,9 @@
 
     <!-- Right pill: nav links + CTA -->
     <div
-      class="pointer-events-auto flex items-center gap-0.5 rounded-sm px-1.5 py-1.5
+      class="pointer-events-auto flex items-center gap-1 rounded-md px-1 py-1
              transition-all duration-250 ease-out"
-      :class="desktopGlass"
+      :class="desktopNavGlass"
     >
       <NuxtLink
         v-for="item in navItems"
@@ -36,59 +37,139 @@
         :to="item.to"
         active-class="nav-active"
         :exact="item.to === '/'"
-        class="text-[12px] font-semibold no-underline px-3.5 py-1.5 rounded-sm
+        class="text-[11px] font-bold no-underline px-4 py-2 rounded-md
                uppercase tracking-[0.06em] transition-all duration-150"
         :class="isOnDarkBg
-          ? 'text-white/70 hover:text-white hover:bg-white/[0.10]'
-          : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-black/[0.05]'"
+          ? 'text-[#0F0C09]/55 hover:text-[#0F0C09] hover:bg-black/[0.07]'
+          : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-black/[0.06]'"
       >
         {{ item.label }}
       </NuxtLink>
 
-      <div class="w-px h-4 mx-1 flex-shrink-0" :class="isOnDarkBg ? 'bg-white/15' : 'bg-black/10'" />
+      <div class="w-px h-4 mx-1 flex-shrink-0 bg-black/10" />
 
       <NuxtLink
         to="/register"
-        class="inline-flex items-center justify-center px-5 py-2 rounded-sm
-               text-[12px] font-bold no-underline uppercase tracking-[0.06em]
-               transition-all duration-150 hover:-translate-y-px"
-        :class="isOnDarkBg
-          ? 'bg-white text-[#0F0C09] hover:bg-white/90'
-          : 'bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)]'"
+        class="inline-flex items-center justify-center px-6 py-2 rounded-md
+               text-[11px] font-bold no-underline uppercase tracking-[0.06em]
+               transition-all duration-150 hover:-translate-y-px
+               bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)]"
       >
-        Coba Gratis
+        Download Sekarang
       </NuxtLink>
     </div>
   </div>
 
   <!-- ── MOBILE: single integrated bar ─────────────────────── -->
-  <!--
-    Closed: compact card (warm cream bg) with brand + hamburger.
-    References IntegratedBio mobile: one card, light warm background,
-    dark square hamburger button on the right.
-  -->
+  <!-- Full screen container -->
   <div
-    class="md:hidden fixed top-3 left-3 right-3 z-50 rounded-2xl overflow-hidden
-           transition-none"
-    :class="mobileOpen ? 'bottom-3' : ''"
+    class="md:hidden fixed inset-0 z-50 pointer-events-none"
   >
-    <!-- Top bar — always visible -->
+    <!-- Dropdown Menu Background -->
     <div
-      class="flex items-center justify-between px-4 transition-colors duration-300"
+      class="absolute inset-0 bg-[#1A1512] flex flex-col pt-[100px] pb-6 overflow-y-auto overflow-x-hidden transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
+      :class="mobileOpen ? 'translate-y-0 pointer-events-auto' : '-translate-y-full pointer-events-none'"
+    >
+      <!-- ── Decorative background — varied shapes ────────── -->
+      <div class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <svg class="absolute w-full h-full opacity-[0.04]" viewBox="0 0 400 700" fill="none" preserveAspectRatio="xMidYMid slice">
+          <!-- Large offset circle top-right -->
+          <circle cx="380" cy="80" r="200" stroke="white" stroke-width="0.7"/>
+          <!-- Medium circle bottom-left -->
+          <circle cx="40" cy="580" r="160" stroke="white" stroke-width="0.7"/>
+          <!-- Diagonal slash lines -->
+          <line x1="0" y1="120" x2="400" y2="380" stroke="white" stroke-width="0.5"/>
+          <line x1="0" y1="180" x2="400" y2="440" stroke="white" stroke-width="0.3"/>
+          <!-- Dot grid cluster top-left -->
+          <circle cx="20" cy="20" r="1.5" fill="white" opacity="0.6"/>
+          <circle cx="40" cy="20" r="1.5" fill="white" opacity="0.6"/>
+          <circle cx="60" cy="20" r="1.5" fill="white" opacity="0.6"/>
+          <circle cx="20" cy="40" r="1.5" fill="white" opacity="0.6"/>
+          <circle cx="40" cy="40" r="1.5" fill="white" opacity="0.6"/>
+          <circle cx="60" cy="40" r="1.5" fill="white" opacity="0.6"/>
+          <circle cx="20" cy="60" r="1.5" fill="white" opacity="0.6"/>
+          <circle cx="40" cy="60" r="1.5" fill="white" opacity="0.6"/>
+          <circle cx="60" cy="60" r="1.5" fill="white" opacity="0.6"/>
+          <!-- Dot grid cluster bottom-right -->
+          <circle cx="320" cy="620" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="340" cy="620" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="360" cy="620" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="380" cy="620" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="320" cy="640" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="340" cy="640" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="360" cy="640" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="380" cy="640" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="320" cy="660" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="340" cy="660" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="360" cy="660" r="1.5" fill="white" opacity="0.4"/>
+          <circle cx="380" cy="660" r="1.5" fill="white" opacity="0.4"/>
+          <!-- Small accent rectangle outline -->
+          <rect x="280" y="160" width="60" height="40" rx="4" stroke="white" stroke-width="0.5" opacity="0.5"/>
+          <!-- Tiny floating cross -->
+          <line x1="200" y1="490" x2="200" y2="510" stroke="white" stroke-width="0.8" opacity="0.4"/>
+          <line x1="190" y1="500" x2="210" y2="500" stroke="white" stroke-width="0.8" opacity="0.4"/>
+          <!-- Arc segment bottom center -->
+          <path d="M 100 700 A 160 160 0 0 1 300 700" stroke="white" stroke-width="0.6" opacity="0.5"/>
+        </svg>
+      </div>
+
+      <!-- Nav links — centered vertically & horizontally -->
+      <nav
+        class="relative z-10 flex-1 flex flex-col items-center justify-center gap-4 min-h-max my-auto"
+        aria-label="Navigasi mobile"
+      >
+        <NuxtLink
+          v-for="(item, i) in navItems"
+          :key="item.to"
+          :to="item.to"
+          :style="{ 
+            transitionDelay: mobileOpen ? `${150 + i * 55}ms` : '0ms',
+            fontSize: 'clamp(32px, 9vw, 44px)',
+            color: 'rgba(255, 255, 255, 0.7)'
+          }"
+          class="w-full text-center font-light no-underline py-2 tracking-[-0.01em] transition-all duration-300 hover:!text-white hover:scale-110"
+          :class="mobileOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'"
+          @click="mobileOpen = false"
+        >
+          {{ item.label }}
+        </NuxtLink>
+      </nav>
+
+      <!-- Bottom: email -->
+      <div 
+        class="relative z-10 pt-8 text-center transition-all duration-500"
+        :style="{ transitionDelay: mobileOpen ? '350ms' : '0ms' }"
+        :class="mobileOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'"
+      >
+        <a
+          href="mailto:halo@santap.id"
+          class="text-[13px] font-medium !text-white opacity-60 hover:opacity-100
+                 transition-opacity duration-150 no-underline
+                 underline underline-offset-4 decoration-white/30"
+          style="color: white;"
+        >
+          halo@santap.id
+        </a>
+      </div>
+    </div>
+
+    <!-- Top bar — always visible pill -->
+    <div
+      class="absolute top-4 left-4 right-4 sm:top-5 sm:left-5 sm:right-5 z-20 flex items-center justify-between px-2 py-2 rounded-md pointer-events-auto transition-all duration-300"
       :class="mobileOpen
-        ? 'bg-[#1A1512] py-3'
-        : 'bg-[#F4EDE4] py-3'"
+        ? 'bg-white/10 backdrop-blur-md border border-white/20 shadow-lg'
+        : 'bg-[#F4EDE4] shadow-md'"
     >
       <!-- Brand -->
       <NuxtLink
-        class="inline-flex items-center gap-2 no-underline"
+        class="inline-flex items-center gap-2 no-underline px-2"
         to="/"
         @click="mobileOpen && (mobileOpen = false)"
       >
         <img src="~/assets/icons/brand.svg" alt="" class="h-[26px] w-[26px]" aria-hidden="true">
         <span
           class="text-[16px] font-bold tracking-tight transition-colors duration-200"
-          :class="mobileOpen ? 'text-white' : 'text-[#1A1512]'"
+          :class="mobileOpen ? '!text-white' : '!text-[#1A1512]'"
         >
           Santap
         </span>
@@ -96,12 +177,12 @@
 
       <!-- Hamburger / X button -->
       <button
-        class="flex items-center justify-center w-10 h-10 rounded-xl
+        class="flex items-center justify-center w-10 h-10 rounded-md
                border-none cursor-pointer transition-all duration-200
                active:scale-95"
         :class="mobileOpen
-          ? 'bg-transparent border border-white/25 text-white hover:bg-white/[0.06]'
-          : 'bg-[#1A1512] text-white hover:bg-[#2a2420]'"
+          ? 'bg-transparent text-white hover:bg-white/10'
+          : 'bg-[#1A1512] text-white hover:bg-[#2a2420] shadow-sm'"
         :aria-expanded="mobileOpen"
         :aria-label="mobileOpen ? 'Tutup menu' : 'Buka menu navigasi'"
         id="nav-hamburger-btn"
@@ -121,57 +202,6 @@
         </template>
       </button>
     </div>
-
-    <!-- Expanded menu content (only when open) -->
-    <Transition name="menu-expand">
-      <div
-        v-if="mobileOpen"
-        class="bg-[#1A1512] flex flex-col"
-        style="height: calc(100% - 60px)"
-      >
-        <!-- Organic blob pattern (like IntegratedBio) -->
-        <div class="absolute inset-0 pointer-events-none overflow-hidden top-[60px]" aria-hidden="true">
-          <svg class="w-full h-full opacity-[0.035]" viewBox="0 0 400 550" fill="none" preserveAspectRatio="xMidYMid slice">
-            <circle cx="340" cy="60" r="220" stroke="white" stroke-width="0.8"/>
-            <circle cx="60" cy="260" r="200" stroke="white" stroke-width="0.8"/>
-            <circle cx="260" cy="460" r="180" stroke="white" stroke-width="0.8"/>
-            <circle cx="180" cy="180" r="260" stroke="white" stroke-width="0.5"/>
-          </svg>
-        </div>
-
-        <!-- Nav links — centered vertically & horizontally -->
-        <nav
-          class="relative z-10 flex-1 flex flex-col items-center justify-center gap-1"
-          aria-label="Navigasi mobile"
-        >
-          <NuxtLink
-            v-for="(item, i) in navItems"
-            :key="item.to"
-            :to="item.to"
-            :style="{ animationDelay: `${i * 55}ms` }"
-            class="mobile-link w-full text-center
-                   text-[clamp(32px,9vw,44px)] font-light text-white/60 no-underline
-                   py-2.5 tracking-[-0.01em]
-                   transition-colors duration-150 hover:text-white"
-            @click="mobileOpen = false"
-          >
-            {{ item.label }}
-          </NuxtLink>
-        </nav>
-
-        <!-- Bottom: email -->
-        <div class="relative z-10 pb-8 text-center">
-          <a
-            href="mailto:halo@santap.id"
-            class="text-[13px] text-white/40 hover:text-white/70
-                   transition-colors duration-150 no-underline
-                   underline underline-offset-4 decoration-white/20"
-          >
-            halo@santap.id
-          </a>
-        </div>
-      </div>
-    </Transition>
   </div>
 </template>
 
@@ -184,9 +214,16 @@ const isHeroPage = computed(() => route.path === '/')
 const isOnDarkBg = computed(() => isHeroPage.value && !isScrolled.value)
 
 // Desktop glass pill style
-const desktopGlass = computed(() => {
+const desktopLogoGlass = computed(() => {
+  if (!isScrolled.value) {
+    return 'bg-transparent border border-transparent'
+  }
+  return 'bg-white/88 backdrop-blur-xl border border-black/[0.07] shadow-[0_2px_16px_rgba(0,0,0,0.07)]'
+})
+
+const desktopNavGlass = computed(() => {
   if (isOnDarkBg.value) {
-    return 'bg-black/30 backdrop-blur-lg border border-white/[0.12] shadow-[0_2px_16px_rgba(0,0,0,0.2)]'
+    return 'bg-white/95 backdrop-blur-md border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.12)]'
   }
   return 'bg-white/88 backdrop-blur-xl border border-black/[0.07] shadow-[0_2px_16px_rgba(0,0,0,0.07)]'
 })
@@ -199,14 +236,8 @@ function toggleMobile() {
 
 watch(() => route.path, () => { mobileOpen.value = false })
 
-watch(mobileOpen, (val) => {
-  if (typeof document !== 'undefined') {
-    document.body.style.overflow = val ? 'hidden' : ''
-  }
-})
-
 const navItems = [
-  { to: '/', label: 'Beranda' },
+  { to: '/company', label: 'Mitra' },
   { to: '/features', label: 'Fitur' },
   { to: '/pricing', label: 'Harga' },
   { to: '/contact', label: 'Kontak' },
@@ -214,34 +245,13 @@ const navItems = [
 </script>
 
 <style scoped>
+/* Active state — strong dark pill so it's clearly distinguishable from hover */
 .nav-active {
-  color: white;
-  font-weight: 700;
+  background-color: rgba(15, 12, 9, 0.10) !important;
+  color: #0F0C09 !important;
+  font-weight: 800;
+  box-shadow: inset 0 0 0 1px rgba(15, 12, 9, 0.08);
 }
 
-/* Mobile nav link staggered entrance */
-.mobile-link {
-  animation: linkIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-/* Expand transition */
-.menu-expand-enter-active {
-  transition: opacity 0.22s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.menu-expand-leave-active {
-  transition: opacity 0.15s ease, transform 0.18s ease;
-}
-.menu-expand-enter-from {
-  opacity: 0;
-  transform: translateY(-8px);
-}
-.menu-expand-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
-}
-
-@keyframes linkIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+/* On dark bg hero, active uses a filled dark pill with slightly different shade */
 </style>

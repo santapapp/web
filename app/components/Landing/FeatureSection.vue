@@ -116,11 +116,11 @@ const headerVisible = ref(false)
 const gridVisible = ref(false)
 
 const { stop: s1 } = useIntersectionObserver(headerRef, ([e]) => {
-  if (e.isIntersecting) { headerVisible.value = true; s1() }
+  if (e && e.isIntersecting) { headerVisible.value = true; s1() }
 }, { threshold: 0.2 })
 
 const { stop: s2 } = useIntersectionObserver(gridRef, ([e]) => {
-  if (e.isIntersecting) { gridVisible.value = true; s2() }
+  if (e && e.isIntersecting) { gridVisible.value = true; s2() }
 }, { threshold: 0.05 })
 </script>
 

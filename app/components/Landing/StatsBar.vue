@@ -28,7 +28,7 @@ const isVisible = ref(false)
 const { stop } = useIntersectionObserver(
   barRef,
   ([entry]) => {
-    if (entry.isIntersecting) { isVisible.value = true; stop() }
+    if (entry && entry.isIntersecting) { isVisible.value = true; stop() }
   },
   { threshold: 0.3 }
 )

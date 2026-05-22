@@ -16,8 +16,8 @@
 
           <!-- Title -->
           <h1 class="font-medium tracking-[-0.03em] leading-[1.0] mb-6" style="font-size: clamp(40px, 8vw, 96px);">
-            <span class="block text-[var(--color-text-primary)]">Syarat & Ketentuan</span>
-            <span class="block text-[var(--color-text-tertiary)]">Aturan Main Kami.</span>
+            <span class="block text-[var(--color-text-primary)]">Kebijakan Privasi</span>
+            <span class="block text-[var(--color-text-tertiary)]">Keamanan Data Anda.</span>
           </h1>
 
           <!-- Meta description -->
@@ -38,7 +38,7 @@
           <!-- LEFT COLUMN: Sticky Table of Contents (TOC) -->
           <nav 
             class="lg:col-span-4 lg:sticky lg:top-28 bg-[var(--color-bg-surface)] border border-[var(--color-border)] p-6 rounded-2xl hidden lg:block"
-            aria-label="Daftar Isi Syarat dan Ketentuan"
+            aria-label="Daftar Isi Kebijakan Privasi"
           >
             <p class="text-[11px] font-extrabold uppercase tracking-[0.15em] text-[var(--color-text-tertiary)] mb-5">
               Daftar Isi
@@ -62,7 +62,7 @@
 
             <div class="flex flex-col gap-3">
               <p class="text-[12px] text-[var(--color-text-secondary)] leading-relaxed">
-                Punya pertanyaan mengenai syarat ini? Hubungi Legal kami:
+                Punya pertanyaan hukum? Hubungi tim Legal kami di:
               </p>
               <a href="mailto:legal@santap.id" class="text-[13px] font-semibold text-[var(--color-primary)] hover:underline">
                 legal@santap.id
@@ -78,149 +78,153 @@
               <div class="card p-6 md:p-8 rounded-2xl bg-[var(--color-bg-surface)] border border-[var(--color-border)] flex gap-5 items-start">
                 <div class="w-10 h-10 rounded-full bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center shrink-0">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-[16px] font-semibold text-[var(--color-text-primary)] mb-2">Ringkasan Syarat Penggunaan</h3>
+                  <h3 class="text-[16px] font-semibold text-[var(--color-text-primary)] mb-2">Ringkasan Komitmen Privasi Kami</h3>
                   <p class="text-[14px]">
-                    Dengan membuat akun di Santap, Anda bersepakat atas hal-hari berikut: <strong>Tidak ada biaya siluman</strong>, Anda bebas membatalkan langganan kapan saja, dan bertanggung jawab menjaga akun staf Anda. Kami menjamin keandalan sistem kami, namun tidak bertanggung jawab atas kerugian tidak langsung akibat gangguan koneksi luar.
+                    Kami sangat menghargai kepercayaan Anda. Secara singkat: <strong>Kami hanya mengumpulkan informasi penting</strong> yang dibutuhkan untuk memproses transaksi POS, sinkronisasi pesanan ke dapur, dan kepatuhan regulasi keuangan. <strong>Kami tidak pernah menjual data pribadi Anda</strong> atau data transaksi restoran Anda kepada pihak ketiga mana pun.
                   </p>
                 </div>
               </div>
 
               <!-- Section 1 -->
-              <section id="ketentuan-umum" class="scroll-mt-32 flex flex-col gap-4">
+              <section id="pengantar" class="scroll-mt-32 flex flex-col gap-4">
                 <div class="flex items-center gap-3">
                   <span class="text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-primary)]">01</span>
-                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Ketentuan Umum</h2>
+                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Pengantar & Informasi Umum</h2>
                 </div>
                 <p>
-                  Selamat datang di Santap. Syarat dan Ketentuan Penggunaan ini ("Syarat") merupakan perjanjian hukum antara Anda selaku pemilik bisnis kuliner (merchant), perwakilannya, maupun staf operasional dengan PT Santap Teknologi Indonesia ("Santap", "Kami") sehubungan dengan pemanfaatan platform aplikasi kasir (POS), kitchen display system (KDS), dashboard analitik, dan layanan terkait lainnya.
+                  Kebijakan Privasi ini menjelaskan bagaimana PT Santap Teknologi Indonesia ("Santap", "Kami") mengumpulkan, menggunakan, menyimpan, dan melindungi informasi pribadi Pengguna ("Anda") saat Anda menggunakan aplikasi kasir (POS), dashboard restoran, customer ordering page, serta situs web kami di santap.id.
                 </p>
                 <p>
-                  Dengan mendaftar, mengakses, atau menggunakan bagian mana pun dari layanan kami, Anda menyatakan setuju untuk terikat secara hukum oleh Syarat ini. Jika Anda tidak setuju terhadap bagian mana pun dari dokumen ini, silakan hentikan akses dan jangan gunakan layanan kami.
+                  Dengan menggunakan layanan Santap, Anda dianggap telah membaca, memahami, dan menyetujui seluruh ketentuan yang tercantum dalam Kebijakan Privasi ini. Kami berkomitmen untuk melindungi privasi baik pemilik merchant (restoran/cafe), staf operasional, maupun pelanggan akhir (customer) Anda yang memesan menu dari platform kami.
                 </p>
               </section>
 
               <div class="h-px bg-[var(--color-border)]"></div>
 
               <!-- Section 2 -->
-              <section id="akun-merchant" class="scroll-mt-32 flex flex-col gap-4">
+              <section id="data-dikumpul" class="scroll-mt-32 flex flex-col gap-4">
                 <div class="flex items-center gap-3">
                   <span class="text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-primary)]">02</span>
-                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Akun & Keanggotaan Merchant</h2>
+                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Data yang Kami Kumpulkan</h2>
                 </div>
                 <p>
-                  Untuk menggunakan layanan POS Cloud Santap, Anda wajib mendaftarkan akun merchant dengan mengisi informasi identitas bisnis secara jujur dan akurat.
+                  Kami mengumpulkan data untuk dapat menyediakan layanan operasional restoran secara handal. Data ini dikelompokkan menjadi:
                 </p>
                 <ul class="list-disc pl-5 flex flex-col gap-2">
-                  <li><strong>Kerahasiaan Akun:</strong> Anda bertanggung jawab penuh untuk menjaga kerahasiaan kata sandi masuk admin, pin kasir, serta token autentikasi yang diberikan kepada staf.</li>
-                  <li><strong>Tanggung Jawab Aktivitas:</strong> Setiap transaksi, edit menu, atau perubahan stok bahan baku yang tercatat di bawah kredensial akun Anda akan dianggap sepenuhnya sebagai instruksi resmi dari Anda.</li>
-                  <li><strong>Verifikasi:</strong> Kami berhak meminta dokumen tambahan (seperti KTP pemilik atau NIB) untuk tujuan kepatuhan registrasi metode pembayaran QRIS.</li>
+                  <li>
+                    <strong>Informasi Akun Merchant:</strong> Nama pemilik, nama restoran/cafe, alamat email bisnis, nomor telepon/WhatsApp aktif, serta alamat fisik outlet.
+                  </li>
+                  <li>
+                    <strong>Data Transaksi & Finansial:</strong> Laporan penjualan harian, menu yang dipesan, harga menu, metode pembayaran yang digunakan (QRIS, Tunai, Kartu), waktu transaksi, dan status rekonsiliasi kas.
+                  </li>
+                  <li>
+                    <strong>Data Pelanggan (Customer Ordering):</strong> Saat pelanggan melakukan scan QR di meja untuk memesan, kami dapat mengumpulkan nama tamu (sesuai input), nomor meja, detail pesanan, dan bukti transfer pembayaran jika melakukan checkout digital.
+                  </li>
+                  <li>
+                    <strong>Data Teknis:</strong> Alamat IP, jenis perangkat seluler/tablet kasir, log aktivitas sistem operasional, dan data diagnosis jika terjadi crash aplikasi untuk membantu perbaikan bug.
+                  </li>
                 </ul>
               </section>
 
               <div class="h-px bg-[var(--color-border)]"></div>
 
               <!-- Section 3 -->
-              <section id="penggunaan-pos" class="scroll-mt-32 flex flex-col gap-4">
+              <section id="penggunaan-data" class="scroll-mt-32 flex flex-col gap-4">
                 <div class="flex items-center gap-3">
                   <span class="text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-primary)]">03</span>
-                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Penggunaan Layanan POS Cloud</h2>
+                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Bagaimana Data Digunakan</h2>
                 </div>
                 <p>
-                  Layanan Santap disediakan bagi merchant untuk mendukung transaksi operasional yang sah. Pengguna dilarang keras untuk:
+                  Data yang dikumpulkan diolah untuk keperluan-keperluan berikut:
                 </p>
                 <ul class="list-disc pl-5 flex flex-col gap-2">
-                  <li>Menggunakan platform Santap untuk memproses transaksi barang ilegal, narkotika, perjudian, pencucian uang, atau aktivitas melanggar hukum lainnya.</li>
-                  <li>Melakukan tindakan reverse engineering, mendekompilasi, menyalin arsitektur kode API, atau merusak sistem keamanan server cloud kami.</li>
-                  <li>Mengirimkan data fiktif secara sengaja dalam jumlah besar (DDOS) yang dapat menurunkan performa sinkronisasi transaksi merchant lain.</li>
+                  <li>Menyediakan, memelihara, dan meningkatkan fungsi aplikasi kasir POS dan KDS dapur secara real-time.</li>
+                  <li>Memproses transaksi pembayaran digital QRIS dan e-wallet secara aman serta melakukan rekonsiliasi otomatis.</li>
+                  <li>Menghasilkan dashboard analitik penjualan yang akurat agar pemilik restoran dapat melihat laba, menu terlaris, dan performa staff.</li>
+                  <li>Mengirimkan notifikasi operasional penting, seperti alert persediaan bahan baku yang menipis atau pembaruan sistem aplikasi kasir.</li>
+                  <li>Mencegah penyalahgunaan transaksi keuangan, fraud, atau kegagalan sistem yang merugikan merchant.</li>
                 </ul>
               </section>
 
               <div class="h-px bg-[var(--color-border)]"></div>
 
               <!-- Section 4 -->
-              <section id="langganan-uji" class="scroll-mt-32 flex flex-col gap-4">
+              <section id="keamanan-data" class="scroll-mt-32 flex flex-col gap-4">
                 <div class="flex items-center gap-3">
                   <span class="text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-primary)]">04</span>
-                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Skema Langganan & Uji Coba Gratis</h2>
+                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Keamanan & Penyimpanan Data</h2>
                 </div>
                 <p>
-                  Santap menawarkan uji coba gratis (free trial) selama 14 hari saat pendaftaran awal untuk semua tipe paket berbayar (Starter atau Pro).
+                  Seluruh data yang diproses di aplikasi POS cloud Santap dienkripsi secara aman saat dikirim dari perangkat kasir Anda menuju server database kami menggunakan protokol SSL/TLS yang kuat.
                 </p>
                 <p>
-                  Setelah masa uji coba berakhir, Anda harus memilih paket berlangganan bulanan atau tahunan aktif untuk terus dapat menggunakan database pencatatan POS kami. Biaya berlangganan dihitung flat per outlet (cabang) per bulan. Pembayaran tahunan mendapatkan diskon sebesar 20% dari total nilai langganan bulanan standar.
+                  Kami menyimpan data Anda di server cloud aman dengan sertifikasi standar internasional. Kami secara berkala melakukan pencadangan otomatis (automated backup) untuk mencegah risiko data hilang akibat bencana fisik. Meskipun kami berusaha maksimal mengamankan sistem, mohon diingat bahwa tidak ada metode transmisi internet yang 100% aman, oleh karena itu kami menyarankan pemilik akun untuk menjaga kerahasiaan kata sandi dan token operasional masing-masing staf.
                 </p>
               </section>
 
               <div class="h-px bg-[var(--color-border)]"></div>
 
               <!-- Section 5 -->
-              <section id="qris-pembatalan" class="scroll-mt-32 flex flex-col gap-4">
+              <section id="pihak-ketiga" class="scroll-mt-32 flex flex-col gap-4">
                 <div class="flex items-center gap-3">
                   <span class="text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-primary)]">05</span>
-                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Ketentuan Pembayaran QRIS & Pembatalan</h2>
+                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Pengungkapan kepada Pihak Ketiga</h2>
                 </div>
                 <p>
-                  Santap mengintegrasikan pembayaran digital QRIS melalui gerbang pembayaran (payment gateway) berlisensi resmi Bank Indonesia.
-                </p>
-                <p>
-                  Santap tidak mengambil komisi transaksi penjualan kasir (0% tambahan komisi). Potongan MDR (Merchant Discount Rate) merupakan potongan murni dari penyedia payment gateway sesuai regulasi Bank Indonesia.
-                </p>
-                <p>
-                  <strong>Pembatalan Layanan:</strong> Anda berhak menonaktifkan langganan kapan saja tanpa dikenakan biaya denda pembatalan. Tagihan pro-rata akan disesuaikan otomatis pada sisa hari masa aktif berjalan jika Anda melakukan downgrade paket.
-                </p>
-              </section>
-
-              <div class="h-px bg-[var(--color-border)]"></div>
-
-              <!-- Section 6 -->
-              <section id="kekayaan-intelektual" class="scroll-mt-32 flex flex-col gap-4">
-                <div class="flex items-center gap-3">
-                  <span class="text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-primary)]">06</span>
-                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Kepemilikan Kekayaan Intelektual</h2>
-                </div>
-                <p>
-                  Seluruh hak kekayaan intelektual atas logo brand Santap, arsitektur aplikasi, tampilan antarmuka (UI/UX), grafik, ikon, dan dokumen tertulis di situs ini sepenuhnya adalah hak milik eksklusif PT Santap Teknologi Indonesia. 
-                </p>
-                <p>
-                  Anda tetap memiliki hak milik penuh atas data data menu kuliner, nama restoran, data transaksi penjualan, dan database inventaris stok yang Anda masukkan ke platform kami. Kami hanya diberikan hak terbatas untuk menyimpan dan mengolah data tersebut demi berjalannya fungsi sistem cloud POS Anda.
-                </p>
-              </section>
-
-              <div class="h-px bg-[var(--color-border)]"></div>
-
-              <!-- Section 7 -->
-              <section id="pembatasan-tanggungjawab" class="scroll-mt-32 flex flex-col gap-4">
-                <div class="flex items-center gap-3">
-                  <span class="text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-primary)]">07</span>
-                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Pembatasan Tanggung Jawab</h2>
-                </div>
-                <p>
-                  Santap berkomitmen untuk menjaga keandalan operasional POS cloud dengan Service Level Agreement (SLA) uptime 99.99%. Namun, kami tidak bertanggung jawab atas kerugian finansial, penurunan omzet, atau hilangnya kesempatan bisnis secara tidak langsung yang disebabkan oleh:
+                  Kami tidak membagikan, menyewakan, atau menjual data pribadi Anda kepada perusahaan lain untuk tujuan pemasaran di luar ekosistem Santap. Kami hanya membagikan data Anda dengan mitra tertentu untuk kelancaran layanan, antara lain:
                 </p>
                 <ul class="list-disc pl-5 flex flex-col gap-2">
-                  <li>Kegagalan koneksi jaringan internet di wilayah outlet merchant Anda.</li>
-                  <li>Kerusakan perangkat keras (smartphone/tablet kasir) milik merchant.</li>
-                  <li>Gangguan teknis eksternal berskala nasional dari server gerbang pembayaran (payment gateway) atau server bank.</li>
+                  <li><strong>Gerbang Pembayaran (Payment Gateway):</strong> Untuk memproses verifikasi transaksi digital QRIS dan transfer bank.</li>
+                  <li><strong>Penyedia Infrastruktur Cloud:</strong> Server database hosting tempat data operasional terenkripsi disimpan.</li>
+                  <li><strong>Kepatuhan Hukum:</strong> Jika diwajibkan oleh regulator, pengadilan, atau otoritas Bank Indonesia sehubungan dengan kepatuhan hukum transaksi perbankan.</li>
                 </ul>
               </section>
 
               <div class="h-px bg-[var(--color-border)]"></div>
 
-              <!-- Section 8 -->
-              <section id="hukum-kontak" class="scroll-mt-32 flex flex-col gap-4">
+              <!-- Section 6 -->
+              <section id="hak-pengguna" class="scroll-mt-32 flex flex-col gap-4">
                 <div class="flex items-center gap-3">
-                  <span class="text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-primary)]">08</span>
-                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Hukum yang Mengatur & Kontak</h2>
+                  <span class="text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-primary)]">06</span>
+                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Hak-hak Pengguna</h2>
                 </div>
                 <p>
-                  Syarat dan Ketentuan ini diatur dan ditafsirkan sepenuhnya berdasarkan hukum Negara Republik Indonesia. Setiap perselisihan yang timbul dari Syarat ini akan diupayakan diselesaikan terlebih dahulu secara musyawarah mufakat.
+                  Sebagai pengguna, Anda memiliki hak penuh untuk mengakses, memperbarui, atau menghapus informasi pribadi Anda yang tersimpan di sistem kami:
                 </p>
+                <ul class="list-disc pl-5 flex flex-col gap-2">
+                  <li>Pemilik restoran dapat memperbarui profil bisnis, daftar menu, harga, dan nomor WhatsApp admin langsung melalui dashboard pengaturan.</li>
+                  <li>Anda dapat mengajukan permohonan penutupan akun merchant dan penghapusan data transaksi historis secara permanen dari server database kami dengan menghubungi tim legal/support kami.</li>
+                  <li>Pelanggan (customer) yang memesan secara dine-in dapat meminta agar nama guest session dihapus setelah transaksi bill meja diselesaikan di kasir.</li>
+                </ul>
+              </section>
+
+              <div class="h-px bg-[var(--color-border)]"></div>
+
+              <!-- Section 7 -->
+              <section id="perubahan-kebijakan" class="scroll-mt-32 flex flex-col gap-4">
+                <div class="flex items-center gap-3">
+                  <span class="text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-primary)]">07</span>
+                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Perubahan Kebijakan</h2>
+                </div>
                 <p>
-                  Jika Anda memiliki pertanyaan mengenai implementasi atau persetujuan dokumen Syarat & Ketentuan Penggunaan ini, silakan hubungi tim legal kami:
+                  Kami berhak memperbarui Kebijakan Privasi ini sewaktu-waktu seiring dengan penambahan fitur baru pada aplikasi kasir POS atau penyesuaian aturan hukum di Indonesia. Kami akan memberitahukan pembaruan tersebut melalui pengumuman di aplikasi kasir atau mengirimkan email pemberitahuan ke alamat email Anda sekurang-kurangnya 7 hari sebelum perubahan tersebut berlaku efektif.
+                </p>
+              </section>
+
+              <div class="h-px bg-[var(--color-border)]"></div>
+
+              <!-- Section 8 -->
+              <section id="kontak-legal" class="scroll-mt-32 flex flex-col gap-4">
+                <div class="flex items-center gap-3">
+                  <span class="text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-primary)]">08</span>
+                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Hubungi Kami</h2>
+                </div>
+                <p>
+                  Jika Anda memiliki kekhawatiran, pertanyaan, atau keluhan terkait cara kami memperlakukan data pribadi Anda atau perihal Kebijakan Privasi ini, silakan hubungi tim legal kami:
                 </p>
                 <div class="p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-surface)] mt-2">
                   <p class="font-semibold text-[var(--color-text-primary)] mb-1">PT Santap Teknologi Indonesia</p>
@@ -247,24 +251,24 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 
 useHead({
-  title: 'Syarat & Ketentuan Penggunaan — Santap',
+  title: 'Kebijakan Privasi — Santap',
   meta: [
-    { name: 'description', content: 'Bacalah syarat dan ketentuan penggunaan aplikasi kasir mobile POS Santap, aturan berlangganan, ketentuan pembayaran QRIS, dan batas tanggung jawab.' }
+    { name: 'description', content: 'Pelajari bagaimana kami mengumpulkan, mengamankan, dan memperlakukan data transaksi kasir POS serta informasi pribadi pelanggan Anda dengan aman di Santap.' }
   ]
 })
 
 const sections = [
-  { id: 'ketentuan-umum', title: 'Ketentuan Umum' },
-  { id: 'akun-merchant', title: 'Akun & Keanggotaan' },
-  { id: 'penggunaan-pos', title: 'Penggunaan POS' },
-  { id: 'langganan-uji', title: 'Langganan & Uji Coba' },
-  { id: 'qris-pembatalan', title: 'QRIS & Pembatalan' },
-  { id: 'kekayaan-intelektual', title: 'Kekayaan Intelektual' },
-  { id: 'pembatasan-tanggungjawab', title: 'Pembatasan Tanggung Jawab' },
-  { id: 'hukum-kontak', title: 'Hukum & Kontak' }
+  { id: 'pengantar', title: 'Pengantar' },
+  { id: 'data-dikumpul', title: 'Data yang Dikumpulkan' },
+  { id: 'penggunaan-data', title: 'Penggunaan Data' },
+  { id: 'keamanan-data', title: 'Keamanan & Penyimpanan' },
+  { id: 'pihak-ketiga', title: 'Pihak Ketiga' },
+  { id: 'hak-pengguna', title: 'Hak-hak Pengguna' },
+  { id: 'perubahan-kebijakan', title: 'Perubahan Kebijakan' },
+  { id: 'kontak-legal', title: 'Hubungi Kami' }
 ]
 
-const activeSection = ref('ketentuan-umum')
+const activeSection = ref('pengantar')
 
 const scrollToSection = (id: string) => {
   const element = document.getElementById(id)
