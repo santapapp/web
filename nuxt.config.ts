@@ -15,7 +15,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBaseUrl: '',
-      useMockApi: true
+      useMockApi: false
     }
   },
   image: {

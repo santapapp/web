@@ -1,60 +1,17 @@
 <template>
   <main>
 
-    <!-- ══════════════════════════════════════════════════════
-         HERO — IntegratedBio style:
-         Large 2-line title (bold + muted), scroll arrow, subtitle bottom-right
-         ══════════════════════════════════════════════════════ -->
-    <section
-      class="relative bg-[var(--color-bg-page)]"
-      style="min-height: 85svh; display: flex; flex-direction: column;"
+    <!-- ── HERO — Curtain Reveal ──────────────────────────── -->
+    <AppPageHeroCurtain
+      badge="Fitur Santap"
+      line1="Semua Fitur"
+      line2="Kasir Modern."
       aria-label="Fitur Santap"
+      scroll-target="features-content"
     >
-      <div
-        class="flex-1 px-5 md:px-10 lg:px-16 max-w-[1400px] mx-auto w-full
-               flex flex-col justify-between pt-32 pb-16 md:pt-40 md:pb-20"
-      >
-        <!-- ── Overline badge ──────────────────────────────── -->
-        <div class="mb-8 md:mb-12">
-          <div class="inline-flex items-center gap-3 bg-[var(--color-bg-surface)] px-4 py-2 rounded-md border border-[var(--color-border)]">
-            <div class="w-2 h-2 rounded-sm bg-[var(--color-primary)] flex-shrink-0"></div>
-            <span class="text-[10.5px] font-bold uppercase tracking-[0.16em]" style="color: var(--color-text-primary);">Fitur Santap</span>
-          </div>
-        </div>
-
-        <!-- ── Main title — 2 lines ──────────────────────────── -->
-        <div class="flex-1 flex items-center">
-          <h1 class="font-medium tracking-[-0.03em] leading-[0.95]" style="font-size: clamp(56px, 12vw, 160px);">
-            <span class="block" style="color: var(--color-text-primary);">Semua Fitur</span>
-            <span class="block" style="color: var(--color-text-tertiary);">Kasir Modern.</span>
-          </h1>
-        </div>
-
-        <!-- ── Bottom row: scroll arrow (left) + subtitle (right) ── -->
-        <div class="flex items-end justify-between border-t pt-10 border-[var(--color-border)] mt-12">
-          <!-- Scroll-down arrow -->
-          <button
-            @click="scrollToContent"
-            class="flex items-center justify-center rounded-xl border border-[var(--color-border)] transition-all duration-200 hover:border-[var(--color-text-primary)] hover:bg-[var(--color-text-primary)] group"
-            style="width: 44px; height: 44px; color: var(--color-text-primary);"
-            aria-label="Gulir ke bawah"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="transition-colors duration-200 group-hover:text-white" aria-hidden="true">
-              <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-
-          <!-- Subtitle text — bottom right -->
-          <p
-            class="text-right text-[14.5px] leading-[1.7] max-w-[300px] md:max-w-[380px]"
-            style="color: var(--color-text-secondary);"
-          >
-            Dari pencatatan pesanan hingga laporan keuangan harian —
-            <span style="color: var(--color-text-primary); font-weight: 500;">Santap menyederhanakan operasional restoran</span> dalam satu aplikasi.
-          </p>
-        </div>
-      </div>
-    </section>
+      Dari pencatatan pesanan hingga laporan keuangan harian —
+      <span style="color: var(--color-text-primary); font-weight: 500;">Santap menyederhanakan operasional restoran</span> dalam satu aplikasi.
+    </AppPageHeroCurtain>
 
     <!-- ══════════════════════════════════════════════════════
          IMMERSIVE DARK SECTION — food image + large white text overlay
@@ -92,12 +49,11 @@
         </div>
 
         <!-- Large descriptive text -->
-        <p
+        <AppTextWordReveal
           class="font-medium leading-[1.12] tracking-tight max-w-[950px]"
           style="font-size: clamp(26px, 4vw, 52px); color: #FFFFFF;"
-        >
-          Platform kami memungkinkan pencatatan pesanan, pembayaran multi-metode, dan pelaporan real-time yang, digabungkan dengan antarmuka intuitif, membuka kendali penuh atas operasional restoran dari satu aplikasi.
-        </p>
+          text="Platform kami memungkinkan pencatatan pesanan, pembayaran multi-metode, dan pelaporan real-time yang, digabungkan dengan antarmuka intuitif, membuka kendali penuh atas operasional restoran dari satu aplikasi."
+        />
       </div>
     </section>
 
@@ -217,7 +173,7 @@
         </div>
         <div class="md:col-span-4 flex md:justify-end items-end gap-3">
           <NuxtLink
-            to="/register"
+            to="/#"
             class="inline-flex items-center gap-2 rounded-full text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:-translate-y-px shadow-sm"
             style="background-color: var(--color-text-primary); color: #FFFFFF; padding: 14px 28px;"
           >
@@ -355,11 +311,6 @@ useHead({
     { name: 'description', content: 'Semua fitur yang dibutuhkan kasir modern: manajemen pesanan, laporan real-time, multi pembayaran, dan lebih banyak lagi.' }
   ]
 })
-
-const scrollToContent = () => {
-  document.getElementById('features-content')?.scrollIntoView({ behavior: 'smooth' })
-}
-
 const focuses = [
   {
     id: 'reliability',

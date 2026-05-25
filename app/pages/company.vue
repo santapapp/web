@@ -1,61 +1,19 @@
 <template>
-  <main>
+  <main ref="mainRef">
 
-    <!-- ══════════════════════════════════════════════════════
-         HERO — IntegratedBio style:
-         Large 2-line title (bold + muted), scroll arrow, subtitle bottom-right
-         ══════════════════════════════════════════════════════ -->
-    <section
-      class="relative bg-[var(--color-bg-page)]"
-      style="min-height: 85svh; display: flex; flex-direction: column;"
+    <!-- ── HERO — Curtain Reveal ──────────────────────────── -->
+    <AppPageHeroCurtain
+      badge="Mitra & Perusahaan"
+      line1="Kemitraan Kokoh."
+      line2="Tumbuh Bersama."
       aria-label="Mitra & Perusahaan"
+      scroll-target="company-overview"
+      title-size="clamp(52px, 11vw, 150px)"
     >
-      <div
-        class="flex-1 px-5 md:px-10 lg:px-16 max-w-[1400px] mx-auto w-full
-               flex flex-col justify-between pt-32 pb-16 md:pt-40 md:pb-20"
-      >
-        <!-- ── Overline badge ──────────────────────────────── -->
-        <div class="mb-8 md:mb-12">
-          <div class="inline-flex items-center gap-3 bg-[var(--color-bg-surface)] px-4 py-2 rounded-md border border-[var(--color-border)]">
-            <div class="w-2 h-2 rounded-sm bg-[var(--color-primary)] flex-shrink-0"></div>
-            <span class="text-[10.5px] font-bold uppercase tracking-[0.16em]" style="color: var(--color-text-primary);">Mitra & Perusahaan</span>
-          </div>
-        </div>
-
-        <!-- ── Main title — 2 lines ──────────────────────────── -->
-        <div class="flex-1 flex items-center">
-          <h1 class="font-medium tracking-[-0.03em] leading-[0.95]" style="font-size: clamp(52px, 11vw, 150px);">
-            <span class="block" style="color: var(--color-text-primary);">Kemitraan Kokoh.</span>
-            <span class="block" style="color: var(--color-text-tertiary);">Tumbuh Bersama.</span>
-          </h1>
-        </div>
-
-        <!-- ── Bottom row: scroll arrow (left) + subtitle (right) ── -->
-        <div class="flex items-end justify-between border-t pt-10 border-[var(--color-border)] mt-12">
-          <!-- Scroll-down arrow -->
-          <button
-            @click="scrollToContent"
-            class="flex items-center justify-center rounded-xl border border-[var(--color-border)] transition-all duration-200 hover:border-[var(--color-text-primary)] hover:bg-[var(--color-text-primary)] group"
-            style="width: 44px; height: 44px; color: var(--color-text-primary); cursor: pointer;"
-            aria-label="Gulir ke bawah"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="transition-colors duration-200 group-hover:text-white" aria-hidden="true">
-              <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-
-          <!-- Subtitle text — bottom right -->
-          <p
-            class="text-right text-[14.5px] leading-[1.7] max-w-[300px] md:max-w-[380px]"
-            style="color: var(--color-text-secondary);"
-          >
-            Membangun ekosistem F&B Indonesia yang lebih tangguh.
-            <span style="color: var(--color-text-primary); font-weight: 500;">Santap hadir</span> sebagai partner teknologi terpercaya bagi jutaan merchant di tanah air.
-          </p>
-        </div>
-      </div>
-    </section>
-
+      Membangun ekosistem F&amp;B Indonesia yang lebih tangguh.
+      <span style="color: var(--color-text-primary); font-weight: 500;">Santap hadir</span> sebagai partner teknologi terpercaya bagi jutaan merchant di tanah air.
+    </AppPageHeroCurtain>
+    
     <!-- ══════════════════════════════════════════════════════
          IMMERSIVE DARK SECTION — coffee shop / restaurant scene + large white text overlay
          ══════════════════════════════════════════════════════ -->
@@ -92,12 +50,11 @@
         </div>
 
         <!-- Large descriptive text -->
-        <p
+        <AppTextWordReveal
           class="font-medium leading-[1.12] tracking-tight max-w-[950px]"
           style="font-size: clamp(26px, 4vw, 52px); color: #FFFFFF;"
-        >
-          Kami bertekad memajukan bisnis kuliner lokal melalui teknologi point-of-sale yang modern, andal, dan mudah diakses oleh siapa saja.
-        </p>
+          text="Kami bertekad memajukan bisnis kuliner lokal melalui teknologi point-of-sale yang modern, andal, dan mudah diakses oleh siapa saja."
+        />
       </div>
     </section>
 
@@ -106,6 +63,7 @@
          ══════════════════════════════════════════════════════ -->
     <section
       id="company-content"
+      ref="valsSecRef"
       class="bg-[var(--color-bg-page)] px-5 md:px-10 lg:px-16 py-20 md:py-28 max-w-[1400px] mx-auto"
       aria-label="Nilai Kami"
     >
@@ -115,7 +73,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
         
         <!-- Left Column: Heading -->
-        <div class="lg:col-span-4 lg:sticky lg:top-28 self-start">
+        <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
           <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">Nilai & Komitmen</p>
           <h2
             class="font-medium tracking-tight leading-[1.1] mb-8"
@@ -136,7 +94,7 @@
             <div 
               v-for="(val, i) in values" 
               :key="i"
-              class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 py-6"
+              class="cmp-right-item flex flex-col sm:flex-row sm:items-start justify-between gap-4 py-6"
             >
               <div class="flex items-start gap-4">
                 <span class="text-[12px] font-medium tabular-nums text-[var(--color-text-tertiary)] mt-1">0{{ i + 1 }}.</span>
@@ -160,6 +118,8 @@
          STATS SECTION — clean grid layout
          ══════════════════════════════════════════════════════ -->
     <section
+      id="company-stats"
+      ref="statsSecRef"
       class="bg-[var(--color-bg-page)] px-5 md:px-10 lg:px-16 py-20 md:py-28 max-w-[1400px] mx-auto"
       aria-label="Pencapaian"
     >
@@ -168,7 +128,7 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
         <!-- Left: description -->
-        <div class="lg:col-span-4">
+        <div class="lg:col-span-4 cmp-left">
           <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">Data Bicara</p>
           <h2
             class="font-medium tracking-tight leading-[1.1] mb-6"
@@ -184,7 +144,7 @@
         <!-- Right: Stats Grid -->
         <div class="lg:col-span-8">
           <div class="grid grid-cols-2 gap-x-8 gap-y-12 md:gap-y-16">
-            <div v-for="stat in stats" :key="stat.label" class="flex flex-col gap-2">
+            <div v-for="stat in stats" :key="stat.label" class="cmp-right-item flex flex-col gap-2">
               <span
                 class="font-medium tracking-tight leading-none text-[var(--color-text-primary)]"
                 style="font-size: clamp(32px, 5vw, 64px);"
@@ -208,6 +168,7 @@
          ═════════════════════════════════════════════════════════════════════════════════════ -->
     <section
       id="company-partners"
+      ref="partnersSecRef"
       class="bg-[var(--color-bg-page)] px-5 md:px-10 lg:px-16 py-20 md:py-28 max-w-[1400px] mx-auto"
       aria-label="Mitra Restoran"
     >
@@ -217,7 +178,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
         
         <!-- Left Column: Heading -->
-        <div class="lg:col-span-4 lg:sticky lg:top-28 self-start">
+        <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
           <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">Ekosistem Kuliner</p>
           <h2
             class="font-medium tracking-tight leading-[1.1] mb-8"
@@ -295,7 +256,7 @@
       <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div
           class="absolute"
-          style="width: 60%; height: 60%; top: -20%; left: -10%; background: radial-gradient(circle, rgba(232,119,34,0.06) 0%, transparent 70%); border-radius: 50%;"
+          style="width: 60%; height: 60%; top: -20%; left: -10%; background: radial-gradient(circle, rgba(232,119,34,0.07) 0%, transparent 70%); border-radius: 50%;"
         ></div>
         <div
           class="absolute"
@@ -307,7 +268,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
           
           <!-- Left Column: Heading -->
-          <div class="lg:col-span-4 flex flex-col justify-between">
+          <div class="lg:col-span-5 flex flex-col justify-between">
             <div>
               <!-- Badge -->
               <div class="mb-8">
@@ -316,78 +277,162 @@
                   style="background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1);"
                 >
                   <div class="w-2 h-2 rounded-sm flex-shrink-0" style="background-color: var(--color-primary);"></div>
-                  <span class="text-[10.5px] font-bold uppercase tracking-[0.16em]" style="color: rgba(255,255,255,0.8);">Mulai Kolaborasi</span>
+                  <span class="text-[10.5px] font-bold uppercase tracking-[0.16em]" style="color: rgba(255,255,255,0.8);">Bergabung Bersama Kami</span>
                 </div>
               </div>
 
               <h2
-                class="font-medium leading-[1.08] tracking-tight mb-6"
+                class="font-medium leading-[1.05] tracking-tight mb-6"
                 style="font-size: clamp(30px, 4.5vw, 56px); color: #FFFFFF;"
               >
-                Kolaborasi untuk masa depan
-                <span style="color: rgba(255,255,255,0.35);"> kuliner Indonesia.</span>
+                Siap menjadi bagian dari ekosistem kuliner
+                <span style="color: rgba(255,255,255,0.3);"> masa depan Indonesia?</span>
               </h2>
-              <p class="text-[14.5px] leading-[1.75] max-w-sm mb-12" style="color: rgba(255,255,255,0.55);">
-                Apapun model bisnis F&B Anda, Santap siap hadir membantu menyederhanakan operasional digital setiap hari.
+              <p class="text-[14.5px] leading-[1.75] max-w-sm mb-10" style="color: rgba(255,255,255,0.55);">
+                Lebih dari 10.000 merchant telah mempercayakan operasional kasir harian mereka kepada Santap. Giliran Anda bergabung dan rasakan perbedaannya.
               </p>
+
+              <!-- Proof stat row -->
+              <div class="flex items-center gap-6 mb-10">
+                <div>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none">10.000+</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255,255,255,0.4);">Merchant Aktif</p>
+                </div>
+                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.1);"></div>
+                <div>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none">50+</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255,255,255,0.4);">Kota di Indonesia</p>
+                </div>
+                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.1);"></div>
+                <div>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none">99.9%</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255,255,255,0.4);">Uptime</p>
+                </div>
+              </div>
             </div>
 
-            <!-- Contacts info -->
-            <div class="hidden lg:flex flex-col gap-6">
+            <!-- Contact info -->
+            <div class="hidden lg:flex flex-col gap-5">
               <div class="h-px" style="background-color: rgba(255,255,255,0.08);"></div>
-              <div>
-                <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: rgba(255,255,255,0.35);">Hubungi Kemitraan</p>
-                <a href="mailto:halo@santap.id" class="text-[15px] font-medium text-white hover:text-[var(--color-primary)] transition-colors no-underline">
-                  halo@santap.id
-                </a>
+              <div class="flex items-center gap-8">
+                <div>
+                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255,255,255,0.35);">Email Kami</p>
+                  <a href="mailto:halo@santap.id" class="text-[14px] font-medium text-white hover:text-[var(--color-primary)] transition-colors no-underline">
+                    halo@santap.id
+                  </a>
+                </div>
+                <div>
+                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255,255,255,0.35);">WhatsApp</p>
+                  <a href="https://wa.me/6281234567890" target="_blank" class="text-[14px] font-medium text-white hover:text-[var(--color-primary)] transition-colors no-underline">
+                    +62 812-3456-7890
+                  </a>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Right Column: Partnerships CTA Cards -->
-          <div class="lg:col-span-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
+          <div class="lg:col-span-7">
+            <div class="flex flex-col gap-5">
               
-              <!-- Card 1: Mitra Merchant -->
+              <!-- Card 1: Mitra Merchant — featured -->
               <div
-                class="border rounded-2xl p-8 flex flex-col justify-between"
-                style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
+                class="border rounded-2xl p-8 md:p-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative overflow-hidden"
+                style="background-color: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.12);"
               >
-                <div>
-                  <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-primary)] mb-4 block">Mitra Merchant</span>
-                  <h3 class="text-xl font-medium text-white mb-3">Daftarkan Restoran Anda</h3>
-                  <p class="text-[13.5px] leading-relaxed text-white/55 mb-8">
-                    Nikmati kemudahan mencatat pesanan, kelola stok bahan baku, dan pantau laporan penjualan cabang secara real-time.
+                <!-- Glow accent -->
+                <div class="absolute top-0 right-0 w-48 h-48 pointer-events-none" style="background: radial-gradient(circle at top right, rgba(232,119,34,0.12) 0%, transparent 70%);"></div>
+                
+                <div class="flex-1 relative z-10">
+                  <div class="flex items-center gap-2 mb-3">
+                    <!-- Icon -->
+                    <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: var(--color-primary);">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-primary)]">Mitra Merchant</span>
+                  </div>
+                  <h3 class="text-[20px] font-medium text-white mb-2 leading-tight">Daftarkan Restoran atau Cafe Anda</h3>
+                  <p class="text-[13.5px] leading-relaxed text-white/55">
+                    Mulai perjalanan digitalisasi kasir Anda — gratis 14 hari, tanpa kartu kredit, tanpa kontrak mengikat.
                   </p>
                 </div>
                 <NuxtLink
-                  to="/register"
-                  class="inline-flex items-center justify-center py-3.5 rounded-full text-[11px] font-bold uppercase tracking-[0.08em] no-underline transition-all hover:-translate-y-px bg-white text-[#111009] hover:bg-white/95"
+                  to="/#"
+                  class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-[11px] font-bold uppercase tracking-[0.08em] no-underline transition-all hover:-translate-y-px flex-shrink-0 relative z-10 bg-white text-[#111009] hover:bg-white/95"
                 >
-                  Daftar Sekarang
+                  Mulai Gratis
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </NuxtLink>
               </div>
 
-              <!-- Card 2: Mitra Integrasi / API -->
-              <div
-                class="border rounded-2xl p-8 flex flex-col justify-between"
-                style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
-              >
-                <div>
-                  <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40 mb-4 block">Mitra Integrasi</span>
-                  <h3 class="text-xl font-medium text-white mb-3">Integrasikan Layanan Anda</h3>
-                  <p class="text-[13.5px] leading-relaxed text-white/55 mb-8">
-                    Sambungkan sistem pembayaran e-wallet, layanan pengiriman makanan, atau sistem akuntansi Anda dengan API terbuka Santap.
-                  </p>
+              <!-- Card 2: Mitra Integrasi -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+                <!-- Sub-card A: API / Integrasi -->
+                <div
+                  class="border rounded-2xl p-7 flex flex-col justify-between"
+                  style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
+                >
+                  <div>
+                    <div class="flex items-center gap-2 mb-3">
+                      <div class="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style="background-color: rgba(255,255,255,0.08);">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M8 9l3 3-3 3M13 15h3" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </div>
+                      <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Mitra Integrasi</span>
+                    </div>
+                    <h3 class="text-[17px] font-medium text-white mb-2 leading-snug">Sambungkan Sistem Anda via API</h3>
+                    <p class="text-[13px] leading-relaxed text-white/50 mb-6">
+                      Integrasikan e-wallet, delivery platform, atau sistem akuntansi dengan API terbuka Santap.
+                    </p>
+                  </div>
+                  <NuxtLink
+                    to="/contact"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 text-white/60 hover:text-white"
+                  >
+                    Hubungi Tim API
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </NuxtLink>
                 </div>
-                <NuxtLink
-                  to="/contact"
-                  class="inline-flex items-center justify-center py-3.5 rounded-full text-[11px] font-bold uppercase tracking-[0.08em] no-underline transition-all hover:-translate-y-px text-white border border-white/20 hover:bg-white/5"
-                >
-                  Hubungi API Support
-                </NuxtLink>
-              </div>
 
+                <!-- Sub-card B: Kemitraan / Reseller -->
+                <div
+                  class="border rounded-2xl p-7 flex flex-col justify-between"
+                  style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
+                >
+                  <div>
+                    <div class="flex items-center gap-2 mb-3">
+                      <div class="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style="background-color: rgba(255,255,255,0.08);">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </div>
+                      <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Program Reseller</span>
+                    </div>
+                    <h3 class="text-[17px] font-medium text-white mb-2 leading-snug">Jadi Mitra Reseller Santap</h3>
+                    <p class="text-[13px] leading-relaxed text-white/50 mb-6">
+                      Dapatkan komisi menarik dengan merekomendasikan Santap ke jaringan restoran dan cafe Anda.
+                    </p>
+                  </div>
+                  <NuxtLink
+                    to="/contact"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 text-white/60 hover:text-white"
+                  >
+                    Daftar Reseller
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </NuxtLink>
+                </div>
+
+              </div>
             </div>
           </div>
 
@@ -399,17 +444,116 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const mainRef         = ref<HTMLElement | null>(null)
+const valsSecRef      = ref<HTMLElement | null>(null)
+const statsSecRef     = ref<HTMLElement | null>(null)
+const partnersSecRef  = ref<HTMLElement | null>(null)
+let ctx: any = null
+
+onMounted(async () => {
+  const { gsap } = await import('gsap')
+  const { ScrollTrigger } = await import('gsap/ScrollTrigger')
+  gsap.registerPlugin(ScrollTrigger)
+
+  ctx = gsap.context(() => {
+    const mm = gsap.matchMedia()
+
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      // ─── Helper: animate satu section ─────────────────────────────────────
+      const animateSection = (secEl: HTMLElement | null, rightDelay = 0) => {
+        if (!secEl) return
+
+        const leftCol    = secEl.querySelector<HTMLElement>('.cmp-left')
+        const rightItems = secEl.querySelectorAll<HTMLElement>('.cmp-right-item')
+
+        // LEFT: fade in + slide dari bawah, trigger lebih lambat (butuh lebih banyak scroll)
+        if (leftCol) {
+          gsap.set(leftCol, { opacity: 0, y: 32 })
+          gsap.to(leftCol, {
+            scrollTrigger: { trigger: leftCol, start: 'top 72%' },
+            opacity: 1,
+            y: 0,
+            duration: 1.4,
+            ease: 'power3.out',
+          })
+        }
+
+        // RIGHT ITEMS: swipe masuk dari kanan, stagger per item
+        if (rightItems.length) {
+          gsap.set(rightItems, { opacity: 0, x: 50 })
+          gsap.to(rightItems, {
+            scrollTrigger: { trigger: secEl, start: 'top 82%' },
+            opacity: 1,
+            x: 0,
+            duration: 1.1,
+            ease: 'power3.out',
+            stagger: 0.14,
+            delay: rightDelay,
+          })
+        }
+      }
+
+      animateSection(valsSecRef.value)
+      animateSection(statsSecRef.value)
+
+      // Partners: featured card dulu, lalu logo grid
+      if (partnersSecRef.value) {
+        const leftCol     = partnersSecRef.value.querySelector<HTMLElement>('.cmp-left')
+        const featuredCard = partnersSecRef.value.querySelector<HTMLElement>('.featured-cafe-card')
+        const logoCards    = partnersSecRef.value.querySelectorAll<HTMLElement>('.partner-logo-card')
+
+        if (leftCol) {
+          gsap.set(leftCol, { opacity: 0, y: 32 })
+          gsap.to(leftCol, {
+            scrollTrigger: { trigger: leftCol, start: 'top 72%' },
+            opacity: 1, y: 0,
+            duration: 1.4,
+            ease: 'power3.out',
+          })
+        }
+
+        if (featuredCard) {
+          gsap.set(featuredCard, { opacity: 0, x: 50 })
+          gsap.to(featuredCard, {
+            scrollTrigger: { trigger: partnersSecRef.value, start: 'top 82%' },
+            opacity: 1, x: 0,
+            duration: 1.2,
+            ease: 'power3.out',
+          })
+        }
+
+        if (logoCards.length) {
+          gsap.set(logoCards, { opacity: 0, x: 40 })
+          gsap.to(logoCards, {
+            scrollTrigger: { trigger: partnersSecRef.value, start: 'top 75%' },
+            opacity: 1, x: 0,
+            duration: 1.0,
+            ease: 'power3.out',
+            stagger: 0.08,
+            delay: 0.3,
+          })
+        }
+      }
+    })
+
+    mm.add('(prefers-reduced-motion: reduce)', () => {
+      gsap.set(
+        mainRef.value?.querySelectorAll('.cmp-left, .cmp-right-item, .featured-cafe-card, .partner-logo-card') ?? [],
+        { opacity: 1, x: 0, y: 0, clearProps: 'all' }
+      )
+    })
+  }, mainRef.value ?? undefined)
+})
+
+onUnmounted(() => { ctx?.revert() })
 useHead({
   title: 'Mitra & Perusahaan — Santap',
   meta: [
     { name: 'description', content: 'Kenali visi, komitmen, dan pilar kerja Santap dalam memberdayakan jutaan merchant F&B di seluruh Indonesia lewat teknologi POS POS modern.' }
   ]
 })
-
-const scrollToContent = () => {
-  document.getElementById('company-overview')?.scrollIntoView({ behavior: 'smooth' })
-}
-
 const values = [
   {
     title: 'Inovasi Tanpa Batas',

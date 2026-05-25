@@ -1,60 +1,17 @@
 <template>
   <main>
 
-    <!-- ══════════════════════════════════════════════════════
-         HERO — IntegratedBio style:
-         Large 2-line title (bold + muted), scroll arrow, subtitle bottom-right
-         ══════════════════════════════════════════════════════ -->
-    <section
-      class="relative bg-[var(--color-bg-page)]"
-      style="min-height: 85svh; display: flex; flex-direction: column;"
+    <!-- ── HERO — Curtain Reveal ──────────────────────────── -->
+    <AppPageHeroCurtain
+      badge="Tentang Kami"
+      line1="Cerita Kami."
+      line2="Visi Kuliner."
       aria-label="Tentang Kami"
+      scroll-target="about-overview"
     >
-      <div
-        class="flex-1 px-5 md:px-10 lg:px-16 max-w-[1400px] mx-auto w-full
-               flex flex-col justify-between pt-32 pb-16 md:pt-40 md:pb-20"
-      >
-        <!-- ── Overline badge ──────────────────────────────── -->
-        <div class="mb-8 md:mb-12">
-          <div class="inline-flex items-center gap-3 bg-[var(--color-bg-surface)] px-4 py-2 rounded-md border border-[var(--color-border)]">
-            <div class="w-2 h-2 rounded-sm bg-[var(--color-primary)] flex-shrink-0"></div>
-            <span class="text-[10.5px] font-bold uppercase tracking-[0.16em]" style="color: var(--color-text-primary);">Tentang Kami</span>
-          </div>
-        </div>
-
-        <!-- ── Main title — 2 lines ──────────────────────────── -->
-        <div class="flex-1 flex items-center">
-          <h1 class="font-medium tracking-[-0.03em] leading-[0.95]" style="font-size: clamp(56px, 12vw, 160px);">
-            <span class="block" style="color: var(--color-text-primary);">Cerita Kami.</span>
-            <span class="block" style="color: var(--color-text-tertiary);">Visi Kuliner.</span>
-          </h1>
-        </div>
-
-        <!-- ── Bottom row: scroll arrow (left) + subtitle (right) ── -->
-        <div class="flex items-end justify-between border-t pt-10 border-[var(--color-border)] mt-12">
-          <!-- Scroll-down arrow -->
-          <button
-            @click="scrollToContent"
-            class="flex items-center justify-center rounded-xl border border-[var(--color-border)] transition-all duration-200 hover:border-[var(--color-text-primary)] hover:bg-[var(--color-text-primary)] group"
-            style="width: 44px; height: 44px; color: var(--color-text-primary); cursor: pointer;"
-            aria-label="Gulir ke bawah"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="transition-colors duration-200 group-hover:text-white" aria-hidden="true">
-              <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-
-          <!-- Subtitle text — bottom right -->
-          <p
-            class="text-right text-[14.5px] leading-[1.7] max-w-[300px] md:max-w-[380px]"
-            style="color: var(--color-text-secondary);"
-          >
-            Kami percaya teknologi kasir harusnya menyederhanakan operasional harian,
-            <span style="color: var(--color-text-primary); font-weight: 500;">bukan menambah kerumitan</span> di restoran atau cafe Anda.
-          </p>
-        </div>
-      </div>
-    </section>
+      Kami percaya teknologi kasir harusnya menyederhanakan operasional harian,
+      <span style="color: var(--color-text-primary); font-weight: 500;">bukan menambah kerumitan</span> di restoran atau cafe Anda.
+    </AppPageHeroCurtain>
 
     <!-- ══════════════════════════════════════════════════════
          IMMERSIVE DARK SECTION — warm kitchen visual + large white text overlay
@@ -92,12 +49,11 @@
         </div>
 
         <!-- Large descriptive text -->
-        <p
+        <AppTextWordReveal
           class="font-medium leading-[1.12] tracking-tight max-w-[950px]"
           style="font-size: clamp(26px, 4vw, 52px); color: #FFFFFF;"
-        >
-          Santap lahir dari satu misi sederhana: memerdekakan pelaku usaha kuliner Indonesia melalui teknologi POS cloud yang handal, cepat, dan terjangkau bagi siapa saja.
-        </p>
+          text="Santap lahir dari satu misi sederhana: memerdekakan pelaku usaha kuliner Indonesia melalui teknologi POS cloud yang handal, cepat, dan terjangkau bagi siapa saja."
+        />
       </div>
     </section>
 
@@ -300,7 +256,7 @@
 
         <div class="flex flex-wrap justify-center gap-4">
           <NuxtLink
-            to="/register"
+            to="/#"
             class="inline-flex items-center justify-center py-3.5 px-8 rounded-full text-[11px] font-bold uppercase tracking-[0.08em] no-underline transition-all hover:-translate-y-px bg-white text-[#111009] hover:bg-white/95"
           >
             Mulai Uji Coba Gratis
@@ -325,11 +281,6 @@ useHead({
     { name: 'description', content: 'Kenali kisah berdirinya, misi utama, dan perjalanan tim Santap dalam menghadirkan solusi teknologi POS cloud untuk ekosistem kuliner di Indonesia.' }
   ]
 })
-
-const scrollToContent = () => {
-  document.getElementById('about-overview')?.scrollIntoView({ behavior: 'smooth' })
-}
-
 const pillars = [
   {
     title: 'Merchant-First',

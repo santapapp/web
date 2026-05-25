@@ -1,5 +1,5 @@
 <template>
-  <section class="cta-section">
+  <section class="cta-section" ref="containerRef">
     <!-- Background decoration -->
     <div class="cta-bg" aria-hidden="true">
       <div class="cta-orb cta-orb--1" />
@@ -8,7 +8,7 @@
     </div>
 
     <div class="container">
-      <div ref="contentRef" class="cta-content" :class="{ 'is-visible': contentVisible }">
+      <div class="cta-content gsap-content opacity-0 translate-y-6">
 
         <!-- Eyebrow -->
         <div class="cta-eyebrow">
@@ -31,7 +31,7 @@
 
         <!-- CTA -->
         <div class="btn-row cta-actions">
-          <NuxtLink class="btn btn-white btn-lg" to="/register">
+          <NuxtLink class="btn btn-white btn-lg" to="/#">
             Daftar Gratis
           </NuxtLink>
           <NuxtLink class="btn btn-outline-white" to="/features">
@@ -53,18 +53,47 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+
 const trust = [
   { id: 'free', icon: 'i-lucide-gift', label: 'Gratis untuk memulai' },
   { id: 'secure', icon: 'i-lucide-shield-check', label: 'Data terenkripsi' },
   { id: 'cancel', icon: 'i-lucide-x-circle', label: 'Batalkan kapan saja' },
 ]
 
-const contentRef = ref<HTMLElement | null>(null)
-const contentVisible = ref(false)
+const containerRef = ref<HTMLElement | null>(null)
+let ctx: any = null
 
-const { stop } = useIntersectionObserver(contentRef, ([e]) => {
-  if (e && e.isIntersecting) { contentVisible.value = true; stop() }
-}, { threshold: 0.2 })
+onMounted(async () => {
+  const { gsap } = await import('gsap')
+  const { ScrollTrigger } = await import('gsap/ScrollTrigger')
+  gsap.registerPlugin(ScrollTrigger)
+
+  ctx = gsap.context(() => {
+    const mm = gsap.matchMedia()
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      gsap.to('.gsap-content', {
+        scrollTrigger: {
+          trigger: '.gsap-content',
+          start: 'top 85%',
+        },
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        ease: 'power3.out'
+      })
+    })
+
+    mm.add("(prefers-reduced-motion: reduce)", () => {
+      gsap.set('.gsap-content', { y: 0, opacity: 1 })
+    })
+  }, containerRef.value ?? undefined)
+})
+
+onUnmounted(() => {
+  ctx?.revert()
+})
 </script>
 
 <style scoped>
@@ -116,14 +145,6 @@ const { stop } = useIntersectionObserver(contentRef, ([e]) => {
   align-items: center;
   text-align: center;
   gap: 28px;
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
-}
-
-.cta-content.is-visible {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 /* Eyebrow */

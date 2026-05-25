@@ -1,108 +1,104 @@
 <script setup lang="ts">
 definePageMeta({
+  layout: 'org',
   middleware: ['org-exists']
 })
 
-const { org, categories, items, pending, error, fetchPublicOrg } = usePublicOrg()
+/**
+ * Halaman publik restoran — hanya info statis.
+ * Tanpa real menu data (butuh session dari QR meja).
+ * User diarahkan scan QR untuk melihat menu dan order.
+ */
 
-await fetchPublicOrg()
+const route = useRoute()
+const config = useRuntimeConfig()
+const orgSlug = computed(() => String(route.params.orgSlug || ''))
 
-const availableItems = computed(() => items.value.filter((item) => item.is_available))
+// Mengambil data organisasi dari database via API
+const { data: response, error } = await useFetch<any>(
+  `/api/v1/customer/organization/${orgSlug.value}`,
+  {
+    baseURL: config.public.apiBaseUrl
+  }
+)
 
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    maximumFractionDigits: 0
-  }).format(value)
+// Validasi jika organisasi tidak ditemukan
+if (error.value || !response.value?.data) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Restoran tidak ditemukan.',
+    fatal: true
+  })
+}
+
+const org = computed(() => response.value?.data)
 </script>
 
 <template>
   <section class="page-section">
     <div class="container stack">
-      <div v-if="pending" class="content-card stack">
-        <span class="badge">Loading</span>
-        <h1>Memuat restoran</h1>
-        <p>Data mock sedang disiapkan.</p>
-      </div>
-
-      <SharedStateBlock
-        v-else-if="error"
-        label="Error"
-        title="Restoran tidak ditemukan"
-        :description="error.message"
-      />
-
-      <template v-else-if="org">
-        <div class="hero-grid">
-          <div class="hero-copy">
-            <p class="eyebrow">Restoran publik</p>
-            <h1>{{ org.name }}</h1>
-            <p>{{ org.description }}</p>
-
-            <div class="button-row">
-              <NuxtLink class="btn-primary" :to="`/o/${org.slug}/orders?table=TBL_8KJ2QX`">
-                Demo QR meja
-              </NuxtLink>
-              <NuxtLink class="btn-outline" :to="`/o/${org.slug}/orders?bill=BILL_7JA92K`">
-                Demo open bill
-              </NuxtLink>
-            </div>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Santap — Pesan Digital</p>
+          <div class="org-header">
+            <img v-if="org?.logo" :src="org.logo" :alt="org?.name" class="org-logo" />
+            <h1>{{ org?.name || orgSlug }}</h1>
           </div>
+          <p>
+            Scan QR meja Anda untuk melihat menu dan mulai memesan secara digital —
+            tanpa perlu memanggil pelayan.
+          </p>
 
-          <aside class="content-card stack">
-            <span class="badge">{{ org.open_status }}</span>
-            <h3>{{ org.address }}</h3>
-            <p class="muted">Timezone: {{ org.timezone }}</p>
-          </aside>
+          <div class="button-row">
+            <NuxtLink class="btn-primary" :to="`/o/${orgSlug}/orders`">
+              Lihat Halaman Order
+            </NuxtLink>
+          </div>
         </div>
 
-        <section class="stack">
-          <div class="stack">
-            <p class="eyebrow">Menu publik</p>
-            <h2>{{ availableItems.length }} menu tersedia</h2>
-          </div>
-
-          <div class="grid-cards">
-            <article v-for="category in categories" :key="category.id" class="content-card stack">
-              <span class="badge">{{ category.name }}</span>
-              <div
-                v-for="item in availableItems.filter((menuItem) => menuItem.category_id === category.id)"
-                :key="item.id"
-                class="menu-row"
-              >
-                <div>
-                  <h3>{{ item.name }}</h3>
-                  <p>{{ item.description }}</p>
-                </div>
-                <strong>{{ formatCurrency(item.price) }}</strong>
-              </div>
-            </article>
-          </div>
-        </section>
-      </template>
+        <aside class="content-card stack">
+          <span class="badge">Petunjuk Pemesanan</span>
+          <h3>Cara Memesan</h3>
+          <ol class="steps">
+            <li>Scan QR Code di meja Anda</li>
+            <li>Pilih menu yang diinginkan</li>
+            <li>Klik "Pesan Sekarang"</li>
+            <li>Bayar via QRIS</li>
+          </ol>
+          <p class="muted">QR Code tersedia di setiap meja.</p>
+        </aside>
+      </div>
     </div>
   </section>
 </template>
 
 <style scoped>
-.menu-row {
-  border-top: 1px solid var(--color-gray-100);
-  display: grid;
-  gap: 12px;
-  grid-template-columns: 1fr auto;
-  padding-top: 16px;
+.org-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
 }
 
-.menu-row strong {
-  color: var(--color-orange);
-  white-space: nowrap;
+.org-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-@media (max-width: 640px) {
-  .menu-row {
-    grid-template-columns: 1fr;
-  }
+.steps {
+  padding-left: 20px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.steps li {
+  font-size: 15px;
+  color: var(--color-text, #1a1714);
+  line-height: 1.4;
 }
 </style>
-

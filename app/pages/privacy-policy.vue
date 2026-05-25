@@ -1,27 +1,33 @@
 <template>
   <main>
     <!-- ══════════════════════════════════════════════════════
-         HERO — Premium Document Header
+         HERO — Premium Document Header with Curtain Reveal
          ══════════════════════════════════════════════════════ -->
-    <section class="bg-[var(--color-bg-page)] pt-32 pb-16 md:pt-40 md:pb-24 border-b border-[var(--color-border)]">
+    <section ref="heroRef" class="bg-[var(--color-bg-page)] pt-32 pb-16 md:pt-40 md:pb-24 border-b border-[var(--color-border)]">
       <div class="px-5 md:px-10 lg:px-16 max-w-[1400px] mx-auto">
         <div class="max-w-[800px]">
           <!-- Overline Badge -->
-          <div class="mb-6">
+          <div ref="ppBadgeRef" class="pp-badge mb-6">
             <div class="inline-flex items-center gap-3 bg-[var(--color-bg-surface)] px-4 py-2 rounded-md border border-[var(--color-border)]">
               <div class="w-2 h-2 rounded-sm bg-[var(--color-primary)] flex-shrink-0"></div>
               <span class="text-[10.5px] font-bold uppercase tracking-[0.16em]" style="color: var(--color-text-primary);">Dokumen Hukum</span>
             </div>
           </div>
 
-          <!-- Title -->
+          <!-- Title with curtain reveal -->
           <h1 class="font-medium tracking-[-0.03em] leading-[1.0] mb-6" style="font-size: clamp(40px, 8vw, 96px);">
-            <span class="block text-[var(--color-text-primary)]">Kebijakan Privasi</span>
-            <span class="block text-[var(--color-text-tertiary)]">Keamanan Data Anda.</span>
+            <span class="pp-line-wrap block overflow-hidden relative">
+              <span ref="ppCurtain1Ref" class="pp-curtain pp-curtain--dark" aria-hidden="true" />
+              <span ref="ppText1Ref" class="pp-text block text-[var(--color-text-primary)]">Kebijakan Privasi</span>
+            </span>
+            <span class="pp-line-wrap block overflow-hidden relative">
+              <span ref="ppCurtain2Ref" class="pp-curtain pp-curtain--orange" aria-hidden="true" />
+              <span ref="ppText2Ref" class="pp-text block text-[var(--color-text-tertiary)]">Keamanan Data Anda.</span>
+            </span>
           </h1>
 
           <!-- Meta description -->
-          <p class="text-[15px] leading-[1.7] text-[var(--color-text-secondary)] mt-4">
+          <p ref="ppMetaRef" class="pp-meta text-[15px] leading-[1.7] text-[var(--color-text-secondary)] mt-4">
             Pembaruan Terakhir: <span class="font-medium text-[var(--color-text-primary)]">23 Mei 2026</span> &bull; Versi 1.1
           </p>
         </div>
@@ -278,13 +284,25 @@ const scrollToSection = (id: string) => {
   }
 }
 
+// Curtain reveal refs
+const heroRef      = ref<HTMLElement | null>(null)
+const ppBadgeRef   = ref<HTMLElement | null>(null)
+const ppCurtain1Ref = ref<HTMLElement | null>(null)
+const ppCurtain2Ref = ref<HTMLElement | null>(null)
+const ppText1Ref   = ref<HTMLElement | null>(null)
+const ppText2Ref   = ref<HTMLElement | null>(null)
+const ppMetaRef    = ref<HTMLElement | null>(null)
+
+let ctx: any = null
+
 // Track active section on scroll
 let observer: IntersectionObserver | null = null
 
-onMounted(() => {
+onMounted(async () => {
+  // ── Intersection Observer for TOC ───────────────────────
   const options = {
     root: null,
-    rootMargin: '-20% 0px -60% 0px', // Trigger when section is in the middle of viewport
+    rootMargin: '-20% 0px -60% 0px',
     threshold: 0
   }
 
@@ -300,11 +318,69 @@ onMounted(() => {
     const el = document.getElementById(sec.id)
     if (el && observer) observer.observe(el)
   })
+
+  // ── GSAP Curtain Reveal ─────────────────────────────────
+  const { gsap } = await import('gsap')
+
+  ctx = gsap.context(() => {
+    const mm = gsap.matchMedia()
+
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      const curtains = [ppCurtain1Ref.value, ppCurtain2Ref.value]
+      const texts    = [ppText1Ref.value,    ppText2Ref.value]
+
+      gsap.set(curtains, { position: 'absolute', inset: 0, zIndex: 2, yPercent: 0 })
+      gsap.set(texts, { opacity: 0, y: 18 })
+      gsap.set(ppBadgeRef.value, { opacity: 0, y: 14 })
+      gsap.set(ppMetaRef.value,  { opacity: 0, y: 12 })
+
+      const tl = gsap.timeline({ delay: 0.2 })
+
+      tl.to(ppBadgeRef.value, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' })
+
+      curtains.forEach((curtain, i) => {
+        const text   = texts[i]
+        const offset = 0.25 + i * 0.18
+
+        tl.to(curtain, { yPercent: 110, duration: 1.35, ease: 'power4.out' }, offset)
+        tl.to(text,    { opacity: 1, y: 0, duration: 1.1, ease: 'power4.out' }, offset + 0.05)
+      })
+
+      tl.to(ppMetaRef.value, { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' }, '-=0.5')
+    })
+
+    mm.add('(prefers-reduced-motion: reduce)', () => {
+      gsap.set([ppCurtain1Ref.value, ppCurtain2Ref.value], { display: 'none' })
+      gsap.set([ppText1Ref.value, ppText2Ref.value, ppBadgeRef.value, ppMetaRef.value], { opacity: 1, y: 0, clearProps: 'all' })
+    })
+  }, heroRef.value ?? undefined)
 })
 
 onUnmounted(() => {
-  if (observer) {
-    observer.disconnect()
-  }
+  if (observer) observer.disconnect()
+  ctx?.revert()
 })
 </script>
+
+<style scoped>
+.pp-curtain {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  transform-origin: top center;
+  will-change: transform;
+}
+.pp-curtain--dark  { background-color: var(--color-bg-page, rgba(12, 9, 6, 1)); }
+.pp-curtain--orange { background-color: #E8712A; }
+.pp-text {
+  position: relative;
+  z-index: 1;
+  will-change: transform, opacity;
+}
+.pp-line-wrap {
+  position: relative;
+  padding-bottom: 0.06em;
+}
+</style>
+

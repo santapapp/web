@@ -5,6 +5,7 @@
     CTA heading + nav columns top, massive brand name bottom.
   -->
   <footer
+    ref="containerRef"
     class="relative overflow-hidden flex flex-col"
     style="background-color: #0F0C09; min-height: 100svh;"
     aria-label="Footer"
@@ -42,17 +43,19 @@
 
         <!-- Left: CTA Block -->
         <div class="lg:col-span-7 flex flex-col items-start">
-          <h2
-            class="font-medium leading-[1.08] tracking-tight"
-            style="font-size: clamp(28px, 4vw, 52px); color: #FFFFFF; max-width: 580px; margin-bottom: 40px;"
-          >
-            Kami memajukan bisnis kuliner untuk masa depan ekosistem restoran Indonesia.
-          </h2>
+          <div class="overflow-hidden mb-10">
+            <h2
+              class="footer-h2 font-medium leading-[1.08] tracking-tight"
+              style="font-size: clamp(28px, 4vw, 52px); color: #FFFFFF; max-width: 580px;"
+            >
+              Kami memajukan bisnis kuliner untuk masa depan ekosistem restoran Indonesia.
+            </h2>
+          </div>
 
           <!-- CTA Buttons -->
-          <div class="flex items-center gap-3">
+          <div class="footer-cta-btns flex items-center gap-3">
             <NuxtLink
-              to="/register"
+              to="/#"
               class="inline-flex items-center gap-2 rounded-full
                      text-[11px] font-bold uppercase tracking-[0.1em]
                      no-underline transition-all duration-150 hover:-translate-y-px"
@@ -61,7 +64,7 @@
               Daftar Sekarang
             </NuxtLink>
             <NuxtLink
-              to="/register"
+              to="/#"
               class="inline-flex items-center justify-center rounded-full
                      no-underline flex-shrink-0 transition-all duration-200
                      hover:-translate-y-px hover:scale-105"
@@ -76,7 +79,7 @@
         </div>
 
         <!-- Right: Nav columns + scroll-to-top -->
-        <div class="lg:col-span-5 flex justify-between lg:justify-end gap-16 lg:gap-20 pt-2">
+        <div class="footer-nav-cols lg:col-span-5 flex justify-between lg:justify-end gap-16 lg:gap-20 pt-2">
 
           <!-- Navigate -->
           <div>
@@ -162,7 +165,7 @@
       <div class="flex-1" style="min-height: clamp(60px, 8vh, 100px);"></div>
 
       <!-- ── Massive Brand Name — bottom ─────────────────────── -->
-      <div class="w-full overflow-hidden" aria-hidden="true">
+      <div class="footer-brand w-full overflow-hidden" aria-hidden="true">
         <p
           class="font-bold tracking-tighter text-center select-none pointer-events-none leading-none"
           style="
@@ -206,9 +209,74 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+
+const containerRef = ref<HTMLElement | null>(null)
+let ctx: any = null
+
 const currentYear = new Date().getFullYear()
 
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
+
+onMounted(async () => {
+  const { gsap } = await import('gsap')
+  const { ScrollTrigger } = await import('gsap/ScrollTrigger')
+  gsap.registerPlugin(ScrollTrigger)
+
+  ctx = gsap.context(() => {
+    const mm = gsap.matchMedia()
+
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      // ── H2 push-up from clip ─────────────────────────────────
+      gsap.set('.footer-h2', { yPercent: 108 })
+      gsap.to('.footer-h2', {
+        scrollTrigger: { trigger: '.footer-h2', start: 'top 90%' },
+        yPercent: 0,
+        duration: 1.1,
+        ease: 'power4.out',
+      })
+
+      // ── CTA buttons fade + slide ──────────────────────────
+      gsap.set('.footer-cta-btns', { opacity: 0, y: 20 })
+      gsap.to('.footer-cta-btns', {
+        scrollTrigger: { trigger: '.footer-cta-btns', start: 'top 92%' },
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+      })
+
+      // ── Nav columns stagger from below ──────────────────────
+      gsap.set('.footer-nav-cols', { opacity: 0, y: 30 })
+      gsap.to('.footer-nav-cols', {
+        scrollTrigger: { trigger: '.footer-nav-cols', start: 'top 92%' },
+        opacity: 1,
+        y: 0,
+        duration: 0.85,
+        ease: 'power3.out',
+      })
+
+      // ── Brand name subtle fade in ──────────────────────────
+      gsap.set('.footer-brand', { opacity: 0 })
+      gsap.to('.footer-brand', {
+        scrollTrigger: { trigger: '.footer-brand', start: 'top 98%' },
+        opacity: 1,
+        duration: 1.4,
+        ease: 'power2.out',
+      })
+    })
+
+    mm.add('(prefers-reduced-motion: reduce)', () => {
+      gsap.set(['.footer-h2', '.footer-cta-btns', '.footer-nav-cols', '.footer-brand'], {
+        opacity: 1, yPercent: 0, y: 0, clearProps: 'all',
+      })
+    })
+  }, containerRef.value ?? undefined)
+})
+
+onUnmounted(() => {
+  ctx?.revert()
+})
 </script>

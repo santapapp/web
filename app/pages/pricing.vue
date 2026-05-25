@@ -1,60 +1,17 @@
 <template>
   <main>
 
-    <!-- ══════════════════════════════════════════════════════
-         HERO — IntegratedBio style:
-         Large 2-line title (bold + muted), scroll arrow, subtitle bottom-right
-         ══════════════════════════════════════════════════════ -->
-    <section
-      class="relative bg-[var(--color-bg-page)]"
-      style="min-height: 85svh; display: flex; flex-direction: column;"
+    <!-- ── HERO — Curtain Reveal ──────────────────────────── -->
+    <AppPageHeroCurtain
+      badge="Harga Paket"
+      line1="Harga Jujur."
+      line2="Tanpa Kejutan."
       aria-label="Harga Santap"
+      scroll-target="pricing-overview"
     >
-      <div
-        class="flex-1 px-5 md:px-10 lg:px-16 max-w-[1400px] mx-auto w-full
-               flex flex-col justify-between pt-32 pb-16 md:pt-40 md:pb-20"
-      >
-        <!-- ── Overline badge ──────────────────────────────── -->
-        <div class="mb-8 md:mb-12">
-          <div class="inline-flex items-center gap-3 bg-[var(--color-bg-surface)] px-4 py-2 rounded-md border border-[var(--color-border)]">
-            <div class="w-2 h-2 rounded-sm bg-[var(--color-primary)] flex-shrink-0"></div>
-            <span class="text-[10.5px] font-bold uppercase tracking-[0.16em]" style="color: var(--color-text-primary);">Harga Paket</span>
-          </div>
-        </div>
-
-        <!-- ── Main title — 2 lines ──────────────────────────── -->
-        <div class="flex-1 flex items-center">
-          <h1 class="font-medium tracking-[-0.03em] leading-[0.95]" style="font-size: clamp(56px, 12vw, 160px);">
-            <span class="block" style="color: var(--color-text-primary);">Harga Jujur.</span>
-            <span class="block" style="color: var(--color-text-tertiary);">Tanpa Kejutan.</span>
-          </h1>
-        </div>
-
-        <!-- ── Bottom row: scroll arrow (left) + subtitle (right) ── -->
-        <div class="flex items-end justify-between border-t pt-10 border-[var(--color-border)] mt-12">
-          <!-- Scroll-down arrow -->
-          <button
-            @click="scrollToContent"
-            class="flex items-center justify-center rounded-xl border border-[var(--color-border)] transition-all duration-200 hover:border-[var(--color-text-primary)] hover:bg-[var(--color-text-primary)] group"
-            style="width: 44px; height: 44px; color: var(--color-text-primary);"
-            aria-label="Gulir ke bawah"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="transition-colors duration-200 group-hover:text-white" aria-hidden="true">
-              <path d="M12 5v14M5 12l7 7 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-
-          <!-- Subtitle text — bottom right -->
-          <p
-            class="text-right text-[14.5px] leading-[1.7] max-w-[300px] md:max-w-[380px]"
-            style="color: var(--color-text-secondary);"
-          >
-            Investasi terbaik untuk operasional kuliner Anda.
-            <span style="color: var(--color-text-primary); font-weight: 500;">Pilih paket yang paling pas</span> untuk skala kapasitas bisnis saat ini.
-          </p>
-        </div>
-      </div>
-    </section>
+      Investasi terbaik untuk operasional kuliner Anda.
+      <span style="color: var(--color-text-primary); font-weight: 500;">Pilih paket yang paling pas</span> untuk skala kapasitas bisnis saat ini.
+    </AppPageHeroCurtain>
 
     <!-- ══════════════════════════════════════════════════════
          IMMERSIVE DARK SECTION — food image + large white text overlay
@@ -93,12 +50,11 @@
         </div>
 
         <!-- Large descriptive text -->
-        <p
+        <AppTextWordReveal
           class="font-medium leading-[1.12] tracking-tight max-w-[950px]"
           style="font-size: clamp(26px, 4vw, 52px); color: #FFFFFF;"
-        >
-          Platform kami memungkinkan pencatatan pesanan, pembayaran multi-metode, dan pelaporan real-time yang, digabungkan dengan antarmuka intuitif, membuka kendali penuh atas operasional restoran dari satu aplikasi.
-        </p>
+          text="Platform kami memungkinkan pencatatan pesanan, pembayaran multi-metode, dan pelaporan real-time yang, digabungkan dengan antarmuka intuitif, membuka kendali penuh atas operasional restoran dari satu aplikasi."
+        />
       </div>
     </section>
 
@@ -426,11 +382,6 @@ useHead({
     { name: 'description', content: 'Pilihan paket berlangganan aplikasi kasir mobile Santap. Dapatkan paket Starter, Pro, atau Enterprise sesuai kebutuhan restoran Anda.' }
   ]
 })
-
-const scrollToContent = () => {
-  document.getElementById('pricing-overview')?.scrollIntoView({ behavior: 'smooth' })
-}
-
 const isAnnual = ref(false)
 
 const openFaq = ref<number | null>(0)
@@ -448,7 +399,7 @@ const plans = [
     showPeriod: true,
     featured: false,
     ctaLabel: 'Mulai Uji Coba',
-    ctaLink: '/register',
+    ctaLink: '/#',
     features: [
       '1 Akun Kasir (Mobile POS)',
       'Sinkronisasi Dapur (KDS)',
@@ -466,7 +417,7 @@ const plans = [
     showPeriod: true,
     featured: true,
     ctaLabel: 'Coba Pro 14 Hari',
-    ctaLink: '/register',
+    ctaLink: '/#',
     features: [
       'Multi Akun Kasir & Pelayan',
       'Manajemen Stok & Bahan Baku',

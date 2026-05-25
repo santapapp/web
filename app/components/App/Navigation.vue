@@ -4,9 +4,9 @@
     Desktop: logo pill left + nav+CTA pill right (separate floating elements)
   -->
 
-  <!-- ── DESKTOP: two separate floating pills ─────────────── -->
+  <!-- ── DESKTOP: two separate floating pills ──────────────────── -->
   <!-- Inset further to remain perfectly inside the hero section margins -->
-  <div class="hidden md:flex fixed top-9 left-11 right-11 z-50 items-center justify-between pointer-events-none">
+  <div class="hidden md:flex fixed top-9 left-11 right-11 z-50 items-center justify-between pointer-events-none nav-desktop-entry">
 
     <!-- Logo pill (left) -->
     <NuxtLink
@@ -49,7 +49,7 @@
       <div class="w-px h-4 mx-1 flex-shrink-0 bg-black/10" />
 
       <NuxtLink
-        to="/register"
+        to="/#"
         class="inline-flex items-center justify-center px-6 py-2 rounded-md
                text-[11px] font-bold no-underline uppercase tracking-[0.06em]
                transition-all duration-150 hover:-translate-y-px
@@ -60,10 +60,10 @@
     </div>
   </div>
 
-  <!-- ── MOBILE: single integrated bar ─────────────────────── -->
+  <!-- ── MOBILE: single integrated bar ─────────────────────────── -->
   <!-- Full screen container -->
   <div
-    class="md:hidden fixed inset-0 z-50 pointer-events-none"
+    class="md:hidden fixed inset-0 z-50 pointer-events-none nav-mobile-entry"
   >
     <!-- Dropdown Menu Background -->
     <div
@@ -253,5 +253,36 @@ const navItems = [
   box-shadow: inset 0 0 0 1px rgba(15, 12, 9, 0.08);
 }
 
-/* On dark bg hero, active uses a filled dark pill with slightly different shade */
+/* ── Nav entry animations ───────────────────────────────── */
+.nav-desktop-entry {
+  animation: nav-slide-down 0.65s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+.nav-mobile-entry > .absolute {
+  /* Targets the top bar pill */
+  animation: nav-fade-in 0.5s ease 0.1s both;
+}
+
+@keyframes nav-slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes nav-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-desktop-entry,
+  .nav-mobile-entry > .absolute {
+    animation: none;
+  }
+}
 </style>

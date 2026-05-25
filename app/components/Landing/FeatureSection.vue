@@ -1,9 +1,9 @@
 <template>
-  <section class="feature-section">
+  <section class="feature-section" ref="containerRef">
     <div class="container">
 
       <!-- Header -->
-      <div ref="headerRef" class="section-header" :class="{ 'is-visible': headerVisible }">
+      <div class="section-header gsap-header opacity-0 translate-y-6">
         <span class="overline">Fitur Unggulan</span>
         <h2>
           Semua yang dibutuhkan<br>
@@ -16,13 +16,11 @@
       </div>
 
       <!-- Bento grid — asymmetric layout -->
-      <div ref="gridRef" class="bento-grid">
+      <div class="bento-grid">
 
         <!-- Card 1: Large — Kasir Mobile (primary feature) -->
         <div
-          class="bento-card bento-card--large bento-card--primary anim-fade-up"
-          :class="{ 'is-visible': gridVisible }"
-          style="--delay: 0s"
+          class="bento-card bento-card--large bento-card--primary gsap-card opacity-0 translate-y-6"
         >
           <div class="bento-icon-wrap bento-icon-wrap--light">
             <UIcon name="i-lucide-smartphone" class="bento-icon" />
@@ -37,9 +35,7 @@
 
         <!-- Card 2: Laporan -->
         <div
-          class="bento-card anim-fade-up"
-          :class="{ 'is-visible': gridVisible }"
-          style="--delay: 0.08s"
+          class="bento-card gsap-card opacity-0 translate-y-6"
         >
           <div class="bento-icon-wrap" style="background: #E8F5EF;">
             <UIcon name="i-lucide-bar-chart-3" class="bento-icon" style="color: #2D8A4E;" />
@@ -50,9 +46,7 @@
 
         <!-- Card 3: Inventaris -->
         <div
-          class="bento-card anim-fade-up"
-          :class="{ 'is-visible': gridVisible }"
-          style="--delay: 0.16s"
+          class="bento-card gsap-card opacity-0 translate-y-6"
         >
           <div class="bento-icon-wrap" style="background: #EEF2FF;">
             <UIcon name="i-lucide-package" class="bento-icon" style="color: #4F46E5;" />
@@ -63,9 +57,7 @@
 
         <!-- Card 4: Multi Pembayaran -->
         <div
-          class="bento-card anim-fade-up"
-          :class="{ 'is-visible': gridVisible }"
-          style="--delay: 0.24s"
+          class="bento-card gsap-card opacity-0 translate-y-6"
         >
           <div class="bento-icon-wrap" style="background: #FFF4E0;">
             <UIcon name="i-lucide-credit-card" class="bento-icon" style="color: #B97B0A;" />
@@ -76,9 +68,7 @@
 
         <!-- Card 5: Menu Digital -->
         <div
-          class="bento-card anim-fade-up"
-          :class="{ 'is-visible': gridVisible }"
-          style="--delay: 0.32s"
+          class="bento-card gsap-card opacity-0 translate-y-6"
         >
           <div class="bento-icon-wrap" style="background: var(--color-primary-light);">
             <UIcon name="i-lucide-book-open" class="bento-icon" style="color: var(--color-primary);" />
@@ -89,9 +79,7 @@
 
         <!-- Card 6: Multi Outlet — wide card -->
         <div
-          class="bento-card bento-card--wide anim-fade-up"
-          :class="{ 'is-visible': gridVisible }"
-          style="--delay: 0.4s"
+          class="bento-card bento-card--wide gsap-card opacity-0 translate-y-6"
         >
           <div class="bento-icon-wrap" style="background: var(--color-sage);">
             <UIcon name="i-lucide-store" class="bento-icon" style="color: #2C7A5C;" />
@@ -110,18 +98,55 @@
 </template>
 
 <script setup lang="ts">
-const headerRef = ref<HTMLElement | null>(null)
-const gridRef = ref<HTMLElement | null>(null)
-const headerVisible = ref(false)
-const gridVisible = ref(false)
+import { ref, onMounted, onUnmounted } from 'vue'
 
-const { stop: s1 } = useIntersectionObserver(headerRef, ([e]) => {
-  if (e && e.isIntersecting) { headerVisible.value = true; s1() }
-}, { threshold: 0.2 })
+const containerRef = ref<HTMLElement | null>(null)
+let ctx: any = null
 
-const { stop: s2 } = useIntersectionObserver(gridRef, ([e]) => {
-  if (e && e.isIntersecting) { gridVisible.value = true; s2() }
-}, { threshold: 0.05 })
+onMounted(async () => {
+  const { gsap } = await import('gsap')
+  const { ScrollTrigger } = await import('gsap/ScrollTrigger')
+  gsap.registerPlugin(ScrollTrigger)
+
+  ctx = gsap.context(() => {
+    const mm = gsap.matchMedia()
+
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      // Header reveal
+      gsap.to('.gsap-header', {
+        scrollTrigger: {
+          trigger: '.gsap-header',
+          start: 'top 85%',
+        },
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        ease: 'power3.out'
+      })
+
+      // Grid cards stagger
+      gsap.to('.gsap-card', {
+        scrollTrigger: {
+          trigger: '.bento-grid',
+          start: 'top 85%',
+        },
+        y: 0,
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: 'power3.out'
+      })
+    })
+
+    mm.add("(prefers-reduced-motion: reduce)", () => {
+      gsap.set(['.gsap-header', '.gsap-card'], { y: 0, opacity: 1 })
+    })
+  }, containerRef.value ?? undefined)
+})
+
+onUnmounted(() => {
+  ctx?.revert()
+})
 </script>
 
 <style scoped>
@@ -137,14 +162,6 @@ const { stop: s2 } = useIntersectionObserver(gridRef, ([e]) => {
   text-align: center;
   display: grid;
   gap: 14px;
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.65s var(--ease-out), transform 0.65s var(--ease-out);
-}
-
-.section-header.is-visible {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .h2-serif {
