@@ -1,0 +1,170 @@
+/* ============================================================
+   SANTAP MOTION SYSTEM
+   Calm · premium · lightweight SaaS motion language
+   ============================================================ */
+
+:root {
+  --ease-premium: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-soft: cubic-bezier(0, 0, 0.2, 1);
+
+  --motion-micro: 150ms;
+  --motion-ui: 280ms;
+  --motion-section: 520ms;
+  --motion-hero: 1100ms;
+
+  --motion-y-sm: 8px;
+  --motion-y-md: 14px;
+  --motion-y-lg: 20px;
+}
+
+/* ── Page shell ─────────────────────────────────────────── */
+.motion-page-enter {
+  animation: motion-fade-up var(--motion-ui) var(--ease-premium) both;
+}
+
+/* ── Interactive primitives ─────────────────────────────── */
+.motion-btn {
+  transition:
+    transform var(--motion-micro) var(--ease-premium),
+    background-color var(--motion-micro) var(--ease-premium),
+    border-color var(--motion-micro) var(--ease-premium),
+    box-shadow var(--motion-ui) var(--ease-premium),
+    opacity var(--motion-micro) var(--ease-premium);
+}
+
+.motion-btn:hover {
+  transform: translateY(-1px);
+}
+
+.motion-btn:active {
+  transform: translateY(0);
+}
+
+.motion-card {
+  transition:
+    transform var(--motion-ui) var(--ease-premium),
+    border-color var(--motion-ui) var(--ease-premium),
+    box-shadow var(--motion-ui) var(--ease-premium),
+    background-color var(--motion-ui) var(--ease-premium);
+}
+
+.motion-card:hover {
+  transform: translateY(-2px);
+}
+
+/* ── Nav glass (minimal blur) ───────────────────────────── */
+.motion-nav-glass {
+  transition:
+    background-color var(--motion-ui) var(--ease-premium),
+    border-color var(--motion-ui) var(--ease-premium),
+    box-shadow var(--motion-ui) var(--ease-premium),
+    backdrop-filter var(--motion-ui) var(--ease-premium),
+    transform var(--motion-ui) var(--ease-premium),
+    padding var(--motion-ui) var(--ease-premium);
+}
+
+.motion-nav-glass--scrolled {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* ── Accordion / collapsible ──────────────────────────────── */
+.motion-accordion-panel {
+  transition: grid-template-rows var(--motion-ui) var(--ease-premium);
+}
+
+.motion-accordion-trigger {
+  transition:
+    opacity var(--motion-micro) var(--ease-premium),
+    padding var(--motion-ui) var(--ease-premium);
+}
+
+/* ── Hero ambient (alive but quiet) ─────────────────────── */
+.hero-ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hero-ambient__grid {
+  position: absolute;
+  inset: -20%;
+  opacity: 0.35;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  animation: hero-grid-drift 48s linear infinite;
+}
+
+.hero-ambient__glow {
+  position: absolute;
+  width: 55%;
+  height: 55%;
+  top: 15%;
+  right: -10%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 119, 34, 0.12) 0%, transparent 68%);
+  animation: hero-glow-pulse 12s ease-in-out infinite alternate;
+}
+
+.hero-ambient__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes hero-grid-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-24px, -16px, 0); }
+}
+
+@keyframes hero-glow-pulse {
+  from { opacity: 0.55; transform: scale(1); }
+  to { opacity: 0.85; transform: scale(1.06); }
+}
+
+/* Focus section — very slow ambient only */
+.focus-ambient-orb {
+  animation: focus-orb-drift 20s ease-in-out infinite alternate;
+}
+
+@keyframes focus-orb-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(2%, -3%, 0); }
+}
+
+@keyframes motion-fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--motion-y-sm), 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .motion-page-enter,
+  .hero-ambient__grid,
+  .hero-ambient__glow,
+  .focus-ambient-orb {
+    animation: none !important;
+  }
+
+  .motion-btn:hover,
+  .motion-card:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .motion-nav-glass--scrolled {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+}

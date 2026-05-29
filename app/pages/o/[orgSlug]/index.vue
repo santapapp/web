@@ -1,104 +1,101 @@
 <script setup lang="ts">
+import OrgHeroSection from '~/components/org/OrgHeroSection.vue'
+import OrgTransactionInfoCard from '~/components/org/OrgTransactionInfoCard.vue'
+import OrgStartOrderCard from '~/components/org/OrgStartOrderCard.vue'
+import OrgMenuPreviewSection from '~/components/org/OrgMenuPreviewSection.vue'
+
 definePageMeta({
   layout: 'org',
   middleware: ['org-exists']
 })
 
-/**
- * Halaman publik restoran — hanya info statis.
- * Tanpa real menu data (butuh session dari QR meja).
- * User diarahkan scan QR untuk melihat menu dan order.
- */
-
 const route = useRoute()
-const config = useRuntimeConfig()
 const orgSlug = computed(() => String(route.params.orgSlug || ''))
+const orderPath = computed(() => `/o/${orgSlug.value}/orders`)
 
-// Mengambil data organisasi dari database via API
-const { data: response, error } = await useFetch<any>(
-  `/api/v1/customer/organization/${orgSlug.value}`,
-  {
-    baseURL: config.public.apiBaseUrl
-  }
+const {
+  org,
+  openingStatus,
+  fullAddress,
+  hasLocalSession,
+  isLoading,
+  isNotFound
+} = usePublicOrg(orgSlug)
+
+const {
+  products,
+  pending: menuPending,
+  loadForOrgSlug
+} = useOrderMenu()
+
+const loadedMenuSlug = ref('')
+
+watch(
+  org,
+  async (value) => {
+    const slug = value?.slug || orgSlug.value
+    if (!slug || loadedMenuSlug.value === slug) return
+    loadedMenuSlug.value = slug
+    await loadForOrgSlug(slug)
+  },
+  { immediate: true }
 )
 
-// Validasi jika organisasi tidak ditemukan
-if (error.value || !response.value?.data) {
-  throw createError({
-    statusCode: 404,
-    statusMessage: 'Restoran tidak ditemukan.',
-    fatal: true
-  })
-}
-
-const org = computed(() => response.value?.data)
+useSeoMeta({
+  title: () => org.value ? `${org.value.name} | Santap` : 'Outlet | Santap',
+  description: () =>
+    org.value
+      ? `Lihat informasi outlet dan preview menu ${org.value.name}. Mulai pesanan dari halaman order Santap.`
+      : 'Lihat informasi outlet dan preview menu di Santap.'
+})
 </script>
 
 <template>
-  <section class="page-section">
-    <div class="container stack">
-      <div class="hero-grid">
-        <div class="hero-copy">
-          <p class="eyebrow">Santap — Pesan Digital</p>
-          <div class="org-header">
-            <img v-if="org?.logo" :src="org.logo" :alt="org?.name" class="org-logo" />
-            <h1>{{ org?.name || orgSlug }}</h1>
-          </div>
-          <p>
-            Scan QR meja Anda untuk melihat menu dan mulai memesan secara digital —
-            tanpa perlu memanggil pelayan.
-          </p>
-
-          <div class="button-row">
-            <NuxtLink class="btn-primary" :to="`/o/${orgSlug}/orders`">
-              Lihat Halaman Order
-            </NuxtLink>
-          </div>
-        </div>
-
-        <aside class="content-card stack">
-          <span class="badge">Petunjuk Pemesanan</span>
-          <h3>Cara Memesan</h3>
-          <ol class="steps">
-            <li>Scan QR Code di meja Anda</li>
-            <li>Pilih menu yang diinginkan</li>
-            <li>Klik "Pesan Sekarang"</li>
-            <li>Bayar via QRIS</li>
-          </ol>
-          <p class="muted">QR Code tersedia di setiap meja.</p>
-        </aside>
+  <div class="min-h-dvh bg-gray-50">
+    <div v-if="isLoading" class="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
+      <USkeleton class="h-64 w-full rounded-lg" />
+      <div class="mt-5 grid gap-3 sm:grid-cols-3">
+        <USkeleton v-for="n in 3" :key="n" class="h-28 rounded-lg" />
+      </div>
+      <div class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <USkeleton v-for="n in 6" :key="n" class="h-44 rounded-lg" />
       </div>
     </div>
-  </section>
+
+    <section v-else-if="isNotFound || !org" class="flex min-h-[calc(100dvh-64px)] items-center justify-center px-4 py-12">
+      <div class="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 text-center">
+        <UIcon name="i-lucide-store" class="mx-auto size-10 text-gray-300" />
+        <h1 class="mt-4 text-xl font-bold text-gray-950">Outlet tidak ditemukan</h1>
+        <p class="mt-2 text-sm leading-6 text-gray-500">
+          Link outlet tidak valid atau outlet sedang tidak tersedia.
+        </p>
+        <UButton
+          to="/"
+          color="primary"
+          variant="solid"
+          icon="i-lucide-home"
+          label="Kembali"
+          class="mt-5"
+        />
+      </div>
+    </section>
+
+    <template v-else>
+      <OrgHeroSection
+        :org="org"
+        :opening-status="openingStatus"
+        :full-address="fullAddress"
+      />
+
+      <div class="space-y-5 pb-10">
+        <OrgTransactionInfoCard :org="org" :full-address="fullAddress" />
+        <OrgStartOrderCard :order-to="orderPath" :has-local-session="hasLocalSession" />
+        <OrgMenuPreviewSection
+          :products="products"
+          :loading="menuPending"
+          :order-to="orderPath"
+        />
+      </div>
+    </template>
+  </div>
 </template>
-
-<style scoped>
-.org-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 8px;
-}
-
-.org-logo {
-  width: 64px;
-  height: 64px;
-  border-radius: 12px;
-  object-fit: cover;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.steps {
-  padding-left: 20px;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.steps li {
-  font-size: 15px;
-  color: var(--color-text, #1a1714);
-  line-height: 1.4;
-}
-</style>

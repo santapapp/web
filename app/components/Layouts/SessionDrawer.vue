@@ -1,7 +1,19 @@
 <script setup lang="ts">
+/**
+ * SessionDrawer — Drawer kiri "Menu Sesi"
+ *
+ * Berisi:
+ * - SessionInfoCard: info org & sesi aktif (table/open_bill)
+ * - QuickActionsCard: aksi cepat
+ * - ConfirmExitSessionModal: konfirmasi keluar sesi
+ *
+ * Emits:
+ * - close: tutup drawer
+ * - open-cart: buka cart (mobile)
+ * - open-scanner: buka QR scanner (dari quick actions)
+ */
+
 import { useRoute, useRouter } from '#imports'
-import { useCustomerSession } from '~/composables/useCustomerSession'
-import { useWaiterCallStore } from '~/stores/waiter-call.store'
 
 defineProps<{
   isOpen: boolean
@@ -9,80 +21,109 @@ defineProps<{
 
 const emit = defineEmits<{
   close: []
-  openNotifications: []
+  'open-cart': []
+  'open-scanner': []
 }>()
 
 const route = useRoute()
 const router = useRouter()
-const customerSession = useCustomerSession()
-const waiterCallStore = useWaiterCallStore()
+const session = useCustomerSession()
 
-const handleCallWaiter = () => {
-  waiterCallStore.callWaiter()
-  emit('close')
-  emit('openNotifications')
+const showExitConfirm = ref(false)
+
+const handleExitSession = () => {
+  showExitConfirm.value = true
 }
 
-const handleCallCashier = async () => {
+const handleConfirmExit = () => {
+  session.clearSession()
+  showExitConfirm.value = false
   emit('close')
-  emit('openNotifications')
-  const result = await waiterCallStore.callCashier()
-  if (!result.success && result.error) {
-    alert(result.error.message || 'Gagal memanggil kasir. Silakan coba lagi.')
-  }
+  router.push(`/o/${route.params.orgSlug}`)
 }
 
-const handleResetSession = () => {
-  if (confirm('Apakah Anda yakin ingin keluar dari sesi meja ini? Anda perlu memindai QR meja kembali untuk memesan.')) {
-    customerSession.clearSession()
-    emit('close')
-    router.push(`/o/${route.params.orgSlug}`)
-  }
+const handleCancelExit = () => {
+  showExitConfirm.value = false
+}
+
+const handleScanCode = () => {
+  emit('close')
+  emit('open-scanner')
+}
+
+const handleOpenCart = () => {
+  emit('close')
+  emit('open-cart')
 }
 </script>
 
 <template>
   <Teleport to="body">
-    <div v-if="isOpen" class="drawer-overlay" @click="$emit('close')">
-      <div class="drawer-content" @click.stop>
-        <div class="drawer-header">
-          <div class="drawer-title-group">
-            <h3>Menu Sesi</h3>
-            <p v-if="customerSession.tableName.value" class="drawer-table">🪑 Meja {{ customerSession.tableName.value }}</p>
-          </div>
-          <button class="drawer-close" @click="$emit('close')" aria-label="Tutup menu">✕</button>
-        </div>
-        <div class="drawer-body">
-          <div class="drawer-section">
-            <h4 class="section-title">Informasi Restoran</h4>
-            <div class="info-card">
-              <p class="info-label">Restoran</p>
-              <p class="info-val">{{ customerSession.orgName.value || '-' }}</p>
-            </div>
-            <div class="info-card" v-if="customerSession.tableName.value">
-              <p class="info-label">Nomor Meja</p>
-              <p class="info-val">{{ customerSession.tableName.value }}</p>
-            </div>
-          </div>
+    <!-- Overlay -->
+    <Transition name="drawer-fade">
+      <div
+        v-if="isOpen"
+        class="drawer-overlay"
+        aria-label="Tutup menu sesi"
+        @click="$emit('close')"
+      />
+    </Transition>
 
-          <div class="drawer-section">
-            <h4 class="section-title">Aksi Cepat</h4>
-            <button class="drawer-btn" @click="handleCallWaiter">
-              <span>💁‍♂️ Panggil Pelayan</span>
-            </button>
-            <button class="drawer-btn" @click="handleCallCashier" :disabled="!customerSession.openBill.value">
-              <span>💰 Panggil Kasir / Minta Tagihan</span>
-            </button>
-            <button class="drawer-btn danger-btn" @click="handleResetSession">
-              <span>🚪 Ganti Meja / Keluar Sesi</span>
-            </button>
+    <!-- Drawer panel -->
+    <Transition name="drawer-slide-left">
+      <div
+        v-if="isOpen"
+        class="drawer-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu Sesi"
+        @click.stop
+      >
+        <!-- Header -->
+        <div class="drawer-header">
+          <div class="drawer-header-left">
+            <div class="drawer-header-icon">
+              <UIcon name="i-lucide-layout-dashboard" class="size-4 text-amber-700" />
+            </div>
+            <h2 class="drawer-title">Menu Sesi</h2>
           </div>
+          <button
+            class="close-btn"
+            aria-label="Tutup drawer"
+            @click="$emit('close')"
+          >
+            <UIcon name="i-lucide-x" class="size-5" />
+          </button>
         </div>
+
+        <!-- Body -->
+        <div class="drawer-body">
+          <!-- Session Info Card -->
+          <SessionInfoCard />
+
+          <!-- Quick Actions -->
+          <SessionQuickActionsCard
+            @open-cart="handleOpenCart"
+            @scan-code="handleScanCode"
+            @exit-session="handleExitSession"
+          />
+        </div>
+
+        <!-- Footer -->
         <div class="drawer-footer">
-          <p>© Santap App</p>
+          <p>© {{ new Date().getFullYear() }} Santap App</p>
         </div>
       </div>
-    </div>
+    </Transition>
+
+    <!-- Confirm Exit Modal (di luar drawer agar tidak ter-clip) -->
+    <SessionConfirmExitSessionModal
+      :open="showExitConfirm"
+      :has-cart-items="session.hasCart.value"
+      :session-mode="session.sessionMode.value"
+      @confirm="handleConfirmExit"
+      @cancel="handleCancelExit"
+    />
   </Teleport>
 </template>
 
@@ -92,162 +133,114 @@ const handleResetSession = () => {
   inset: 0;
   z-index: 100;
   background: rgba(13, 11, 9, 0.4);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  display: flex;
-  justify-content: flex-start;
-  animation: fadeIn 0.25s ease;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.drawer-content {
+.drawer-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 101;
   width: 85%;
   max-width: 320px;
-  height: 100%;
   background: #FAF8F3;
-  box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+  box-shadow: 4px 0 32px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
-  animation: slideInLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes slideInLeft {
-  from { transform: translateX(-100%); }
-  to { transform: translateX(0); }
+  overflow: hidden;
 }
 
 .drawer-header {
-  padding: 20px 16px 16px;
+  padding: 18px 16px 14px;
   border-bottom: 1px solid rgba(224, 217, 206, 0.6);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
 }
 
-.drawer-title-group h3 {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0;
-  color: #1a1714;
+.drawer-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.drawer-table {
-  margin: 4px 0 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: #c07b2a;
-}
-
-.drawer-close {
-  background: transparent;
-  border: none;
-  font-size: 20px;
-  color: #8a7f6e;
-  cursor: pointer;
-  padding: 4px;
+.drawer-header-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: #fef3c7;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.drawer-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a1714;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  color: #8a7f6e;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.close-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
 .drawer-body {
   flex: 1;
-  padding: 20px 16px;
+  padding: 16px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-}
-
-.drawer-section {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.section-title {
-  margin: 0 0 4px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #8a7f6e;
-}
-
-.info-card {
-  background: white;
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid rgba(224, 217, 206, 0.4);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.info-label {
-  margin: 0;
-  font-size: 13px;
-  color: #8a7f6e;
-}
-
-.info-val {
-  margin: 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a1714;
-}
-
-.drawer-btn {
-  background: white;
-  border: 1px solid rgba(224, 217, 206, 0.6);
-  border-radius: 12px;
-  padding: 14px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a1714;
-  cursor: pointer;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: background 0.15s, border-color 0.15s;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.drawer-btn:hover {
-  background: #fdfdfb;
-  border-color: #c07b2a;
-}
-
-.drawer-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.danger-btn {
-  color: #ff4d4f;
-  border-color: rgba(255, 77, 79, 0.2);
-}
-
-.danger-btn:hover {
-  background: rgba(255, 77, 79, 0.03);
-  border-color: #ff4d4f;
+  gap: 20px;
 }
 
 .drawer-footer {
-  padding: 16px;
-  border-top: 1px solid rgba(224, 217, 206, 0.6);
+  padding: 14px 16px;
+  border-top: 1px solid rgba(224, 217, 206, 0.5);
   text-align: center;
+  flex-shrink: 0;
 }
 
 .drawer-footer p {
   margin: 0;
-  font-size: 12px;
-  color: #8a7f6e;
+  font-size: 11px;
+  color: #a09080;
+}
+
+/* ── Transitions ─────────────────────────────────────────── */
+.drawer-fade-enter-active,
+.drawer-fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.drawer-fade-enter-from,
+.drawer-fade-leave-to {
+  opacity: 0;
+}
+
+.drawer-slide-left-enter-active,
+.drawer-slide-left-leave-active {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.drawer-slide-left-enter-from,
+.drawer-slide-left-leave-to {
+  transform: translateX(-100%);
 }
 </style>

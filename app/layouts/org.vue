@@ -3,21 +3,20 @@ import { ref, onMounted } from 'vue'
 import { useCustomerSession } from '~/composables/useCustomerSession'
 import OrgHeader from '~/components/Layouts/OrgHeader.vue'
 import SessionDrawer from '~/components/Layouts/SessionDrawer.vue'
-import NotificationsDrawer from '~/components/Layouts/NotificationsDrawer.vue'
+import OrdersDrawer from '~/components/Layouts/OrdersDrawer.vue'
 
 /**
  * Layout: org
  * Digunakan oleh semua halaman di /o/[orgSlug]/**
  *
- * Desain Modular:
- * - Menyederhanakan layout dengan membagi Header dan Drawer ke component terpisah
- * - Menggunakan state global via Pinia store untuk sinkronisasi aksi panggil waiter/kasir
+ * Drawer kiri: SessionDrawer — "Menu Sesi"
+ * Drawer kanan: OrdersDrawer — "Pesanan Saya"
  */
 
 const customerSession = useCustomerSession()
 
-const isDrawerOpen = ref(false)
-const isNotificationsOpen = ref(false)
+const isSessionDrawerOpen = ref(false)
+const isOrdersDrawerOpen = ref(false)
 
 onMounted(() => {
   customerSession.restoreLocal()
@@ -26,22 +25,22 @@ onMounted(() => {
 
 <template>
   <div class="org-shell">
-    <!-- Premium Header Component -->
+    <!-- Header -->
     <OrgHeader
-      @open-drawer="isDrawerOpen = true"
-      @open-notifications="isNotificationsOpen = true"
+      @open-drawer="isSessionDrawerOpen = true"
+      @open-orders="isOrdersDrawerOpen = true"
     />
 
-    <!-- Modular Drawer Components -->
+    <!-- Drawer kiri: Menu Sesi -->
     <SessionDrawer
-      :is-open="isDrawerOpen"
-      @close="isDrawerOpen = false"
-      @open-notifications="isNotificationsOpen = true"
+      :is-open="isSessionDrawerOpen"
+      @close="isSessionDrawerOpen = false"
     />
 
-    <NotificationsDrawer
-      :is-open="isNotificationsOpen"
-      @close="isNotificationsOpen = false"
+    <!-- Drawer kanan: Pesanan Saya -->
+    <OrdersDrawer
+      :is-open="isOrdersDrawerOpen"
+      @close="isOrdersDrawerOpen = false"
     />
 
     <!-- Konten halaman -->
@@ -60,7 +59,7 @@ onMounted(() => {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: #FAF8F3;
+  background: #F4F4F4;
   position: relative;
 }
 

@@ -10,8 +10,7 @@
       scroll-target="company-overview"
       title-size="clamp(52px, 11vw, 150px)"
     >
-      Membangun ekosistem F&amp;B Indonesia yang lebih tangguh.
-      <span style="color: var(--color-text-primary); font-weight: 500;">Santap hadir</span> sebagai partner teknologi terpercaya bagi jutaan merchant di tanah air.
+      Ekosistem F&B Indonesia yang lebih tangguh. <span style="color: var(--color-text-primary); font-weight: 500;">Santap adalah partner teknologi</span> yang terpercaya merchant.
     </AppPageHeroCurtain>
     
     <!-- ══════════════════════════════════════════════════════
@@ -53,7 +52,7 @@
         <AppTextWordReveal
           class="font-medium leading-[1.12] tracking-tight max-w-[950px]"
           style="font-size: clamp(26px, 4vw, 52px); color: #FFFFFF;"
-          text="Kami bertekad memajukan bisnis kuliner lokal melalui teknologi point-of-sale yang modern, andal, dan mudah diakses oleh siapa saja."
+          text="Kami berkomitmen memberdayakan bisnis kuliner Indonesia melalui teknologi POS cloud yang modern, andal, dan terjangkau untuk semua."
         />
       </div>
     </section>
@@ -79,10 +78,10 @@
             class="font-medium tracking-tight leading-[1.1] mb-8"
             style="font-size: clamp(28px, 3.5vw, 42px); color: var(--color-text-primary);"
           >
-            Pilar Kerja Kami
+            Pilar Kami
           </h2>
           <p class="text-[14.5px] leading-[1.7] text-[var(--color-text-secondary)] mb-12 max-w-sm">
-            Lebih dari sekadar aplikasi kasir. Kami beroperasi berdasarkan komitmen jangka panjang untuk mendukung pertumbuhan restoran Anda.
+            Nilai-nilai yang memandu setiap keputusan produk dan layanan yang kami buat untuk merchant.
           </p>
         </div>
 
@@ -111,55 +110,6 @@
           </div>
         </div>
 
-      </div>
-    </section>
-
-    <!-- ══════════════════════════════════════════════════════
-         STATS SECTION — clean grid layout
-         ══════════════════════════════════════════════════════ -->
-    <section
-      id="company-stats"
-      ref="statsSecRef"
-      class="bg-[var(--color-bg-page)] px-5 md:px-10 lg:px-16 py-20 md:py-28 max-w-[1400px] mx-auto"
-      aria-label="Pencapaian"
-    >
-      <!-- Top Divider -->
-      <div class="h-px bg-[var(--color-border)] mb-16"></div>
-
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
-        <!-- Left: description -->
-        <div class="lg:col-span-4 cmp-left">
-          <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">Data Bicara</p>
-          <h2
-            class="font-medium tracking-tight leading-[1.1] mb-6"
-            style="font-size: clamp(28px, 3.5vw, 42px); color: var(--color-text-primary);"
-          >
-            Dipercaya di Seluruh Indonesia
-          </h2>
-          <p class="text-[14.5px] leading-[1.7] text-[var(--color-text-secondary)] max-w-sm">
-            Statistik nyata dari dedikasi kami dalam menghadirkan sistem kasir (POS) handal dan bernilai ekonomi tinggi.
-          </p>
-        </div>
-
-        <!-- Right: Stats Grid -->
-        <div class="lg:col-span-8">
-          <div class="grid grid-cols-2 gap-x-8 gap-y-12 md:gap-y-16">
-            <div v-for="stat in stats" :key="stat.label" class="cmp-right-item flex flex-col gap-2">
-              <span
-                class="font-medium tracking-tight leading-none text-[var(--color-text-primary)]"
-                style="font-size: clamp(32px, 5vw, 64px);"
-              >
-                {{ stat.value }}
-              </span>
-              <span class="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--color-text-tertiary)]">
-                {{ stat.label }}
-              </span>
-              <p class="text-[13.5px] text-[var(--color-text-secondary)] leading-relaxed mt-1 max-w-xs">
-                {{ stat.desc }}
-              </p>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -193,32 +143,27 @@
 
         <!-- Right Column: Cards & Grid -->
         <div class="lg:col-span-8">
-          <!-- Featured Cafe Card -->
+          <!-- Featured Skeleton Card -->
           <div class="featured-cafe-card p-8 md:p-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-surface)] flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12 relative overflow-hidden transition-all duration-300 hover:shadow-lg">
-            <div class="flex-1 z-10">
-              <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-primary)] mb-3 block">Sorotan Mitra</span>
-              <h3 class="text-[22px] font-semibold text-[var(--color-text-primary)] mb-3">Kopi Kenangan</h3>
-              <p class="text-[14px] leading-relaxed text-[var(--color-text-secondary)] mb-6 max-w-lg">
-                "Mengelola ratusan gerai di seluruh Indonesia menjadi jauh lebih mudah sejak kami mengintegrasikan sistem POS cloud dari Santap. Sinkronisasi menu real-time dan manajemen stok bahan baku berjalan tanpa hambatan."
-              </p>
-              <div class="flex items-center gap-3">
-                <span class="inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.08em] text-[var(--color-primary)]">
-                  Kemitraan Sejak 2024
-                </span>
+            <div class="flex-1 z-10 space-y-4">
+              <div class="h-4 w-32 rounded bg-[var(--color-bg-subtle)] animate-pulse"></div>
+              <div class="h-8 w-48 rounded bg-[var(--color-bg-subtle)] animate-pulse"></div>
+              <div class="space-y-2">
+                <div class="h-4 w-full rounded bg-[var(--color-bg-subtle)] animate-pulse"></div>
+                <div class="h-4 w-5/6 rounded bg-[var(--color-bg-subtle)] animate-pulse"></div>
               </div>
+              <div class="h-4 w-40 rounded bg-[var(--color-bg-subtle)] animate-pulse mt-6"></div>
             </div>
-            <!-- Featured Logo Emblem (Kopi Kenangan Logo) -->
-            <div class="w-28 h-28 flex items-center justify-center rounded-xl bg-[var(--color-bg-page)] border border-[var(--color-border)] p-4 self-center md:self-auto shrink-0 z-10 transition-transform duration-300 hover:scale-105">
-              <NuxtImg src="https://upload.wikimedia.org/wikipedia/commons/4/4e/Kopi_Kenangan.svg" alt="Kopi Kenangan Logo" class="w-full h-full object-contain" />
-            </div>
+            <!-- Featured Logo Skeleton -->
+            <div class="w-28 h-28 rounded-xl bg-[var(--color-bg-subtle)] flex-shrink-0 z-10 transition-transform duration-300 hover:scale-105 animate-pulse"></div>
             <div class="absolute bottom-0 right-0 w-48 h-48 bg-gradient-to-br from-[var(--color-primary-light)] to-transparent opacity-40 rounded-full blur-2xl -mr-16 -mb-16 pointer-events-none"></div>
           </div>
 
-          <!-- Logo Grid -->
+          <!-- Logo Grid Skeleton -->
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
             <div
-              v-for="cafe in cafes"
-              :key="cafe.name"
+              v-for="i in 6"
+              :key="i"
               class="partner-logo-card"
             >
               <!-- Glowing effect on hover -->
@@ -232,10 +177,8 @@
  
               <div class="card-content">
                 <div class="logo-wrapper">
-                  <NuxtImg :src="cafe.logoUrl" :alt="cafe.name" class="partner-img-logo" />
+                  <div class="w-full h-full bg-[var(--color-bg-subtle)] rounded animate-pulse"></div>
                 </div>
-                <span class="cafe-name">{{ cafe.name }}</span>
-                <span class="cafe-type">{{ cafe.type }}</span>
               </div>
             </div>
           </div>
@@ -285,11 +228,17 @@
                 class="font-medium leading-[1.05] tracking-tight mb-6"
                 style="font-size: clamp(30px, 4.5vw, 56px); color: #FFFFFF;"
               >
-                Siap menjadi bagian dari ekosistem kuliner
-                <span style="color: rgba(255,255,255,0.3);"> masa depan Indonesia?</span>
+                Bergabunglah dengan <span
+                  style="
+                    background: linear-gradient(100deg, #FFFFFF 0%, var(--color-primary) 55%, #FFA550 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                  "
+                >10.000+ merchant.</span>
               </h2>
               <p class="text-[14.5px] leading-[1.75] max-w-sm mb-10" style="color: rgba(255,255,255,0.55);">
-                Lebih dari 10.000 merchant telah mempercayakan operasional kasir harian mereka kepada Santap. Giliran Anda bergabung dan rasakan perbedaannya.
+                Ratusan restoran dan kafe telah mempercayai Santap untuk operasional kasir harian mereka.
               </p>
 
               <!-- Proof stat row -->
@@ -448,7 +397,6 @@ import { ref, onMounted, onUnmounted } from 'vue'
 
 const mainRef         = ref<HTMLElement | null>(null)
 const valsSecRef      = ref<HTMLElement | null>(null)
-const statsSecRef     = ref<HTMLElement | null>(null)
 const partnersSecRef  = ref<HTMLElement | null>(null)
 let ctx: any = null
 
@@ -496,7 +444,6 @@ onMounted(async () => {
       }
 
       animateSection(valsSecRef.value)
-      animateSection(statsSecRef.value)
 
       // Partners: featured card dulu, lalu logo grid
       if (partnersSecRef.value) {
@@ -556,39 +503,39 @@ useHead({
 })
 const values = [
   {
-    title: 'Inovasi Tanpa Batas',
-    desc: 'Kami terus memperbarui dan mengembangkan POS cloud kami agar selalu selaras dengan perkembangan tren F&B terkini.'
+    title: 'Inovasi Terus Menerus',
+    desc: 'Kami terus update POS cloud agar selaras dengan tren F&B terkini dan kebutuhan merchant.'
   },
   {
     title: 'Ketulusan Melayani',
-    desc: 'Kami menyadari operasional F&B tidak pernah berhenti. Dukungan WhatsApp kami siap membantu menangani kendala teknis Anda kapan saja.'
+    desc: 'Support WhatsApp kami siap 24/7 karena restoran tidak pernah tutup.'
   },
   {
-    title: 'Kemitraan Adil & Transparan',
-    desc: 'Tidak ada biaya tersembunyi. Kami menawarkan struktur harga yang transparan demi menjamin keberlanjutan bisnis kita bersama.'
+    title: 'Kemitraan Adil',
+    desc: 'Tanpa biaya tersembunyi. Harga transparan untuk keberlanjutan bisnis kita bersama.'
   }
 ]
 
 const stats = [
   {
     value: '10,000+',
-    label: 'Merchant Terdaftar',
-    desc: 'Melayani kedai kopi, kafe mandiri, hingga jaringan resto multi-cabang.'
+    label: 'Merchant Aktif',
+    desc: 'Dari kedai kopi hingga franchise besar.'
   },
   {
     value: '99.99%',
-    label: 'Uptime POS Cloud',
-    desc: 'Menjamin kelancaran kasir Anda tanpa khawatir kehilangan data.'
+    label: 'Uptime POS',
+    desc: 'Tanpa khawatir kehilangan data transaksi.'
   },
   {
     value: '50+',
     label: 'Kota di Indonesia',
-    desc: 'Mendukung pertumbuhan bisnis kuliner dari Sabang sampai Merauke.'
+    desc: 'Sabang sampai Merauke, kami siap.'
   },
   {
     value: 'Rp 1.2T+',
     label: 'Volume Transaksi',
-    desc: 'Memproses jutaan transaksi F&B secara aman dan real-time pertahun.'
+    desc: 'Jutaan transaksi F&B per tahun.'
   }
 ]
 

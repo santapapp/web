@@ -5,6 +5,7 @@ definePageMeta({
 })
 
 const route = useRoute()
+const router = useRouter()
 const orgSlug = computed(() => String(route.params.orgSlug || ''))
 
 // Composables
@@ -27,6 +28,13 @@ const {
 const sessionError = ref<string | null>(null)
 const initError = ref<string | null>(null)
 const qrDataUrl = ref<string | null>(null)
+
+// Clear session when payment is successful to prevent 403 Forbidden on future requests
+watch(isPaid, (newVal) => {
+  if (newVal) {
+    customerSession.clearSession()
+  }
+})
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('id-ID', {
@@ -63,18 +71,19 @@ const handleInitiatePayment = async () => {
     return
   }
 
-  const qrString = result.data.metadata?.qr_string
-  if (qrString) {
-    qrDataUrl.value = await generateQrDataUrl(qrString)
-    // Mulai polling setelah QR ditampilkan
-    startPolling(result.data.id)
+  // qr_url adalah URL langsung dari API — bisa berupa URL atau QRIS string
+  const qrUrl = result.data.qr_url
+  if (qrUrl) {
+    qrDataUrl.value = await generateQrDataUrl(qrUrl)
+    // Mulai polling setelah QR ditampilkan (tidak perlu argumen — token di header)
+    startPolling()
   }
 }
 
 // Batalkan pembayaran
 const handleCancelPayment = async () => {
-  if (!payment.value?.id) return
-  await cancelPayment(payment.value.id)
+  if (!payment.value) return
+  await cancelPayment()
   qrDataUrl.value = null
 }
 
@@ -83,23 +92,19 @@ onMounted(async () => {
   const isValid = customerSession.restoreLocal()
 
   if (!isValid) {
-    sessionError.value = 'Sesi tidak valid. Silakan scan ulang QR meja.'
+    // Redirect ke orders agar user bisa mulai sesi baru
+    router.replace(`/o/${orgSlug.value}/orders`)
     return
   }
 
-  // Load open bill
+  // Load order aktif
   await fetchOpenBill()
 
-  // Jika sudah ada pembayaran pending dari sesi sebelumnya
-  if (openBill.value?.payments?.length) {
-    const pendingPayment = openBill.value.payments.find((p) => p.status === 'pending')
-    if (pendingPayment?.id) {
-      // Resume polling
-      startPolling(pendingPayment.id)
-      if (pendingPayment.qr_string) {
-        qrDataUrl.value = await generateQrDataUrl(pendingPayment.qr_string)
-      }
-    }
+  // Jika order sudah terbayar atau pending
+  if (openBill.value?.payment_status === 'paid') {
+    isPaid.value = true
+  } else if (openBill.value?.payment_status === 'pending') {
+    await handleInitiatePayment()
   }
 })
 
@@ -140,8 +145,8 @@ onUnmounted(() => stopPolling())
           <h2>Pembayaran Berhasil!</h2>
           <p>Terima kasih. Pesanan Anda sedang diproses.</p>
           <div v-if="payment" class="payment-detail-row">
-            <span>{{ payment.payment_number }}</span>
-            <strong>{{ formatCurrency(payment.amount) }}</strong>
+            <span>{{ payment.payment_reference }}</span>
+            <strong>{{ formatCurrency(openBill?.total_amount ?? 0) }}</strong>
           </div>
           <NuxtLink :to="`/o/${orgSlug}/orders`" class="btn-primary-full">
             Pesan Lagi
@@ -152,7 +157,7 @@ onUnmounted(() => stopPolling())
         <div v-else-if="isFailed" class="failed-card">
           <div class="state-icon">❌</div>
           <h2>Pembayaran Gagal</h2>
-          <p>{{ payment?.void_reason ?? 'Transaksi dibatalkan atau kedaluwarsa.' }}</p>
+          <p>Transaksi dibatalkan atau kedaluwarsa. Silakan coba lagi.</p>
           <button class="btn-primary-full" @click="handleInitiatePayment">
             Coba Lagi
           </button>
@@ -166,12 +171,12 @@ onUnmounted(() => stopPolling())
 
           <div v-else-if="openBill" class="bill-card">
             <div class="bill-header">
-              <span class="bill-number">{{ openBill.bill_number }}</span>
-              <span class="bill-status" :class="openBill.status">{{ openBill.status }}</span>
+              <span class="bill-number">{{ openBill.order_number }}</span>
+              <span class="bill-status" :class="openBill.bill_status">{{ openBill.bill_status }}</span>
             </div>
 
             <div class="bill-table-info">
-              <p>🪑 {{ openBill.table.name }} ({{ openBill.table.code }})</p>
+              <p>🪑 {{ openBill.dining_table?.name }}{{ openBill.dining_table?.code ? ` (${openBill.dining_table.code})` : '' }}</p>
             </div>
 
             <div class="bill-amounts">
@@ -183,9 +188,9 @@ onUnmounted(() => stopPolling())
                 <span>Diskon</span>
                 <span>-{{ formatCurrency(openBill.discount_amount) }}</span>
               </div>
-              <div v-if="openBill.service_amount > 0" class="amount-row">
+              <div v-if="openBill.service_charge_amount > 0" class="amount-row">
                 <span>Biaya Layanan</span>
-                <span>{{ formatCurrency(openBill.service_amount) }}</span>
+                <span>{{ formatCurrency(openBill.service_charge_amount) }}</span>
               </div>
               <div v-if="openBill.tax_amount > 0" class="amount-row">
                 <span>Pajak</span>
@@ -226,8 +231,8 @@ onUnmounted(() => stopPolling())
                 <div v-if="isPolling" class="qr-overlay-pulse" />
               </div>
 
-              <div v-if="payment?.metadata?.expiry_time" class="qr-expiry">
-                ⏱ Berlaku sampai pukul {{ formatTime(payment.metadata.expiry_time) }}
+              <div v-if="payment?.expires_at" class="qr-expiry">
+                ⏱ Berlaku sampai pukul {{ formatTime(payment.expires_at) }}
               </div>
 
               <p class="qr-hint">
@@ -288,6 +293,12 @@ onUnmounted(() => stopPolling())
   position: sticky;
   top: 56px;
   z-index: 8;
+}
+
+@media (min-width: 1024px) {
+  .payments-header {
+    top: 64px;
+  }
 }
 
 .header-content {

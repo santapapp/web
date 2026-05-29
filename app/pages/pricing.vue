@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main ref="mainRef">
 
     <!-- ── HERO — Curtain Reveal ──────────────────────────── -->
     <AppPageHeroCurtain
@@ -9,8 +9,7 @@
       aria-label="Harga Santap"
       scroll-target="pricing-overview"
     >
-      Investasi terbaik untuk operasional kuliner Anda.
-      <span style="color: var(--color-text-primary); font-weight: 500;">Pilih paket yang paling pas</span> untuk skala kapasitas bisnis saat ini.
+      Mulai dari Rp 99rb/bulan per outlet. <span style="color: var(--color-text-primary); font-weight: 500;">Gratis 14 hari.</span>
     </AppPageHeroCurtain>
 
     <!-- ══════════════════════════════════════════════════════
@@ -53,7 +52,7 @@
         <AppTextWordReveal
           class="font-medium leading-[1.12] tracking-tight max-w-[950px]"
           style="font-size: clamp(26px, 4vw, 52px); color: #FFFFFF;"
-          text="Platform kami memungkinkan pencatatan pesanan, pembayaran multi-metode, dan pelaporan real-time yang, digabungkan dengan antarmuka intuitif, membuka kendali penuh atas operasional restoran dari satu aplikasi."
+          text="Pencatatan pesanan, pembayaran multi-metode, dan laporan real-time dalam satu aplikasi. Kendali penuh atas operasional restoran Anda."
         />
       </div>
     </section>
@@ -63,6 +62,7 @@
          ══════════════════════════════════════════════════════ -->
     <section
       id="pricing-content"
+      ref="plansSecRef"
       class="bg-[var(--color-bg-page)] px-5 md:px-10 lg:px-16 py-20 md:py-28 max-w-[1400px] mx-auto"
       aria-label="Pilihan Paket"
     >
@@ -70,13 +70,13 @@
       <div class="h-px bg-[var(--color-border)] mb-16"></div>
 
       <!-- Billing Toggle Row -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-16">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-16 prc-billing-row">
         <div>
           <h2 class="text-2xl md:text-3xl font-medium tracking-tight text-[var(--color-text-primary)]">
-            Tingkatkan Skala Kapan Saja
+            Pilih Paket Anda
           </h2>
           <p class="text-sm text-[var(--color-text-secondary)] mt-1">
-            Uji coba gratis 14 hari untuk semua paket berbayar.
+            Upgrade atau turun kapan saja. Gratis 14 hari trial semua paket.
           </p>
         </div>
 
@@ -110,7 +110,7 @@
         <div
           v-for="plan in plans"
           :key="plan.name"
-          class="flex flex-col justify-between p-8 rounded-2xl border transition-all duration-300"
+          class="prc-plan-card flex flex-col justify-between p-8 rounded-2xl border transition-all duration-300"
           :class="plan.featured
             ? 'bg-[var(--color-bg-surface)] border-[var(--color-primary)] shadow-[0_8px_32px_rgba(0,0,0,0.04)] lg:scale-105 z-10'
             : 'bg-transparent border-[var(--color-border)] hover:border-[var(--color-border-strong)]'"
@@ -187,6 +187,7 @@
          FAQ SECTION — clean accordion row list
          ══════════════════════════════════════════════════════ -->
     <section
+      ref="faqSecRef"
       class="bg-[var(--color-bg-page)] px-5 md:px-10 lg:px-16 py-20 md:py-28 max-w-[1400px] mx-auto"
       aria-label="Tanya Jawab"
     >
@@ -195,16 +196,16 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
         <!-- Left: header -->
-        <div class="lg:col-span-4 lg:sticky lg:top-28">
+        <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
           <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">FAQ</p>
           <h2
             class="font-medium tracking-tight leading-[1.1] mb-5"
             style="font-size: clamp(28px, 3.5vw, 42px); color: var(--color-text-primary);"
           >
-            Pertanyaan Umum
+            Tanya Jawab
           </h2>
           <p class="text-[14.5px] leading-[1.7] text-[var(--color-text-secondary)] max-w-sm">
-            Menjawab segala pertanyaan Anda terkait sistem berlangganan, pembatalan, dan metode pembayaran Santap.
+            Jawaban umum tentang berlangganan, pembatalan, dan pembayaran.
           </p>
         </div>
 
@@ -212,7 +213,7 @@
         <div class="lg:col-span-8">
           <div class="h-px bg-[var(--color-border)]"></div>
 
-          <div v-for="(item, i) in faqItems" :key="i">
+          <div v-for="(item, i) in faqItems" :key="i" class="cmp-right-item">
             <button
               class="accordion-trigger w-full flex items-center justify-between gap-6 bg-transparent border-none cursor-pointer text-left transition-all duration-250"
               :class="[
@@ -283,6 +284,7 @@
          CUSTOM PRICING TRUST SECTION — same design style as index, customized content
          ══════════════════════════════════════════════════════ -->
     <section
+      ref="trustSecRef"
       class="relative overflow-hidden"
       style="background-color: #111009;"
       aria-label="Transparansi & Jaminan"
@@ -304,7 +306,7 @@
         <!-- Header row -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 mb-20 md:mb-28">
           <!-- Badge -->
-          <div class="lg:col-span-4 flex items-start">
+          <div class="lg:col-span-4 flex items-start prc-trust-badge">
             <div
               class="inline-flex items-center gap-3 px-4 py-2 rounded-md border"
               style="background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1);"
@@ -315,13 +317,19 @@
           </div>
 
           <!-- Heading -->
-          <div class="lg:col-span-8">
+          <div class="lg:col-span-8 prc-trust-heading">
             <h2
               class="font-medium leading-[1.08] tracking-tight"
               style="font-size: clamp(30px, 4.5vw, 56px); color: #FFFFFF; max-width: 680px;"
             >
-              Kami mengutamakan hubungan
-              <span style="color: rgba(255,255,255,0.35);"> jangka panjang yang jujur dan adil.</span>
+              Komitmen kami pada <span
+                style="
+                  background: linear-gradient(100deg, #FFFFFF 0%, var(--color-primary) 55%, #FFA550 100%);
+                  -webkit-background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                  background-clip: text;
+                "
+              >transparansi & keadilan.</span>
             </h2>
           </div>
         </div>
@@ -334,6 +342,7 @@
           <div
             v-for="(focus, i) in focuses"
             :key="focus.id"
+            class="prc-trust-row"
           >
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 py-12 md:py-16 items-start group">
               <!-- Number + Title (left) -->
@@ -372,10 +381,211 @@
       </div>
     </section>
 
+    <!-- ══════════════════════════════════════════════════════
+         CTA SECTION — Dark theme with rich design
+         ══════════════════════════════════════════════════════ -->
+    <section
+      id="pricing-cta"
+      class="relative overflow-hidden"
+      style="background-color: #111009;"
+      aria-label="Bergabung bersama Santap"
+    >
+      <!-- Subtle background texture (glow) -->
+      <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div
+          class="absolute"
+          style="width: 60%; height: 60%; top: -20%; left: -10%; background: radial-gradient(circle, rgba(232,119,34,0.07) 0%, transparent 70%); border-radius: 50%;"
+        ></div>
+        <div
+          class="absolute"
+          style="width: 50%; height: 50%; bottom: -15%; right: -5%; background: radial-gradient(circle, rgba(232,119,34,0.04) 0%, transparent 70%); border-radius: 50%;"
+        ></div>
+      </div>
+
+      <div class="relative z-10 px-5 md:px-10 lg:px-16 py-24 md:py-32 max-w-[1400px] mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+          
+          <!-- Left Column: Heading & Info -->
+          <div class="lg:col-span-5 flex flex-col justify-between">
+            <div>
+              <!-- Badge -->
+              <div class="mb-8">
+                <div
+                  class="inline-flex items-center gap-3 px-4 py-2 rounded-md border"
+                  style="background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1);"
+                >
+                  <div class="w-2 h-2 rounded-sm flex-shrink-0" style="background-color: var(--color-primary);"></div>
+                  <span class="text-[10.5px] font-bold uppercase tracking-[0.16em]" style="color: rgba(255,255,255,0.8);">Mulai Perjalanan</span>
+                </div>
+              </div>
+
+              <h2
+                class="font-medium leading-[1.05] tracking-tight mb-6"
+                style="font-size: clamp(30px, 4.5vw, 56px); color: #FFFFFF;"
+              >
+                Harga yang adil untuk <span
+                  style="
+                    background: linear-gradient(100deg, #FFFFFF 0%, var(--color-primary) 55%, #FFA550 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                  "
+                >kesuksesan Anda.</span>
+              </h2>
+              <p class="text-[14.5px] leading-[1.75] max-w-sm mb-10" style="color: rgba(255,255,255,0.55);">
+                Tanpa biaya tersembunyi, tanpa komitmen jangka panjang. Coba gratis selama 14 hari.
+              </p>
+
+              <!-- Proof stat row skeleton -->
+              <div class="flex items-center gap-6 mb-10">
+                <div>
+                  <div class="h-8 w-24 rounded bg-white/15 animate-pulse mb-2"></div>
+                  <div class="h-3 w-32 rounded bg-white/15 animate-pulse"></div>
+                </div>
+                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.1);"></div>
+                <div>
+                  <div class="h-8 w-20 rounded bg-white/15 animate-pulse mb-2"></div>
+                  <div class="h-3 w-24 rounded bg-white/15 animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contact info -->
+            <div class="hidden lg:flex flex-col gap-5">
+              <div class="h-px" style="background-color: rgba(255,255,255,0.08);"></div>
+              <div class="flex items-center gap-8">
+                <div>
+                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255,255,255,0.35);">Email Kami</p>
+                  <a href="mailto:halo@santap.id" class="text-[14px] font-medium text-white hover:text-[var(--color-primary)] transition-colors no-underline">
+                    halo@santap.id
+                  </a>
+                </div>
+                <div>
+                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255,255,255,0.35);">WhatsApp</p>
+                  <a href="https://wa.me/6281234567890" target="_blank" class="text-[14px] font-medium text-white hover:text-[var(--color-primary)] transition-colors no-underline">
+                    +62 812-3456-7890
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: CTA Cards -->
+          <div class="lg:col-span-7">
+            <div class="flex flex-col gap-5">
+              
+              <!-- Card 1: Mulai Uji Coba — featured -->
+              <div
+                class="border rounded-2xl p-8 md:p-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6 relative overflow-hidden"
+                style="background-color: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.12);"
+              >
+                <!-- Glow accent -->
+                <div class="absolute top-0 right-0 w-48 h-48 pointer-events-none" style="background: radial-gradient(circle at top right, rgba(232,119,34,0.12) 0%, transparent 70%);"></div>
+                
+                <div class="flex-1 relative z-10">
+                  <div class="flex items-center gap-2 mb-3">
+                    <!-- Icon -->
+                    <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: var(--color-primary);">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"/>
+                      </svg>
+                    </div>
+                    <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-primary)]">Gratis 14 Hari</span>
+                  </div>
+                  <h3 class="text-[20px] font-medium text-white mb-2 leading-tight">Coba Semua Paket</h3>
+                  <p class="text-[13.5px] leading-relaxed text-white/55">
+                    Akses penuh ke semua fitur tanpa komitmen. Batalkan kapan saja tanpa pertanyaan.
+                  </p>
+                </div>
+                <NuxtLink
+                  to="/#"
+                  class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-[11px] font-bold uppercase tracking-[0.08em] no-underline transition-all hover:-translate-y-px flex-shrink-0 relative z-10 bg-white text-[#111009] hover:bg-white/95"
+                >
+                  Mulai Gratis
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </NuxtLink>
+              </div>
+
+              <!-- Card 2: Sub-cards -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+                <!-- Sub-card A: Konsultasi Gratis -->
+                <div
+                  class="border rounded-2xl p-7 flex flex-col justify-between"
+                  style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
+                >
+                  <div>
+                    <div class="flex items-center gap-2 mb-3">
+                      <div class="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style="background-color: rgba(255,255,255,0.08);">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-9a9 9 0 11-18 0 9 9 0 0118 0z" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </div>
+                      <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Konsultasi</span>
+                    </div>
+                    <h3 class="text-[17px] font-medium text-white mb-2 leading-snug">Konsultasi Paket</h3>
+                    <p class="text-[13px] leading-relaxed text-white/50 mb-6">
+                      Butuh paket custom? Tim sales kami siap membantu menemukan solusi terbaik untuk bisnis Anda.
+                    </p>
+                  </div>
+                  <NuxtLink
+                    to="/contact"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 text-white/60 hover:text-white"
+                  >
+                    Jadwalkan Konsultasi
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </NuxtLink>
+                </div>
+
+                <!-- Sub-card B: Hubungi Perwakilan -->
+                <div
+                  class="border rounded-2xl p-7 flex flex-col justify-between"
+                  style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
+                >
+                  <div>
+                    <div class="flex items-center gap-2 mb-3">
+                      <div class="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style="background-color: rgba(255,255,255,0.08);">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </div>
+                      <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Hubungi</span>
+                    </div>
+                    <h3 class="text-[17px] font-medium text-white mb-2 leading-snug">Hubungi Tim Sales</h3>
+                    <p class="text-[13px] leading-relaxed text-white/50 mb-6">
+                      Ada pertanyaan tentang harga atau fitur? Chat langsung dengan tim kami via WhatsApp.
+                    </p>
+                  </div>
+                  <NuxtLink
+                    to="https://wa.me/6281234567890"
+                    target="_blank"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 text-white/60 hover:text-white"
+                  >
+                    Chat WhatsApp
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </NuxtLink>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
   </main>
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
+
 useHead({
   title: 'Harga Langganan — Santap',
   meta: [
@@ -389,11 +599,167 @@ const toggleFaq = (index: number) => {
   openFaq.value = openFaq.value === index ? null : index
 }
 
+// ── Refs for scroll animations ───────────────────────────
+const mainRef     = ref<HTMLElement | null>(null)
+const plansSecRef = ref<HTMLElement | null>(null)
+const faqSecRef   = ref<HTMLElement | null>(null)
+const trustSecRef = ref<HTMLElement | null>(null)
+let ctx: any = null
+
+onMounted(async () => {
+  const { gsap } = await import('gsap')
+  const { ScrollTrigger } = await import('gsap/ScrollTrigger')
+  gsap.registerPlugin(ScrollTrigger)
+
+  ctx = gsap.context(() => {
+    const mm = gsap.matchMedia()
+
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      // ── Plans section: billing row + plan cards ──────────────
+      if (plansSecRef.value) {
+        const billingRow = plansSecRef.value.querySelector<HTMLElement>('.prc-billing-row')
+        const planCards  = plansSecRef.value.querySelectorAll<HTMLElement>('.prc-plan-card')
+
+        if (billingRow) {
+          gsap.set(billingRow, { opacity: 0, y: 18 })
+          gsap.to(billingRow, {
+            scrollTrigger: { trigger: plansSecRef.value, start: 'top 80%' },
+            opacity: 1, y: 0,
+            duration: 0.85,
+            ease: 'power3.out',
+          })
+        }
+
+        if (planCards.length) {
+          gsap.set(planCards, { opacity: 0, y: 24 })
+          gsap.to(planCards, {
+            scrollTrigger: { trigger: plansSecRef.value, start: 'top 75%' },
+            opacity: 1, y: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            stagger: 0.12,
+            delay: 0.15,
+          })
+        }
+      }
+
+      // ── FAQ: sticky-left + staggered rows ───────────────────
+      if (faqSecRef.value) {
+        const leftCol = faqSecRef.value.querySelector<HTMLElement>('.cmp-left')
+        const rows    = faqSecRef.value.querySelectorAll<HTMLElement>('.cmp-right-item')
+
+        if (leftCol) {
+          gsap.set(leftCol, { opacity: 0, y: 32 })
+          gsap.to(leftCol, {
+            scrollTrigger: { trigger: leftCol, start: 'top 72%' },
+            opacity: 1,
+            y: 0,
+            duration: 1.4,
+            ease: 'power3.out',
+          })
+        }
+
+        if (rows.length) {
+          gsap.set(rows, { opacity: 0, x: 50 })
+          gsap.to(rows, {
+            scrollTrigger: { trigger: faqSecRef.value, start: 'top 82%' },
+            opacity: 1,
+            x: 0,
+            duration: 1.1,
+            ease: 'power3.out',
+            stagger: 0.14,
+          })
+        }
+      }
+
+      // ── Trust dark section: badge + heading + rows ──────────
+      if (trustSecRef.value) {
+        const badge   = trustSecRef.value.querySelector<HTMLElement>('.prc-trust-badge')
+        const heading = trustSecRef.value.querySelector<HTMLElement>('.prc-trust-heading')
+        const rows    = trustSecRef.value.querySelectorAll<HTMLElement>('.prc-trust-row')
+
+        if (badge) {
+          gsap.set(badge, { opacity: 0, y: 14 })
+          gsap.to(badge, {
+            scrollTrigger: { trigger: trustSecRef.value, start: 'top 80%' },
+            opacity: 1, y: 0,
+            duration: 0.7,
+            ease: 'power3.out',
+          })
+        }
+        if (heading) {
+          gsap.set(heading, { opacity: 0, y: 22 })
+          gsap.to(heading, {
+            scrollTrigger: { trigger: trustSecRef.value, start: 'top 78%' },
+            opacity: 1, y: 0,
+            duration: 1,
+            ease: 'power3.out',
+            delay: 0.1,
+          })
+        }
+        if (rows.length) {
+          gsap.set(rows, { opacity: 0, y: 20 })
+          gsap.to(rows, {
+            scrollTrigger: { trigger: trustSecRef.value, start: 'top 75%' },
+            opacity: 1, y: 0,
+            duration: 0.85,
+            ease: 'power3.out',
+            stagger: 0.12,
+            delay: 0.2,
+          })
+        }
+      }
+
+      // ── New CTA section: left heading + right cards ──────────────
+      const ctaSec = mainRef.value?.querySelector('[aria-label="Bergabung bersama Santap"]')
+      if (ctaSec) {
+        const leftCol = ctaSec.parentElement?.querySelector('.lg\\:col-span-5')
+        const rightCards = ctaSec.parentElement?.querySelectorAll('.lg\\:col-span-7 > div > div')
+
+        if (leftCol) {
+          gsap.set(leftCol, { opacity: 0, y: 32 })
+          gsap.to(leftCol, {
+            scrollTrigger: { trigger: leftCol, start: 'top 72%' },
+            opacity: 1,
+            y: 0,
+            duration: 1.4,
+            ease: 'power3.out',
+          })
+        }
+
+        if (rightCards) {
+          const cardsArray = Array.from(rightCards)
+          gsap.set(cardsArray, { opacity: 0, x: 50 })
+          gsap.to(cardsArray, {
+            scrollTrigger: { trigger: ctaSec, start: 'top 82%' },
+            opacity: 1,
+            x: 0,
+            duration: 1.1,
+            ease: 'power3.out',
+            stagger: 0.14,
+          })
+        }
+      }
+    })
+
+    mm.add('(prefers-reduced-motion: reduce)', () => {
+      gsap.set(
+        mainRef.value?.querySelectorAll(
+          '.prc-billing-row, .prc-plan-card, .cmp-left, .prc-faq-row, .prc-trust-badge, .prc-trust-heading, .prc-trust-row'
+        ) ?? [],
+        { opacity: 1, x: 0, y: 0, clearProps: 'all' }
+      )
+    })
+  }, mainRef.value ?? undefined)
+})
+
+onUnmounted(() => { ctx?.revert() })
+
 const plans = [
   {
     name: 'Starter',
     badge: 'Kios & Kedai Kecil',
-    desc: 'Semua fitur operasional esensial untuk bisnis kuliner pemula yang ingin digitalisasi pencatatan kasir.',
+    desc: 'Fitur operasional esensial untuk memulai digitalisasi kasir.',
     priceMonthly: 'Rp 89.000',
     priceAnnual: 'Rp 71.200',
     showPeriod: true,
@@ -401,17 +767,17 @@ const plans = [
     ctaLabel: 'Mulai Uji Coba',
     ctaLink: '/#',
     features: [
-      '1 Akun Kasir (Mobile POS)',
-      'Sinkronisasi Dapur (KDS)',
-      'Pembayaran Tunai & QRIS',
+      'Kasir Mobile (1 akun)',
+      'Kitchen Display System',
+      'Tunai & QRIS',
       'Laporan Penjualan Dasar',
-      'Dukungan via WhatsApp'
+      'Support via WhatsApp'
     ]
   },
   {
     name: 'Pro',
     badge: 'Cafe & Restoran',
-    desc: 'Untuk bisnis kuliner berkembang yang memerlukan laporan stok mendalam dan manajemen staf terpadu.',
+    desc: 'Untuk bisnis berkembang dengan stok dan manajemen staf terpadu.',
     priceMonthly: 'Rp 149.000',
     priceAnnual: 'Rp 119.200',
     showPeriod: true,
@@ -419,18 +785,18 @@ const plans = [
     ctaLabel: 'Coba Pro 14 Hari',
     ctaLink: '/#',
     features: [
-      'Multi Akun Kasir & Pelayan',
+      'Multi Kasir & Pelayan',
       'Manajemen Stok & Bahan Baku',
-      'Split Bill & Diskon Fleksibel',
+      'Split Bill & Diskon',
       'Dashboard Owner Real-Time',
       'Semua Metode Pembayaran',
-      'Dukungan Prioritas 24 Jam'
+      'Prioritas Support 24/7'
     ]
   },
   {
     name: 'Enterprise',
     badge: 'Multi-Outlet & Franchise',
-    desc: 'Untuk jaringan franchise besar dengan puluhan cabang yang membutuhkan laporan konsolidasi tersentralisasi.',
+    desc: 'Untuk jaringan franchise dengan laporan konsolidasi tersentralisasi.',
     priceMonthly: 'Hubungi Kami',
     priceAnnual: 'Hubungi Kami',
     showPeriod: false,
@@ -438,32 +804,32 @@ const plans = [
     ctaLabel: 'Hubungi Sales',
     ctaLink: '/contact',
     features: [
-      'Tanpa Batasan Cabang/Outlet',
-      'Stok Terpusat Multi-Gudang',
-      'Menu Konsolider & Integrasi API',
-      'Akun Sukses Pelanggan Khusus',
-      'SLA Keandalan Layanan 99.9%',
-      'Kustomisasi Fitur Spesifik'
+      'Unlimited Cabang/Outlet',
+      'Stok Terpusat Multi-Lokasi',
+      'Menu Konsolider & API',
+      'Account Success Manager',
+      'SLA Uptime 99.9%',
+      'Kustomisasi Spesifik'
     ]
   }
 ]
 
 const faqItems = [
   {
-    question: 'Apakah ada kontrak komitmen minimum?',
-    answer: 'Tidak sama sekali. Anda dapat memilih langganan bulanan tanpa kontrak mengikat dan dapat membatalkan layanan kapan saja tanpa biaya penalti.'
+    question: 'Apakah ada kontrak minimum?',
+    answer: 'Tidak ada. Langganan bulanan tanpa komitmen dan dapat dibatalkan kapan saja tanpa penalti.'
   },
   {
-    question: 'Bagaimana sistem penghitungan biaya per outlet?',
-    answer: 'Biaya dihitung flat per outlet (cabang) per bulan. Jika Anda memiliki 3 outlet dan berlangganan paket Pro tahunan, maka biaya bulanan Anda adalah 3 x Rp 119.200.'
+    question: 'Berapa biaya per outlet?',
+    answer: 'Biaya flat per outlet per bulan. Contoh: 3 outlet paket Pro = 3 x Rp 119.200/bulan.'
   },
   {
-    question: 'Apakah ada komisi transaksi dari penjualan QRIS?',
-    answer: 'Santap tidak mengambil biaya komisi tambahan dari transaksi POS Anda. Biaya transaksi QRIS murni dipotong langsung oleh gerbang pembayaran penyedia (sesuai regulasi MDR Bank Indonesia).'
+    question: 'Apakah ada biaya komisi QRIS?',
+    answer: 'Tidak. Santap tidak mengambil komisi penjualan. Biaya QRIS murni dari provider sesuai regulasi Bank Indonesia.'
   },
   {
-    question: 'Bisakah saya melakukan upgrade atau downgrade paket?',
-    answer: 'Ya, Anda bebas untuk melakukan upgrade paket dari Starter ke Pro kapan saja. Skema tagihan pro-rata akan disesuaikan otomatis pada sisa masa aktif langganan Anda.'
+    question: 'Bisa upgrade atau downgrade kapan saja?',
+    answer: 'Ya, bebas upgrade/downgrade. Tagihan disesuaikan otomatis dengan periode sisa bulan aktif.'
   }
 ]
 
@@ -471,22 +837,22 @@ const focuses = [
   {
     id: 'hidden-fees',
     number: '01',
-    title: 'Tanpa Biaya Siluman',
-    desc: 'Semua harga paket yang tertera transparan. Kami tidak memotong komisi penjualan Anda, tidak ada biaya administrasi bulanan tersembunyi, atau biaya aktivasi awal.',
-    tags: ['0% Komisi Tambahan', 'Flat Rate', 'Transparan'],
+    title: 'Tanpa Biaya Tersembunyi',
+    desc: 'Harga yang tertera adalah harga akhir. Tidak ada komisi penjualan, biaya administrasi, atau biaya aktivasi awal.',
+    tags: ['0% Komisi', 'Flat Rate', 'Transparan'],
   },
   {
     id: 'guarantee',
     number: '02',
-    title: 'Garansi Uang Kembali',
-    desc: 'Kami sangat yakin dengan kualitas produk kami. Jika dalam 14 hari pertama penggunaan Anda merasa layanan tidak sesuai, kami akan mengembalikan biaya langganan penuh tanpa pertanyaan.',
-    tags: ['14 Hari Garansi', 'Tanpa Resiko', 'Refund Instan'],
+    title: 'Garansi 14 Hari',
+    desc: 'Jika dalam 14 hari tidak puas dengan layanan, kami kembalikan biaya langganan penuh tanpa pertanyaan.',
+    tags: ['14 Hari', 'Tanpa Risiko', 'Refund Instant'],
   },
   {
     id: 'onboarding',
     number: '03',
-    title: 'Panduan Setup Gratis',
-    desc: 'Tim Customer Success kami akan memandu proses input menu, pengaturan stok, hingga pelatihan kasir Anda secara virtual secara gratis tanpa ada biaya tambahan.',
+    title: 'Setup & Pelatihan Gratis',
+    desc: 'Tim kami memandu setup menu, stok, dan pelatihan kasir secara virtual gratis tanpa biaya tambahan.',
     tags: ['Virtual Setup', 'Training Gratis', 'WhatsApp Support'],
   },
 ]

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import jsQR from 'jsqr'
+import { extractQrToken } from '~/composables/useCustomerSession'
 
 /**
  * OrdersQrScanner — Komponen scan QR kamera untuk halaman orders
@@ -64,31 +65,18 @@ const isCameraSupported = computed(() => {
 // ── Parse URL dari QR ──────────────────────────────────────
 /**
  * QR Santap berisi URL seperti:
- * https://santap.id/o/resto-abc/orders?table=KB-03&qr=abc123token
+ * https://santap.id/o/resto-abc/orders?table=abc123token
  *
  * Atau bisa juga format rawstring: KB-03|abc123token
  */
 const parseQrContent = (rawValue: string): ScanResult | null => {
-  try {
-    // Coba parse sebagai URL
-    const url = new URL(rawValue)
-    const table = url.searchParams.get('table')
-    const qr = url.searchParams.get('qr')
+  const token = extractQrToken(rawValue)
+  if (!token) return null
 
-    if (table && qr) {
-      return { table, qr }
-    }
-  } catch {
-    // Bukan URL yang valid
+  return {
+    table: token,
+    qr: token
   }
-
-  // Coba format pipe-separated: TABLE_CODE|QR_TOKEN
-  const pipeParts = rawValue.split('|')
-  if (pipeParts.length === 2 && pipeParts[0] && pipeParts[1]) {
-    return { table: pipeParts[0].trim(), qr: pipeParts[1].trim() }
-  }
-
-  return null
 }
 
 // ── Mulai kamera ──────────────────────────────────────────

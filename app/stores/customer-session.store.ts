@@ -7,7 +7,7 @@
  */
 
 import { defineStore } from 'pinia'
-import type { CustomerSessionOrg, CustomerSessionTable, CustomerSessionOpenBill } from '~/types/customer-session'
+import type { CustomerSessionOrg, CustomerSessionTable, StoredSessionOpenBill } from '~/types/customer-session'
 
 const STORAGE_KEY = 'customer_session'
 
@@ -16,7 +16,7 @@ interface CustomerSessionState {
   expiresAt: string | null
   organization: CustomerSessionOrg | null
   table: CustomerSessionTable | null
-  openBill: CustomerSessionOpenBill | null
+  openBill: StoredSessionOpenBill | null
   restored: boolean
 }
 
@@ -59,7 +59,7 @@ export const useCustomerSessionStore = defineStore('customer-session', {
       expires_at: string
       organization: CustomerSessionOrg
       table: CustomerSessionTable
-      open_bill: CustomerSessionOpenBill
+      open_bill: StoredSessionOpenBill
     }) {
       this.sessionToken = data.session_token
       this.expiresAt = data.expires_at
@@ -73,7 +73,7 @@ export const useCustomerSessionStore = defineStore('customer-session', {
     /**
      * Update data open bill (misal setelah order atau bayar).
      */
-    setOpenBill(bill: CustomerSessionOpenBill) {
+    setOpenBill(bill: StoredSessionOpenBill) {
       this.openBill = bill
       this.persist()
     },

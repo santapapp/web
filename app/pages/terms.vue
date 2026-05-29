@@ -88,9 +88,9 @@
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-[16px] font-semibold text-[var(--color-text-primary)] mb-2">Ringkasan Syarat Penggunaan</h3>
+                  <h3 class="text-[16px] font-semibold text-[var(--color-text-primary)] mb-2">Ringkasan Syarat</h3>
                   <p class="text-[14px]">
-                    Dengan membuat akun di Santap, Anda bersepakat atas hal-hari berikut: <strong>Tidak ada biaya siluman</strong>, Anda bebas membatalkan langganan kapan saja, dan bertanggung jawab menjaga akun staf Anda. Kami menjamin keandalan sistem kami, namun tidak bertanggung jawab atas kerugian tidak langsung akibat gangguan koneksi luar.
+                    <strong>Tidak ada biaya tersembunyi</strong>. Batalkan kapan saja. Anda tanggung jawab menjaga akun staf. Kami pastikan sistem andal, tapi tidak bertanggung jawab atas gangguan koneksi eksternal.
                   </p>
                 </div>
               </div>
@@ -102,10 +102,10 @@
                   <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Ketentuan Umum</h2>
                 </div>
                 <p>
-                  Selamat datang di Santap. Syarat dan Ketentuan Penggunaan ini ("Syarat") merupakan perjanjian hukum antara Anda selaku pemilik bisnis kuliner (merchant), perwakilannya, maupun staf operasional dengan PT Santap Teknologi Indonesia ("Santap", "Kami") sehubungan dengan pemanfaatan platform aplikasi kasir (POS), kitchen display system (KDS), dashboard analitik, dan layanan terkait lainnya.
+                  Syarat ini adalah perjanjian antara Anda sebagai pemilik bisnis kuliner (merchant) dan PT Santap Teknologi Indonesia mengenai penggunaan aplikasi POS, kitchen display system (KDS), dan layanan terkait.
                 </p>
                 <p>
-                  Dengan mendaftar, mengakses, atau menggunakan bagian mana pun dari layanan kami, Anda menyatakan setuju untuk terikat secara hukum oleh Syarat ini. Jika Anda tidak setuju terhadap bagian mana pun dari dokumen ini, silakan hentikan akses dan jangan gunakan layanan kami.
+                  Dengan mendaftar atau menggunakan layanan kami, Anda setuju dengan syarat ini. Jika Anda tidak setuju, jangan menggunakan layanan kami.
                 </p>
               </section>
 

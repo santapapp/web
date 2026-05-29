@@ -2,26 +2,26 @@
  * useCustomerPayment — Composable untuk pembayaran QRIS mandiri
  *
  * Endpoints:
- * - POST /api/v1/customer/payments          (inisiasi QRIS)
- * - POST /api/v1/customer/payments/{id}/check (cek status)
- * - POST /api/v1/customer/payments/{id}/cancel (batalkan)
+ * - POST   /v1/customer/order/pay-qris    → inisiasi QRIS (X-Public-Token)
+ * - GET    /v1/customer/order/qris-status → cek status (X-Public-Token)
+ * - DELETE /v1/customer/order/qris-cancel → batalkan (X-Public-Token)
  *
  * Flow:
- * 1. initiatePayment() → dapat qr_string
- * 2. Render QR dari qr_string
- * 3. startPolling(paymentId) → check tiap 3 detik sampai paid/failed
+ * 1. initiatePayment() → dapat qr_url dan payment_reference
+ * 2. Render QR dari qr_url
+ * 3. startPolling() → check tiap 3 detik sampai paid/cancelled
  */
 
 import { ref, onUnmounted } from 'vue'
-import type { CustomerPayment } from '~/types/customer-payment'
+import type { LocalQrisPayment, QrisPaymentStatus } from '~/types/customer-payment'
 import type { CustomerApiError } from './useCustomerApi'
 
-const POLL_INTERVAL_MS = 3000 // 3 detik sesuai docs
+const POLL_INTERVAL_MS = 5000 // 5 detik
 
 export const useCustomerPayment = () => {
   const api = useCustomerApi()
 
-  const payment = ref<CustomerPayment | null>(null)
+  const payment = ref<LocalQrisPayment | null>(null)
   const isPaid = ref(false)
   const isFailed = ref(false)
   const isPolling = ref(false)
@@ -32,49 +32,50 @@ export const useCustomerPayment = () => {
   let pollingInterval: ReturnType<typeof setInterval> | null = null
 
   /**
+   * Update local state berdasarkan status dari API.
+   * Status dari GET /v1/customer/order/qris-status → data.payment_status
+   */
+  const applyStatus = (status: QrisPaymentStatus | undefined | null) => {
+    if (!status) return
+    if (payment.value) {
+      payment.value = { ...payment.value, status }
+    }
+    if (status === 'paid') {
+      isPaid.value = true
+      isFailed.value = false
+    } else if (status === 'cancelled') {
+      isFailed.value = true
+      isPaid.value = false
+    }
+  }
+
+  /**
    * Inisiasi pembayaran QRIS.
-   * Nominal diambil otomatis dari total_amount open bill.
-   * Jika sudah ada transaksi pending, API mengembalikan transaksi yang sudah ada.
+   * Nominal diambil otomatis dari total_amount order aktif di backend.
+   * Response: { data: { qr_url, payment_reference }, message }
    */
   const initiatePayment = async () => {
     initiatePending.value = true
     paymentError.value = null
 
     try {
-      const response = await api.initiatePayment()
+      const response = await api.initiateQris()
       const data = response.data
 
-      const mappedPayment: CustomerPayment = {
-        id: data.payment_reference,
-        organization_id: 1,
-        open_bill_id: '1',
-        payment_number: data.payment_reference,
-        method: 'qris',
+      const localPayment: LocalQrisPayment = {
+        qr_url: data.qr_url ?? '',
+        payment_reference: data.payment_reference,
         status: 'pending',
-        amount: 0,
-        paid_amount: 0,
-        reference_number: data.payment_reference,
-        void_reason: null,
-        metadata: {
-          status_code: '',
-          status_message: '',
-          transaction_id: '',
-          order_id: data.payment_reference,
-          gross_amount: '',
-          qr_string: data.qr_url,
-          expiry_time: new Date(Date.now() + 15 * 60 * 1000).toISOString()
-        },
-        created_at: new Date().toISOString(),
-        paid_at: null
+        expires_at: new Date(Date.now() + 15 * 60 * 1000).toISOString() // Estimasi 15 menit
       }
 
-      payment.value = mappedPayment
+      payment.value = localPayment
 
-      // Reset status sebelumnya
+      // Reset state sebelumnya
       isPaid.value = false
       isFailed.value = false
 
-      return { success: true, data: mappedPayment, message: response.message }
+      return { success: true, data: localPayment, message: response.message as string }
     } catch (err) {
       paymentError.value = err as CustomerApiError
       return { success: false, error: err as CustomerApiError }
@@ -85,27 +86,14 @@ export const useCustomerPayment = () => {
 
   /**
    * Cek status pembayaran sekali (tanpa polling).
+   * Response: { data: { payment_status: 'unpaid' | 'pending' | 'paid' | 'cancelled' } }
    */
-  const checkPaymentOnce = async (paymentId: string) => {
+  const checkPaymentOnce = async () => {
     try {
-      const response = await api.checkPayment(paymentId)
-      const status = response.data?.payment_status
-
-      if (status === 'paid') {
-        isPaid.value = true
-        isFailed.value = false
-      } else if (status === 'failed' || status === 'cancelled') {
-        isFailed.value = true
-        isPaid.value = false
-      }
-
-      const updatedPayment: any = {
-        ...(payment.value || {}),
-        status: status
-      }
-      payment.value = updatedPayment
-
-      return { success: true, data: updatedPayment }
+      const response = await api.checkQrisStatus()
+      const status = response.data?.payment_status as QrisPaymentStatus | undefined
+      applyStatus(status)
+      return { success: true, status }
     } catch (err) {
       return { success: false, error: err as CustomerApiError }
     }
@@ -113,9 +101,9 @@ export const useCustomerPayment = () => {
 
   /**
    * Mulai polling status pembayaran setiap 3 detik.
-   * Berhenti otomatis jika paid atau failed.
+   * Berhenti otomatis jika paid atau cancelled.
    */
-  const startPolling = (paymentId: string) => {
+  const startPolling = () => {
     if (pollingInterval) stopPolling()
 
     isPolling.value = true
@@ -124,14 +112,11 @@ export const useCustomerPayment = () => {
 
     pollingInterval = setInterval(async () => {
       try {
-        const response = await api.checkPayment(paymentId)
-        const status = response.data?.payment_status
+        const response = await api.checkQrisStatus()
+        const status = response.data?.payment_status as QrisPaymentStatus | undefined
+        applyStatus(status)
 
-        if (status === 'paid') {
-          isPaid.value = true
-          stopPolling()
-        } else if (status === 'failed' || status === 'cancelled') {
-          isFailed.value = true
+        if (isPaid.value || isFailed.value) {
           stopPolling()
         }
       } catch (err) {
@@ -153,20 +138,19 @@ export const useCustomerPayment = () => {
   }
 
   /**
-   * Batalkan pembayaran yang masih pending.
+   * Batalkan pembayaran QRIS yang masih pending.
+   * DELETE /v1/customer/order/qris-cancel
    */
-  const cancelPayment = async (paymentId: string) => {
+  const cancelPayment = async () => {
     cancelPending.value = true
 
     try {
       stopPolling()
-      await api.cancelPayment(paymentId)
-      
-      const updatedPayment: any = {
-        ...(payment.value || {}),
-        status: 'cancelled'
+      await api.cancelQris()
+
+      if (payment.value) {
+        payment.value = { ...payment.value, status: 'cancelled' }
       }
-      payment.value = updatedPayment
       isFailed.value = true
 
       return { success: true, message: 'Pembayaran dibatalkan.' }

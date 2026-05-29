@@ -1,47 +1,60 @@
-// Types untuk Customer Payment API (Real API)
-// Endpoint: POST /api/v1/customer/payments
-// Endpoint: POST /api/v1/customer/payments/{id}/check
-// Endpoint: POST /api/v1/customer/payments/{id}/cancel
+// Types untuk Customer Payment
+// Inisiasi QRIS → POST /v1/customer/order/pay-qris   (header: X-Public-Token)
+// Cek status    → GET  /v1/customer/order/qris-status (header: X-Public-Token)
+// Batalkan      → DELETE /v1/customer/order/qris-cancel (header: X-Public-Token)
 
-export type CustomerPaymentStatus = 'pending' | 'paid' | 'failed'
+export type QrisPaymentStatus = 'unpaid' | 'pending' | 'paid' | 'cancelled'
 
-export interface CustomerPaymentMetadata {
-  status_code: string
-  status_message: string
-  transaction_id: string
-  order_id: string
-  gross_amount: string
-  qr_string: string
-  expiry_time: string
-}
+// ─── Initiate QRIS Payment ────────────────────────────────────────────────────
 
-export interface CustomerPayment {
-  id: string
-  organization_id: number
-  open_bill_id: string
-  payment_number: string
-  method: 'qris' | 'cash'
-  status: CustomerPaymentStatus
-  amount: number
-  paid_amount: number
-  reference_number: string
-  void_reason?: string | null
-  metadata: CustomerPaymentMetadata | null
-  created_at: string
-  paid_at?: string | null
-}
-
-export interface InitiatePaymentResponse {
+/**
+ * Response dari POST /v1/customer/order/pay-qris
+ * Sesuai CustomerController::payQris()
+ */
+export interface InitiateQrisResponse {
+  data: {
+    qr_url: string | null
+    payment_reference: string
+  }
   message: string
-  data: CustomerPayment
 }
 
-export interface CheckPaymentResponse {
-  message: string
-  data: CustomerPayment
+// ─── Check QRIS Status ────────────────────────────────────────────────────────
+
+/**
+ * Response dari GET /v1/customer/order/qris-status
+ * Sesuai CustomerController::qrisStatus()
+ */
+export interface QrisStatusResponse {
+  data: {
+    payment_status: QrisPaymentStatus
+  }
 }
 
-export interface CancelPaymentResponse {
+// ─── Cancel QRIS ──────────────────────────────────────────────────────────────
+
+/**
+ * Response dari DELETE /v1/customer/order/qris-cancel
+ * Sesuai CustomerController::qrisCancel()
+ */
+export interface QrisCancelResponse {
   message: string
-  data: CustomerPayment
 }
+
+// ─── Local Payment State ──────────────────────────────────────────────────────
+
+/**
+ * State lokal untuk mengelola siklus pembayaran QRIS di frontend.
+ * Digunakan oleh useCustomerPayment composable.
+ */
+export interface LocalQrisPayment {
+  qr_url: string
+  payment_reference: string
+  status: QrisPaymentStatus
+  expires_at: string | null
+}
+
+// Legacy aliases — kept for backward compatibility with payments.vue
+export interface InitiatePaymentResponse extends InitiateQrisResponse {}
+export interface CheckPaymentResponse extends QrisStatusResponse {}
+export interface CancelPaymentResponse extends QrisCancelResponse {}

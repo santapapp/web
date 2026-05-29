@@ -1,44 +1,53 @@
 import { computed } from 'vue'
 import { useRoute } from '#imports'
 
-export type OrderPageMode = 'empty' | 'table_order' | 'order_detail' | 'open_bill' | 'invalid'
+export type OrderPageMode = 'empty' | 'table_order' | 'order_detail' | 'invalid'
 
 export type InvalidOrderModeReason =
   | 'mixed_query'
-  | 'bill_open_attempt'
+  | 'unsupported_query'
   | 'multiple_query_values'
+  | 'empty_query_value'
 
 export interface OrderModeState {
   mode: OrderPageMode
   tableToken?: string
   orderToken?: string
-  billToken?: string
   reason?: InvalidOrderModeReason
 }
 
 type QueryRecord = Record<string, unknown>
 
 const readQueryValue = (query: QueryRecord, key: string) => {
+  const isPresent = Object.prototype.hasOwnProperty.call(query, key)
   const value = query[key]
 
   if (Array.isArray(value)) {
-    const compactValue = value.filter(Boolean)
+    const compactValue = value
+      .filter((item): item is string => typeof item === 'string')
+      .map((item) => item.trim())
+      .filter(Boolean)
 
     if (compactValue.length > 1) {
       return {
         value: String(compactValue[0]),
+        isPresent,
         hasMultipleValues: true
       }
     }
 
     return {
       value: compactValue[0] ? String(compactValue[0]) : undefined,
+      isPresent,
       hasMultipleValues: false
     }
   }
 
+  const normalizedValue = typeof value === 'string' ? value.trim() : undefined
+
   return {
-    value: value ? String(value) : undefined,
+    value: normalizedValue || undefined,
+    isPresent,
     hasMultipleValues: false
   }
 }
@@ -56,14 +65,21 @@ export const resolveOrderMode = (query: QueryRecord): OrderModeState => {
     }
   }
 
-  if (bill.value === 'open' || bills.value === 'open') {
+  if ((table.isPresent && !table.value) || (order.isPresent && !order.value)) {
     return {
       mode: 'invalid',
-      reason: 'bill_open_attempt'
+      reason: 'empty_query_value'
     }
   }
 
-  const activeModes = [table.value, order.value, bill.value].filter(Boolean)
+  if (bill.isPresent || bills.isPresent) {
+    return {
+      mode: 'invalid',
+      reason: 'unsupported_query'
+    }
+  }
+
+  const activeModes = [table.value, order.value].filter(Boolean)
 
   if (activeModes.length > 1) {
     return {
@@ -86,13 +102,6 @@ export const resolveOrderMode = (query: QueryRecord): OrderModeState => {
     }
   }
 
-  if (bill.value) {
-    return {
-      mode: 'open_bill',
-      billToken: bill.value
-    }
-  }
-
   return {
     mode: 'empty'
   }
@@ -108,8 +117,6 @@ export const useOrderMode = () => {
     mode: computed(() => state.value.mode),
     tableToken: computed(() => state.value.tableToken),
     orderToken: computed(() => state.value.orderToken),
-    billToken: computed(() => state.value.billToken),
     invalidReason: computed(() => state.value.reason)
   }
 }
-

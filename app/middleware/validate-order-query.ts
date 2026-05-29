@@ -1,26 +1,42 @@
-/**
- * validate-order-query middleware
- *
- * Validasi halaman /orders hanya bisa diakses jika ada query param yang valid:
- * - ?table={tableCode}&qr={qrToken}   → start session via QR
- *
- * Tanpa query param apapun masih diizinkan (tampil pesan "scan QR dulu").
- */
 export default defineNuxtRouteMiddleware((to) => {
   if (!to.path.endsWith('/orders')) return
 
-  const { table, qr, bill, order } = to.query
+  const hasQuery = (key: string) => Object.prototype.hasOwnProperty.call(to.query, key)
+  const readQuery = (key: string) => {
+    const value = to.query[key]
 
-  // Jika ada konflik query params (mixed mode), redirect ke path bersih
-  const hasTable = Boolean(table)
-  const hasBill = Boolean(bill)
-  const hasOrder = Boolean(order)
+    if (Array.isArray(value)) {
+      const compactValue = value
+        .filter((item): item is string => typeof item === 'string')
+        .map((item) => item.trim())
+        .filter(Boolean)
 
-  const activeModes = [hasTable, hasBill, hasOrder].filter(Boolean).length
+      return {
+        isPresent: hasQuery(key),
+        hasValue: compactValue.length > 0,
+        hasMultipleValues: compactValue.length > 1
+      }
+    }
 
-  if (activeModes > 1) {
-    return navigateTo({ path: to.path }, { replace: true })
+    return {
+      isPresent: hasQuery(key),
+      hasValue: typeof value === 'string' && value.trim().length > 0,
+      hasMultipleValues: false
+    }
   }
 
-  // Jika ada table tapi tidak ada qr token, itu oke — akan ditangani di page
+  const table = readQuery('table')
+  const order = readQuery('order')
+  const bill = readQuery('bill')
+  const bills = readQuery('bills')
+
+  const hasMultipleValues = [table, order, bill, bills].some((value) => value.hasMultipleValues)
+  const hasUnsupportedBillQuery = bill.isPresent || bills.isPresent
+  const hasEmptyAllowedQuery =
+    (table.isPresent && !table.hasValue) || (order.isPresent && !order.hasValue)
+  const hasMixedAllowedQuery = [table.hasValue, order.hasValue].filter(Boolean).length > 1
+
+  if (hasMultipleValues || hasUnsupportedBillQuery || hasEmptyAllowedQuery || hasMixedAllowedQuery) {
+    return navigateTo({ path: to.path }, { replace: true })
+  }
 })

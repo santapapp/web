@@ -1,22 +1,6 @@
-/**
- * useCustomerApi — API client untuk Santap Customer API (Real API)
- *
- * Base URL: http://localhost:8000 (dev) / https://api.santap.id (prod)
- * Auth: X-Customer-Session header (bukan Bearer token)
- *
- * Semua endpoint customer tidak memerlukan login — hanya session token
- * yang didapat setelah scan QR meja.
- */
-
 import { useRuntimeConfig } from '#imports'
-import type { StartSessionPayload, StartSessionResponse, CurrentSessionResponse } from '~/types/customer-session'
-import type { CustomerMenuResponse } from '~/types/customer-menu'
-import type { CreateOrderPayload, CreateOrderResponse, OpenBillResponse, CallCashierResponse } from '~/types/customer-order'
-import type {
-  InitiatePaymentResponse,
-  CheckPaymentResponse,
-  CancelPaymentResponse
-} from '~/types/customer-payment'
+import type { CreateOrderPayload } from '~/types/customer-order'
+import type { PublicOrgResponse } from '~/types/org'
 
 const SESSION_STORAGE_KEY = 'customer_session'
 
@@ -64,16 +48,17 @@ export const useCustomerApi = () => {
     return localStorage.getItem(SESSION_STORAGE_KEY)
   }
 
-  const buildHeaders = (requiresSession = true): Record<string, string> => {
+  const buildHeaders = (requiresToken = true): Record<string, string> => {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       Accept: 'application/json'
     }
 
-    if (requiresSession) {
+    if (requiresToken) {
       const token = getToken()
       if (token) {
         headers['X-Public-Token'] = token
+        headers['X-Customer-Session'] = token
       }
     }
 
@@ -82,7 +67,7 @@ export const useCustomerApi = () => {
 
   const request = async <T>(path: string, options: FetchOptions = {}): Promise<T> => {
     try {
-      const result = await $fetch<T>(`${baseUrl}${path}`, {
+      return await $fetch<T>(`${baseUrl}${path}`, {
         method: options.method ?? 'GET',
         headers: {
           ...buildHeaders(true),
@@ -90,113 +75,175 @@ export const useCustomerApi = () => {
         },
         body: options.body as BodyInit | Record<string, unknown> | null | undefined
       })
-      return result as T
     } catch (error) {
       throw normalizeCustomerApiError(error)
     }
   }
 
-  return {
-    // ─── Session ────────────────────────────────────────────────────────────
+  const publicRequest = async <T>(path: string, options: FetchOptions = {}): Promise<T> => {
+    try {
+      return await $fetch<T>(`${baseUrl}${path}`, {
+        method: options.method ?? 'GET',
+        headers: {
+          ...buildHeaders(false),
+          ...(options.headers ?? {})
+        },
+        body: options.body as BodyInit | Record<string, unknown> | null | undefined
+      })
+    } catch (error) {
+      throw normalizeCustomerApiError(error)
+    }
+  }
 
-    /**
-     * Mulai sesi pelanggan setelah scan QR meja.
-     * Tidak membutuhkan session token.
-     * GET /api/v1/customer/table/{qrToken}
-     */
-    async startSession(payload: StartSessionPayload): Promise<any> {
+  const firstSuccessfulPublicRequest = async <T>(paths: string[]): Promise<T> => {
+    let lastError: unknown = null
+
+    for (const path of paths) {
       try {
-        const result = await $fetch<any>(`${baseUrl}/api/v1/customer/table/${payload.qr_token}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json'
-          }
-        })
-        return result
+        return await publicRequest<T>(path)
       } catch (error) {
-        throw normalizeCustomerApiError(error)
+        lastError = error
       }
+    }
+
+    throw lastError
+  }
+
+  const firstSuccessfulRequest = async <T>(paths: string[]): Promise<T> => {
+    let lastError: unknown = null
+
+    for (const path of paths) {
+      try {
+        return await request<T>(path)
+      } catch (error) {
+        lastError = error
+      }
+    }
+
+    throw lastError
+  }
+
+  return {
+    async getOrganization(orgSlug: string): Promise<PublicOrgResponse> {
+      const encodedSlug = encodeURIComponent(orgSlug)
+
+      return firstSuccessfulPublicRequest<PublicOrgResponse>([
+        `/v1/customer/organization/${encodedSlug}`,
+        `/api/v1/customer/organization/${encodedSlug}`,
+        `/api/public/orgs/${encodedSlug}`
+      ])
     },
 
-    /**
-     * Cek sesi aktif — validasi token masih valid saat user refresh halaman.
-     * GET /api/v1/customer/order
-     */
-    async getCurrentSession(): Promise<any> {
-      return request<any>('/api/v1/customer/order')
+    async scanTable(qrToken: string): Promise<any> {
+      const encodedToken = encodeURIComponent(qrToken)
+      return firstSuccessfulPublicRequest<any>([
+        `/v1/customer/table/${encodedToken}`,
+        `/api/v1/customer/table/${encodedToken}`
+      ])
     },
 
-    // ─── Menu ───────────────────────────────────────────────────────────────
-
-    /**
-     * Ambil semua menu.
-     * GET /api/v1/customer/menu?org={orgId}
-     */
-    async getMenu(orgId: number): Promise<any> {
-      return request<any>(`/api/v1/customer/menu?org=${orgId}`)
+    async validateSession(): Promise<any> {
+      return firstSuccessfulRequest<any>([
+        '/v1/customer/order',
+        '/api/v1/customer/order',
+        '/api/v1/customer/sessions/current'
+      ])
     },
 
-    // ─── Orders ─────────────────────────────────────────────────────────────
+    async getMenu(orgId?: number | string, requiresToken = false): Promise<any> {
+      const query = orgId ? `?org=${encodeURIComponent(String(orgId))}` : ''
 
-    /**
-     * Tambah item ke order (place order/add items).
-     * POST /api/v1/customer/order/items
-     */
-    async createOrder(payload: CreateOrderPayload): Promise<any> {
-      return request<any>('/api/v1/customer/order/items', {
+      const paths = [
+        `/v1/customer/menu${query}`,
+        `/api/v1/customer/menu${query}`
+      ]
+      let lastError: unknown = null
+
+      for (const path of paths) {
+        try {
+          return await $fetch<any>(`${baseUrl}${path}`, {
+            method: 'GET',
+            headers: buildHeaders(requiresToken)
+          })
+        } catch (error) {
+          lastError = normalizeCustomerApiError(error)
+        }
+      }
+
+      throw lastError
+    },
+
+    async getMenuByOrgSlug(orgSlug: string): Promise<any> {
+      const orgResponse = await this.getOrganization(orgSlug)
+      const org = orgResponse?.data ?? (orgResponse as any)
+      const orgId = org?.id
+      if (!orgId) {
+        throw {
+          message: 'ID Outlet tidak ditemukan.',
+          statusCode: 422
+        }
+      }
+      return this.getMenu(orgId, false)
+    },
+
+    async addItems(payload: CreateOrderPayload): Promise<any> {
+      return request<any>('/v1/customer/order/items', {
         method: 'POST',
         body: payload
       })
     },
 
-    /**
-     * Lihat tagihan aktif meja (semua order + pembayaran).
-     * GET /api/v1/customer/order
-     */
-    async getOpenBill(): Promise<any> {
-      return request<any>('/api/v1/customer/order')
+    async getOrder(): Promise<any> {
+      return request<any>('/v1/customer/order')
     },
 
-    /**
-     * Kirim notifikasi ke kasir.
-     * Mocked - backend tidak memiliki endpoint ini.
-     */
-    async callCashier(): Promise<any> {
-      return { message: 'Kasir dipanggil.' }
+    async getPublicOrder(orgSlug: string, orderToken: string): Promise<any> {
+      const encodedOrg = encodeURIComponent(orgSlug)
+      const encodedOrder = encodeURIComponent(orderToken)
+
+      const token = getToken()
+      if (token) {
+        try {
+          const res = await this.getOrder()
+          const raw = res?.data ?? res
+          if (
+            raw &&
+            (String(raw.order_number) === orderToken ||
+              String(raw.public_token) === orderToken ||
+              String(raw.id) === orderToken)
+          ) {
+            return res
+          }
+        } catch {
+          // ignore and fall back
+        }
+      }
+
+      try {
+        return await publicRequest<any>(`/v1/customer/orders/${encodedOrder}`)
+      } catch (primaryError) {
+        try {
+          return await publicRequest<any>(`/api/public/orgs/${encodedOrg}/orders/${encodedOrder}`)
+        } catch {
+          throw primaryError
+        }
+      }
     },
 
-    // ─── Payments ───────────────────────────────────────────────────────────
-
-    /**
-     * Inisiasi pembayaran QRIS mandiri.
-     * POST /api/v1/customer/order/pay-qris
-     */
-    async initiatePayment(): Promise<any> {
-      return request<any>('/api/v1/customer/order/pay-qris', {
+    async initiateQris(): Promise<any> {
+      return request<any>('/v1/customer/order/pay-qris', {
         method: 'POST'
       })
     },
 
-    /**
-     * Cek status pembayaran (untuk polling).
-     * GET /api/v1/customer/order/qris-status
-     */
-    async checkPayment(paymentId?: string): Promise<any> {
-      return request<any>('/api/v1/customer/order/qris-status', {
-        method: 'GET'
-      })
+    async checkQrisStatus(): Promise<any> {
+      return request<any>('/v1/customer/order/qris-status')
     },
 
-    /**
-     * Batalkan pembayaran yang masih pending.
-     * DELETE /api/v1/customer/order/qris-cancel
-     */
-    async cancelPayment(paymentId?: string): Promise<any> {
-      return request<any>('/api/v1/customer/order/qris-cancel', {
+    async cancelQris(): Promise<any> {
+      return request<any>('/v1/customer/order/qris-cancel', {
         method: 'DELETE'
       })
     }
   }
 }
-

@@ -48,7 +48,15 @@
               class="footer-h2 font-medium leading-[1.08] tracking-tight"
               style="font-size: clamp(28px, 4vw, 52px); color: #FFFFFF; max-width: 580px;"
             >
-              Kami memajukan bisnis kuliner untuk masa depan ekosistem restoran Indonesia.
+              <span style="color: #FFFFFF;">Kami membantu bisnis kuliner</span><br>
+              <span
+                style="
+                  background: linear-gradient(100deg, #FFFFFF 0%, var(--color-primary) 55%, #FFA550 100%);
+                  -webkit-background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                  background-clip: text;
+                "
+              >tumbuh di era digital.</span>
             </h2>
           </div>
 
@@ -56,18 +64,17 @@
           <div class="footer-cta-btns flex items-center gap-3">
             <NuxtLink
               to="/#"
-              class="inline-flex items-center gap-2 rounded-full
+              class="motion-btn inline-flex items-center gap-2 rounded-full
                      text-[11px] font-bold uppercase tracking-[0.1em]
-                     no-underline transition-all duration-150 hover:-translate-y-px"
+                     no-underline"
               style="background-color: #FFFFFF; color: #0F0C09; padding: 14px 28px;"
             >
               Daftar Sekarang
             </NuxtLink>
             <NuxtLink
               to="/#"
-              class="inline-flex items-center justify-center rounded-full
-                     no-underline flex-shrink-0 transition-all duration-200
-                     hover:-translate-y-px hover:scale-105"
+              class="motion-btn inline-flex items-center justify-center rounded-full
+                     no-underline flex-shrink-0"
               style="width: 48px; height: 48px; background-color: var(--color-primary); color: #FFFFFF;"
               aria-label="Mulai sekarang"
             >
@@ -210,9 +217,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { runLandingGsap } from '~/composables/useLandingGsap'
 
 const containerRef = ref<HTMLElement | null>(null)
-let ctx: any = null
+let ctx: { revert: () => void } | null = null
 
 const currentYear = new Date().getFullYear()
 
@@ -221,59 +229,26 @@ const scrollToTop = () => {
 }
 
 onMounted(async () => {
-  const { gsap } = await import('gsap')
-  const { ScrollTrigger } = await import('gsap/ScrollTrigger')
-  gsap.registerPlugin(ScrollTrigger)
-
-  ctx = gsap.context(() => {
-    const mm = gsap.matchMedia()
-
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
-      // ── H2 push-up from clip ─────────────────────────────────
-      gsap.set('.footer-h2', { yPercent: 108 })
-      gsap.to('.footer-h2', {
-        scrollTrigger: { trigger: '.footer-h2', start: 'top 90%' },
-        yPercent: 0,
-        duration: 1.1,
-        ease: 'power4.out',
-      })
-
-      // ── CTA buttons fade + slide ──────────────────────────
-      gsap.set('.footer-cta-btns', { opacity: 0, y: 20 })
-      gsap.to('.footer-cta-btns', {
-        scrollTrigger: { trigger: '.footer-cta-btns', start: 'top 92%' },
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-      })
-
-      // ── Nav columns stagger from below ──────────────────────
-      gsap.set('.footer-nav-cols', { opacity: 0, y: 30 })
-      gsap.to('.footer-nav-cols', {
-        scrollTrigger: { trigger: '.footer-nav-cols', start: 'top 92%' },
-        opacity: 1,
-        y: 0,
-        duration: 0.85,
-        ease: 'power3.out',
-      })
-
-      // ── Brand name subtle fade in ──────────────────────────
-      gsap.set('.footer-brand', { opacity: 0 })
-      gsap.to('.footer-brand', {
-        scrollTrigger: { trigger: '.footer-brand', start: 'top 98%' },
-        opacity: 1,
-        duration: 1.4,
-        ease: 'power2.out',
-      })
-    })
+  ctx = await runLandingGsap(containerRef.value, ({
+    mm,
+    motion,
+    revealInstant,
+    revealOnScroll,
+    revealFade,
+  }) => {
+    const targets = ['.footer-h2', '.footer-cta-btns', '.footer-nav-cols', '.footer-brand']
 
     mm.add('(prefers-reduced-motion: reduce)', () => {
-      gsap.set(['.footer-h2', '.footer-cta-btns', '.footer-nav-cols', '.footer-brand'], {
-        opacity: 1, yPercent: 0, y: 0, clearProps: 'all',
-      })
+      revealInstant(targets)
     })
-  }, containerRef.value ?? undefined)
+
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      revealOnScroll('.footer-h2', '.footer-h2', { y: motion.y.md, start: 'top 88%' })
+      revealOnScroll('.footer-cta-btns', '.footer-cta-btns', { y: motion.y.sm, start: 'top 88%', delay: 0.06 })
+      revealOnScroll('.footer-nav-cols', '.footer-nav-cols', { y: motion.y.md, start: 'top 88%', delay: 0.1 })
+      revealFade('.footer-brand', '.footer-brand', { start: 'top 92%', duration: motion.duration.section })
+    })
+  })
 })
 
 onUnmounted(() => {

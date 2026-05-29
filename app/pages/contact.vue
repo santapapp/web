@@ -1,5 +1,5 @@
 <template>
-  <main>
+  <main ref="mainRef">
 
     <!-- ── HERO — Curtain Reveal ──────────────────────────── -->
     <AppPageHeroCurtain
@@ -9,8 +9,7 @@
       aria-label="Hubungi Santap"
       scroll-target="contact-overview"
     >
-      Ada pertanyaan tentang paket, kemitraan, atau integrasi?
-      <span style="color: var(--color-text-primary); font-weight: 500;">Tim customer support &amp; sales kami</span> siap membantu operasional bisnis kuliner Anda tumbuh maksimal.
+      Ada pertanyaan? <span style="color: var(--color-text-primary); font-weight: 500;">Tim kami siap membantu</span> Anda dalam hitungan menit.
     </AppPageHeroCurtain>
 
     <!-- ══════════════════════════════════════════════════════
@@ -52,7 +51,7 @@
         <AppTextWordReveal
           class="font-medium leading-[1.12] tracking-tight max-w-[950px]"
           style="font-size: clamp(26px, 4vw, 52px); color: #FFFFFF;"
-          text="Kami percaya layanan yang baik adalah kunci dari kelancaran bisnis. Kami tidak hanya menjual aplikasi kasir, melainkan hadir sebagai mitra operasional harian Anda."
+          text="Layanan baik adalah kunci operasional lancar. Kami hadir bukan hanya sebagai vendor, tapi partner terpercaya Anda setiap hari."
         />
       </div>
     </section>
@@ -62,6 +61,7 @@
          ══════════════════════════════════════════════════════ -->
     <section
       id="contact-content"
+      ref="channelsSecRef"
       class="bg-[var(--color-bg-page)] px-5 md:px-10 lg:px-16 py-20 md:py-28 max-w-[1400px] mx-auto"
       aria-label="Saluran Kontak"
     >
@@ -71,16 +71,16 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
         
         <!-- Left Column: Heading -->
-        <div class="lg:col-span-4 lg:sticky lg:top-28 self-start">
+        <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
           <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">Hubungi Langsung</p>
           <h2
             class="font-medium tracking-tight leading-[1.1] mb-8"
             style="font-size: clamp(28px, 3.5vw, 42px); color: var(--color-text-primary);"
           >
-            Ada Pertanyaan?
+            Kontak Kami
           </h2>
           <p class="text-[14.5px] leading-[1.7] text-[var(--color-text-secondary)] mb-12 max-w-sm">
-            Tim kami siap menyambut pertanyaan Anda dan mendiskusikan bagaimana Santap dapat menyederhanakan kasir restoran Anda.
+            Hubungi kami melalui WhatsApp atau email. Tim kami siap membantu Anda dalam hitungan menit.
           </p>
         </div>
 
@@ -93,7 +93,7 @@
             <a 
               href="https://wa.me/6281234567890" 
               target="_blank" 
-              class="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 no-underline transition-opacity duration-200 hover:opacity-85"
+              class="cmp-right-item group flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 no-underline transition-opacity duration-200 hover:opacity-85"
             >
               <div class="flex items-start gap-4">
                 <span class="text-[12px] font-medium tabular-nums text-[var(--color-text-tertiary)] mt-1">01.</span>
@@ -117,7 +117,7 @@
             <!-- Email channel -->
             <a 
               href="mailto:halo@santap.id" 
-              class="group flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 no-underline transition-opacity duration-200 hover:opacity-85"
+              class="cmp-right-item group flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 no-underline transition-opacity duration-200 hover:opacity-85"
             >
               <div class="flex items-start gap-4">
                 <span class="text-[12px] font-medium tabular-nums text-[var(--color-text-tertiary)] mt-1">02.</span>
@@ -139,7 +139,7 @@
             <div class="h-px bg-[var(--color-border)]"></div>
 
             <!-- Office address -->
-            <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 py-4">
+            <div class="cmp-right-item flex flex-col sm:flex-row sm:items-start justify-between gap-4 py-4">
                <div class="flex items-start gap-4">
                  <span class="text-[12px] font-medium tabular-nums text-[var(--color-text-tertiary)] mt-1">03.</span>
                  <div>
@@ -165,6 +165,7 @@
          ══════════════════════════════════════════════════════ -->
     <section
       id="contact-form-section"
+      ref="formSecRef"
       class="relative overflow-hidden"
       style="background-color: #111009;"
       aria-label="Formulir Kontak"
@@ -185,7 +186,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
           
           <!-- Left Column: Heading and info -->
-          <div class="lg:col-span-4 flex flex-col justify-between">
+          <div class="lg:col-span-4 flex flex-col justify-between cnt-form-info">
             <div>
               <!-- Badge -->
               <div class="mb-8">
@@ -202,11 +203,17 @@
                 class="font-medium leading-[1.08] tracking-tight mb-6"
                 style="font-size: clamp(30px, 4.5vw, 56px); color: #FFFFFF;"
               >
-                Punya rencana
-                <span style="color: rgba(255,255,255,0.35);"> untuk F&B Anda?</span>
+                Ceritakan <span
+                  style="
+                    background: linear-gradient(100deg, #FFFFFF 0%, var(--color-primary) 55%, #FFA550 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                  "
+                >kebutuhan Anda.</span>
               </h2>
               <p class="text-[14.5px] leading-[1.75] max-w-sm mb-12" style="color: rgba(255,255,255,0.55);">
-                Ceritakan kebutuhan operasional bisnis Anda. Tim perwakilan kami siap mendampingi perjalanan digitalisasi restoran Anda.
+                Tim kami siap mendampingi digitalisasi restoran Anda dengan solusi yang tepat sasaran.
               </p>
             </div>
 
@@ -229,7 +236,7 @@
           </div>
 
           <!-- Right Column: Interactive Form -->
-          <div class="lg:col-span-8">
+          <div class="lg:col-span-8 cnt-form-card">
             <div
               class="border rounded-2xl p-6 md:p-10 lg:p-12"
               style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
@@ -419,7 +426,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 
 useHead({
   title: 'Hubungi Kami — Santap',
@@ -427,6 +434,89 @@ useHead({
     { name: 'description', content: 'Hubungi tim aplikasi kasir mobile Santap. Dapatkan konsultasi gratis, demo produk, atau ajukan pertanyaan seputar kemitraan dan integrasi POS restoran.' }
   ]
 })
+
+// ── Refs for scroll animations ───────────────────────────
+const mainRef        = ref<HTMLElement | null>(null)
+const channelsSecRef = ref<HTMLElement | null>(null)
+const formSecRef     = ref<HTMLElement | null>(null)
+let ctx: any = null
+
+onMounted(async () => {
+  const { gsap } = await import('gsap')
+  const { ScrollTrigger } = await import('gsap/ScrollTrigger')
+  gsap.registerPlugin(ScrollTrigger)
+
+  ctx = gsap.context(() => {
+    const mm = gsap.matchMedia()
+
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      // ── Channels: sticky-left + staggered right items ───────
+      if (channelsSecRef.value) {
+        const leftCol    = channelsSecRef.value.querySelector<HTMLElement>('.cmp-left')
+        const rightItems = channelsSecRef.value.querySelectorAll<HTMLElement>('.cmp-right-item')
+
+        if (leftCol) {
+          gsap.set(leftCol, { opacity: 0, y: 24 })
+          gsap.to(leftCol, {
+            scrollTrigger: { trigger: leftCol, start: 'top 78%' },
+            opacity: 1, y: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+          })
+        }
+
+        if (rightItems.length) {
+          gsap.set(rightItems, { opacity: 0, y: 18 })
+          gsap.to(rightItems, {
+            scrollTrigger: { trigger: channelsSecRef.value, start: 'top 80%' },
+            opacity: 1, y: 0,
+            duration: 0.7,
+            ease: 'power3.out',
+            stagger: 0.1,
+          })
+        }
+      }
+
+      // ── Dark form section: info column + form card ──────────
+      if (formSecRef.value) {
+        const info = formSecRef.value.querySelector<HTMLElement>('.cnt-form-info')
+        const card = formSecRef.value.querySelector<HTMLElement>('.cnt-form-card')
+
+        if (info) {
+          gsap.set(info, { opacity: 0, y: 24 })
+          gsap.to(info, {
+            scrollTrigger: { trigger: formSecRef.value, start: 'top 78%' },
+            opacity: 1, y: 0,
+            duration: 1,
+            ease: 'power3.out',
+          })
+        }
+        if (card) {
+          gsap.set(card, { opacity: 0, y: 28 })
+          gsap.to(card, {
+            scrollTrigger: { trigger: formSecRef.value, start: 'top 78%' },
+            opacity: 1, y: 0,
+            duration: 1,
+            ease: 'power3.out',
+            delay: 0.15,
+          })
+        }
+      }
+    })
+
+    mm.add('(prefers-reduced-motion: reduce)', () => {
+      gsap.set(
+        mainRef.value?.querySelectorAll(
+          '.cmp-left, .cmp-right-item, .cnt-form-info, .cnt-form-card'
+        ) ?? [],
+        { opacity: 1, x: 0, y: 0, clearProps: 'all' }
+      )
+    })
+  }, mainRef.value ?? undefined)
+})
+
+onUnmounted(() => { ctx?.revert() })
+
 const form = reactive({
   name: '',
   businessName: '',

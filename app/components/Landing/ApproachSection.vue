@@ -9,10 +9,9 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8">
 
         <!-- Badge -->
-        <div class="lg:col-span-4 flex items-start">
+        <div class="appr-left lg:col-span-4 flex items-start">
           <div
             class="appr-badge inline-flex items-center gap-3 bg-[var(--color-bg-surface)] px-4 py-2 rounded-md border border-[var(--color-border)]"
-            style="clip-path: inset(0 100% 0 0)"
           >
             <div class="w-2 h-2 rounded-sm bg-[var(--color-primary)] flex-shrink-0"></div>
             <span class="text-[10.5px] font-bold uppercase tracking-[0.16em]" style="color: var(--color-text-primary);">Pendekatan Kami</span>
@@ -20,27 +19,39 @@
         </div>
 
         <!-- Text -->
-        <div class="lg:col-span-8">
-          <div class="overflow-hidden mb-5">
-            <h2
-              class="appr-h2 font-medium leading-[1.1] tracking-tight max-w-[660px]"
-              style="font-size: clamp(26px, 3.5vw, 44px); color: var(--color-text-primary);"
-            >
-              Efisiensi bisnis yang dibangun pada tiga strategi inti.
-            </h2>
-          </div>
+        <div ref="headerRightRef" class="lg:col-span-8">
+          <AppScrollLineCurtain
+            class="mb-5 max-w-[660px]"
+            heading-class="leading-[1.1] tracking-tight"
+            :heading-style="{ fontSize: 'clamp(26px, 3.5vw, 44px)' }"
+            scroll-start="top 78%"
+          >
+            <template #line1>
+              <span style="color: var(--color-text-primary);">Dibangun dengan</span>
+            </template>
+            <template #line2>
+              <span
+                style="
+                  background: linear-gradient(100deg, var(--color-text-primary) 0%, var(--color-primary) 55%, #FFA550 100%);
+                  -webkit-background-clip: text;
+                  -webkit-text-fill-color: transparent;
+                  background-clip: text;
+                "
+              >tiga strategi inti.</span>
+            </template>
+          </AppScrollLineCurtain>
           <p
             class="appr-body text-[14.5px] leading-[1.7] max-w-[500px]"
             style="color: var(--color-text-secondary);"
           >
-            Masing-masing dirancang untuk menyederhanakan operasional restoran — dan bersama-sama, ketiganya membentuk fondasi teknologi yang solid.
+            Dirancang untuk menyederhanakan operasional restoran Anda dengan fondasi teknologi yang solid.
           </p>
         </div>
       </div>
     </div>
 
     <!-- ── Three Steps ────────────────────────────────────── -->
-    <div class="appr-steps-wrap px-5 md:px-10 lg:px-16 pb-24 md:pb-32 max-w-[1400px] mx-auto">
+    <div ref="stepsRef" class="appr-steps-wrap px-5 md:px-10 lg:px-16 pb-24 md:pb-32 max-w-[1400px] mx-auto">
 
       <!-- Top border with wipe animation -->
       <div class="appr-top-border h-px mb-0" style="background-color: var(--color-border); transform-origin: left;"></div>
@@ -100,124 +111,91 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { runLandingGsap } from '~/composables/useLandingGsap'
 
 const containerRef = ref<HTMLElement | null>(null)
-let ctx: any = null
+const headerRightRef = ref<HTMLElement | null>(null)
+const stepsRef = ref<HTMLElement | null>(null)
+let ctx: { revert: () => void } | null = null
 
 const steps = [
   {
     id: 'speed',
     number: '01',
     title: 'Pemrosesan Kilat',
-    desc: 'Selesaikan pesanan dan pembayaran dalam hitungan detik. Antarmuka yang intuitif memungkinkan kasir bekerja tanpa hambatan, bahkan di jam sibuk puncak.',
+    desc: 'Pesanan dan pembayaran selesai dalam hitungan detik. Kerja tanpa hambatan, bahkan saat ramai.',
     tag: 'Kecepatan',
   },
   {
     id: 'accuracy',
     number: '02',
     title: 'Pantau Terpusat',
-    desc: 'Lacak inventaris, pesanan, dan laporan dari seluruh cabang dalam satu dashboard. Tidak ada data yang tertinggal, tidak ada kesalahan pencatatan.',
+    desc: 'Kelola inventaris, pesanan, dan laporan dari seluruh cabang dalam satu dashboard.',
     tag: 'Akurasi',
   },
   {
     id: 'intelligence',
     number: '03',
     title: 'Analisis Pintar',
-    desc: 'Temukan pola penjualan, jam tersibuk, dan menu terlaris secara otomatis. Data yang bekerja untuk Anda — bukan sebaliknya.',
+    desc: 'Temukan pola penjualan, jam sibuk, dan menu terlaris secara otomatis. Data yang actionable.',
     tag: 'Kecerdasan',
   },
 ]
 
 onMounted(async () => {
-  const { gsap } = await import('gsap')
-  const { ScrollTrigger } = await import('gsap/ScrollTrigger')
-  gsap.registerPlugin(ScrollTrigger)
-
-  ctx = gsap.context(() => {
-    const mm = gsap.matchMedia()
-
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
-      // ── Badge clip-path wipe ──────────────────────────────
-      gsap.to('.appr-badge', {
-        scrollTrigger: { trigger: '.appr-badge', start: 'top 88%' },
-        clipPath: 'inset(0 0% 0 0)',
-        duration: 0.8,
-        ease: 'power3.out',
-      })
-
-      // ── H2 push-up from clip ──────────────────────────────
-      gsap.set('.appr-h2', { yPercent: 110 })
-      gsap.to('.appr-h2', {
-        scrollTrigger: { trigger: '.appr-h2', start: 'top 88%' },
-        yPercent: 0,
-        duration: 1.0,
-        ease: 'power4.out',
-      })
-
-      // ── Body paragraph fade ───────────────────────────────
-      gsap.set('.appr-body', { opacity: 0, y: 20 })
-      gsap.to('.appr-body', {
-        scrollTrigger: { trigger: '.appr-body', start: 'top 90%' },
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-      })
-
-      // ── Top border scaleX wipe ────────────────────────────
-      gsap.set('.appr-top-border', { scaleX: 0 })
-      gsap.to('.appr-top-border', {
-        scrollTrigger: { trigger: '.appr-steps-wrap', start: 'top 85%' },
-        scaleX: 1,
-        duration: 1.0,
-        ease: 'power3.inOut',
-      })
-
-      // ── Step rows: stagger slide from left ────────────────
-      gsap.set('.appr-step-row', { opacity: 0, x: -50 })
-      gsap.to('.appr-step-row', {
-        scrollTrigger: { trigger: '.appr-steps-wrap', start: 'top 80%' },
-        opacity: 1,
-        x: 0,
-        duration: 0.85,
-        stagger: 0.14,
-        ease: 'power3.out',
-      })
-
-      // ── Dividers: scaleX wipe, delayed after rows ─────────
-      gsap.set('.appr-divider', { scaleX: 0 })
-      gsap.to('.appr-divider', {
-        scrollTrigger: { trigger: '.appr-steps-wrap', start: 'top 80%' },
-        scaleX: 1,
-        duration: 0.9,
-        stagger: 0.14,
-        delay: 0.2,
-        ease: 'power3.inOut',
-      })
-
-      // ── Tag pills: scale spring bounce ────────────────────
-      gsap.set('.appr-tag-pill', { scale: 0.7, opacity: 0 })
-      gsap.to('.appr-tag-pill', {
-        scrollTrigger: { trigger: '.appr-steps-wrap', start: 'top 80%' },
-        scale: 1,
-        opacity: 1,
-        duration: 0.6,
-        stagger: 0.14,
-        delay: 0.35,
-        ease: 'back.out(1.8)',
-      })
-    })
+  ctx = await runLandingGsap(containerRef.value, ({
+    mm,
+    motion,
+    revealInstant,
+    revealOnScroll,
+    revealFade,
+  }) => {
+    const allTargets = [
+      '.appr-left', '.appr-badge', '.appr-body',
+      '.appr-top-border', '.appr-step-row', '.appr-divider', '.appr-tag-pill',
+    ]
 
     mm.add('(prefers-reduced-motion: reduce)', () => {
-      gsap.set([
-        '.appr-badge', '.appr-h2', '.appr-body',
-        '.appr-top-border', '.appr-step-row', '.appr-divider', '.appr-tag-pill',
-      ], {
-        clipPath: 'none', opacity: 1, yPercent: 0, y: 0,
-        x: 0, scaleX: 1, scale: 1, clearProps: 'all',
-      })
+      revealInstant(allTargets)
     })
-  }, containerRef.value ?? undefined)
+
+    mm.add('(prefers-reduced-motion: no-preference) and (min-width: 768px)', () => {
+      revealFade('.appr-badge', '.appr-badge')
+      revealOnScroll('.appr-left', '.appr-left', { y: motion.y.md })
+      if (headerRightRef.value) {
+        revealOnScroll('.appr-body', headerRightRef.value, { y: motion.y.md, delay: 0.1 })
+      }
+      revealFade('.appr-top-border', stepsRef.value, { start: motion.scroll.section })
+      if (stepsRef.value) {
+        revealOnScroll('.appr-step-row', stepsRef.value, {
+          y: motion.y.md,
+          stagger: motion.stagger.loose,
+          start: motion.scroll.section,
+        })
+        revealFade('.appr-divider', stepsRef.value, { start: motion.scroll.section, delay: 0.1 })
+        revealOnScroll('.appr-tag-pill', stepsRef.value, {
+          y: motion.y.sm,
+          stagger: motion.stagger.tight,
+          start: motion.scroll.section,
+          delay: 0.15,
+        })
+      }
+    })
+
+    mm.add('(prefers-reduced-motion: no-preference) and (max-width: 767px)', () => {
+      revealFade('.appr-badge', '.appr-badge')
+      revealOnScroll('.appr-left', '.appr-left', { y: motion.y.sm })
+      if (headerRightRef.value) {
+        revealOnScroll('.appr-body', headerRightRef.value, { y: motion.y.sm })
+      }
+      if (stepsRef.value) {
+        revealFade('.appr-top-border', stepsRef.value)
+        revealOnScroll('.appr-step-row', stepsRef.value, { y: motion.y.sm, stagger: motion.stagger.normal })
+        revealFade('.appr-divider', stepsRef.value, { delay: 0.08 })
+        revealOnScroll('.appr-tag-pill', stepsRef.value, { y: motion.y.sm, stagger: motion.stagger.tight })
+      }
+    })
+  })
 })
 
 onUnmounted(() => {

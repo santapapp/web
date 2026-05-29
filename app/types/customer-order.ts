@@ -1,95 +1,98 @@
-// Types untuk Customer Order & Bill API (Real API)
-// Endpoint: POST /api/v1/customer/orders
-// Endpoint: GET /api/v1/customer/open-bill
+// Types untuk Customer Order & Bill
+// Tambah item  → POST /v1/customer/order/items   (header: X-Public-Token)
+// Lihat order  → GET  /v1/customer/order          (header: X-Public-Token)
 
-export type CustomerOrderStatus = 'pending' | 'cooking' | 'ready' | 'served' | 'cancelled'
+// ─── Add Items ───────────────────────────────────────────────────────────────
 
-// Request
 export interface CreateOrderItem {
   menu_id: number
   quantity: number
-  notes?: string | null
+  notes?: string | null   // note per item (bukan root order)
+  selected_variants?: Array<{
+    variant_group_id: number
+    variant_id: number
+  }>
 }
 
 export interface CreateOrderPayload {
   items: CreateOrderItem[]
-  note?: string
+  // Global order note tidak didukung backend — gunakan note per item
 }
 
-// Response item dalam order
+// ─── Order Item (dari OrderItemResource) ─────────────────────────────────────
+
+export type OrderItemStatus =
+  | 'pending'
+  | 'preparing'
+  | 'ready'
+  | 'served'
+  | 'cancelled'
+
 export interface CustomerOrderItem {
-  id: string
+  id: number | string
+  parent_item_id: number | string | null
+  item_type: 'product' | 'variant' | 'addon'
   menu_id: number
-  menu_name_snapshot: string
-  menu_price_snapshot: number
+  name: string
+  price: number
   quantity: number
+  subtotal: number
+  item_status: OrderItemStatus | null
   note: string | null
-  status: CustomerOrderStatus
-  subtotal_amount: number
+  children: CustomerOrderItem[]
 }
 
-// Response order setelah create
-export interface CustomerOrder {
-  id: string
-  organization_id: number
-  open_bill_id: string
-  dining_table_id: number
-  order_number: string
-  source: string
-  status: CustomerOrderStatus
-  note: string | null
-  subtotal_amount: number
-  total_amount: number
-  created_at: string
-  items: CustomerOrderItem[]
-}
+// ─── Order Detail (dari OrderDetailResource) ──────────────────────────────────
 
-export interface CreateOrderResponse {
-  message: string
-  data: CustomerOrder
-}
+export type BillStatus = 'open' | 'closed' | 'cancelled'
+export type OrderStatus = 'pending' | 'confirmed' | 'cancelled'
+export type PaymentStatus = 'unpaid' | 'pending' | 'paid' | 'cancelled'
 
-// Open Bill
-export type BillStatus = 'open' | 'locked' | 'payment_requested' | 'closed'
-
-export type PaymentStatus = 'pending' | 'paid' | 'failed'
-
-export interface BillPayment {
-  id: string
-  payment_number: string
-  method: 'qris' | 'cash'
-  status: PaymentStatus
-  amount: number
-  paid_at: string | null
-  qr_string: string | null
-  expiry_time: string | null
-}
-
-export interface OpenBillTable {
+export interface OrderDiningTable {
   id: number
   name: string
   code: string
+  location: string | null
 }
 
-export interface OpenBill {
-  id: string
-  bill_number: string
-  status: BillStatus
+/**
+ * Representasi penuh data order dari GET /v1/customer/order.
+ * Field sesuai OrderDetailResource.
+ */
+export interface CustomerOrderDetail {
+  id: number | string
+  order_number: string
+  public_token: string
+  order_type: string
+  bill_status: BillStatus
+  order_status: OrderStatus
+  payment_status: PaymentStatus
+  payment_method: 'qris' | 'cash' | null
+  payment_reference: string | null
+  // Financial
   subtotal_amount: number
   discount_amount: number
-  service_amount: number
   tax_amount: number
+  service_charge_amount: number
   total_amount: number
-  opened_at: string
-  table: OpenBillTable
-  payments: BillPayment[]
+  payment_amount: number
+  change_amount: number
+  // Meta
+  note: string | null
+  opened_at: string | null
+  closed_at: string | null
+  paid_at: string | null
+  // Relations
+  dining_table: OrderDiningTable | null
+  items: CustomerOrderItem[]
+  created_at: string
 }
 
-export interface OpenBillResponse {
-  data: OpenBill
+export interface CustomerOrderDetailResponse {
+  data: CustomerOrderDetail
 }
 
-// Call Cashier
-export interface CallCashierResponse {
+export interface AddItemsResponse {
+  data: CustomerOrderDetail
   message: string
 }

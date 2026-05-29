@@ -6,12 +6,20 @@
       <div class="section-header gsap-header opacity-0 translate-y-6">
         <span class="overline">Fitur Unggulan</span>
         <h2>
-          Semua yang dibutuhkan<br>
-          <em class="h2-serif">kasir modern.</em>
+          Lengkap untuk<br>
+          <em
+            class="h2-serif"
+            style="
+              background: linear-gradient(100deg, #0C0906 0%, var(--color-primary) 55%, #FFA550 100%);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              background-clip: text;
+              font-style: normal;
+            "
+          >kasir modern.</em>
         </h2>
         <p>
-          Dari pencatatan pesanan hingga laporan keuangan harian —
-          Santap menyederhanakan operasional restoran Anda dalam satu aplikasi.
+          Catat pesanan, proses pembayaran, dan pantau laporan penjualan — semua dari satu aplikasi.
         </p>
       </div>
 
@@ -27,8 +35,7 @@
           </div>
           <h3 class="bento-title">Kasir Mobile</h3>
           <p class="bento-desc">
-            Catat pesanan, proses transaksi, dan terima pembayaran langsung dari smartphone.
-            Tidak perlu perangkat kasir khusus yang mahal.
+            Catat pesanan dan terima pembayaran langsung dari smartphone. Tanpa perlu perangkat kasir khusus.
           </p>
           <div class="bento-tag">Fitur Inti</div>
         </div>
@@ -41,7 +48,7 @@
             <UIcon name="i-lucide-bar-chart-3" class="bento-icon" style="color: #2D8A4E;" />
           </div>
           <h3 class="bento-title">Laporan Real-Time</h3>
-          <p class="bento-desc">Pantau performa penjualan harian, mingguan, dan bulanan dari dasbor yang mudah dibaca.</p>
+          <p class="bento-desc">Pantau penjualan harian, mingguan, dan bulanan dari dasbor yang mudah dipahami.</p>
         </div>
 
         <!-- Card 3: Inventaris -->
@@ -52,7 +59,7 @@
             <UIcon name="i-lucide-package" class="bento-icon" style="color: #4F46E5;" />
           </div>
           <h3 class="bento-title">Manajemen Stok</h3>
-          <p class="bento-desc">Pantau bahan baku dan produk secara otomatis. Notifikasi sebelum stok habis.</p>
+          <p class="bento-desc">Pantau bahan baku secara otomatis. Notifikasi saat stok mendekati batas minimum.</p>
         </div>
 
         <!-- Card 4: Multi Pembayaran -->
@@ -63,7 +70,7 @@
             <UIcon name="i-lucide-credit-card" class="bento-icon" style="color: #B97B0A;" />
           </div>
           <h3 class="bento-title">Multi Pembayaran</h3>
-          <p class="bento-desc">Tunai, QRIS, kartu debit/kredit, dan dompet digital — semua diterima dalam satu sistem.</p>
+          <p class="bento-desc">Terima tunai, QRIS, kartu debit/kredit, dan dompet digital — semua dalam satu sistem.</p>
         </div>
 
         <!-- Card 5: Menu Digital -->
@@ -74,7 +81,7 @@
             <UIcon name="i-lucide-book-open" class="bento-icon" style="color: var(--color-primary);" />
           </div>
           <h3 class="bento-title">Menu Digital</h3>
-          <p class="bento-desc">Kelola menu, harga, dan kategori produk kapan saja. Perubahan langsung tersinkron ke semua perangkat.</p>
+          <p class="bento-desc">Kelola menu dan harga kapan saja. Perubahan langsung tersinkron ke semua perangkat.</p>
         </div>
 
         <!-- Card 6: Multi Outlet — wide card -->
@@ -86,7 +93,7 @@
           </div>
           <div class="bento-wide-content">
             <h3 class="bento-title">Multi Outlet</h3>
-            <p class="bento-desc">Kelola beberapa cabang restoran dari satu akun dengan laporan konsolidasi yang lengkap.</p>
+            <p class="bento-desc">Kelola beberapa cabang dari satu akun dengan laporan terpadu yang lengkap.</p>
           </div>
           <div class="bento-coming-soon">Segera hadir</div>
         </div>

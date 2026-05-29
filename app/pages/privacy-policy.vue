@@ -88,9 +88,9 @@
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-[16px] font-semibold text-[var(--color-text-primary)] mb-2">Ringkasan Komitmen Privasi Kami</h3>
+                  <h3 class="text-[16px] font-semibold text-[var(--color-text-primary)] mb-2">Komitmen Privasi Kami</h3>
                   <p class="text-[14px]">
-                    Kami sangat menghargai kepercayaan Anda. Secara singkat: <strong>Kami hanya mengumpulkan informasi penting</strong> yang dibutuhkan untuk memproses transaksi POS, sinkronisasi pesanan ke dapur, dan kepatuhan regulasi keuangan. <strong>Kami tidak pernah menjual data pribadi Anda</strong> atau data transaksi restoran Anda kepada pihak ketiga mana pun.
+                    Kami menghargai kepercayaan Anda. <strong>Kami hanya kumpulkan informasi yang dibutuhkan</strong> untuk operasional POS, sinkronisasi pesanan, dan kepatuhan regulasi. <strong>Kami tidak pernah jual data pribadi atau transaksi Anda</strong> ke pihak ketiga.
                   </p>
                 </div>
               </div>
@@ -99,13 +99,13 @@
               <section id="pengantar" class="scroll-mt-32 flex flex-col gap-4">
                 <div class="flex items-center gap-3">
                   <span class="text-xs font-bold uppercase tracking-[0.1em] text-[var(--color-primary)]">01</span>
-                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Pengantar & Informasi Umum</h2>
+                  <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Pengantar</h2>
                 </div>
                 <p>
-                  Kebijakan Privasi ini menjelaskan bagaimana PT Santap Teknologi Indonesia ("Santap", "Kami") mengumpulkan, menggunakan, menyimpan, dan melindungi informasi pribadi Pengguna ("Anda") saat Anda menggunakan aplikasi kasir (POS), dashboard restoran, customer ordering page, serta situs web kami di santap.id.
+                  Kebijakan ini menjelaskan bagaimana PT Santap Teknologi Indonesia mengumpulkan, menggunakan, dan melindungi data pribadi Anda saat menggunakan aplikasi POS, dashboard, dan situs santap.id.
                 </p>
                 <p>
-                  Dengan menggunakan layanan Santap, Anda dianggap telah membaca, memahami, dan menyetujui seluruh ketentuan yang tercantum dalam Kebijakan Privasi ini. Kami berkomitmen untuk melindungi privasi baik pemilik merchant (restoran/cafe), staf operasional, maupun pelanggan akhir (customer) Anda yang memesan menu dari platform kami.
+                  Dengan menggunakan layanan kami, Anda menyetujui kebijakan ini. Kami melindungi privasi pemilik merchant, staf operasional, dan pelanggan Anda.
                 </p>
               </section>
 
