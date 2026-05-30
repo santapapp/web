@@ -26,8 +26,10 @@ const formatPrice = (v: number) =>
     maximumFractionDigits: 0
   }).format(v)
 
+// isOpenBill ditentukan dari order_type yang diterima dari backend via prop
+// order_type = 'open_bill' hanya jika kasir membuat open bill
 const isOpenBill = computed(() =>
-  String(props.order?.order_type ?? '').includes('open_bill')
+  props.order?.order_type === 'open_bill'
 )
 
 const paymentConfig = computed(() => {

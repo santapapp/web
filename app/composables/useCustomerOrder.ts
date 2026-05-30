@@ -49,6 +49,52 @@ export const useCustomerOrder = () => {
    *
    * Frontend hanya menghitung preview subtotal — harga final dari backend response.
    */
+  /**
+   * Buat order baru (table_order) di backend.
+   * Dipanggil saat checkout.
+   */
+  const createNewOrder = async (
+    tableToken: string,
+    items: Array<{
+      menu_id: number
+      quantity: number
+      notes?: string | null
+      selected_variants?: Array<{ variant_group_id: number; variant_id: number }>
+    }>
+  ) => {
+    orderPending.value = true
+    orderError.value = null
+
+    try {
+      const payload = {
+        qr_token: tableToken,
+        idempotency_key: crypto.randomUUID(),
+        items: items.map((item) => ({
+          menu_id: item.menu_id,
+          quantity: item.quantity,
+          notes: item.notes ?? null,
+          selected_variants: item.selected_variants ?? []
+        }))
+      }
+
+      const response = await api.createOrder(payload)
+
+      const rawOrder = unwrapOrderResponse(response)
+
+      if (rawOrder) {
+        order.value = mapOrderResponse(rawOrder)
+        syncToSessionStore(rawOrder)
+      }
+
+      return { success: true, data: rawOrder, message: response.message }
+    } catch (err) {
+      orderError.value = err as CustomerApiError
+      return { success: false, error: err as CustomerApiError }
+    } finally {
+      orderPending.value = false
+    }
+  }
+
   const placeOrder = async (
     items: Array<{
       menu_id: number
@@ -149,15 +195,18 @@ export const useCustomerOrder = () => {
 
   return {
     order,
-    openBill,       // alias untuk backward compatibility
     orderPending,
     fetchPending,
     statusPending,
-    billPending,    // alias untuk backward compatibility
     orderError,
     fetchError,
     statusError,
-    billError,      // alias untuk backward compatibility
+
+    openBill,
+    billPending,
+    billError,
+
+    createNewOrder,
     placeOrder,
     fetchOpenBill,
     fetchOrderStatus
@@ -201,7 +250,10 @@ function mapOrderResponse(raw: any): CustomerOrderDetail {
         }
       : null,
     items: Array.isArray(raw.items) ? raw.items.map(mapOrderItem) : [],
-    created_at: raw.created_at ?? new Date().toISOString()
+    created_at: raw.created_at ?? new Date().toISOString(),
+    qris_data: raw.qris_data ?? null,
+    payment_expires_at: raw.payment_expires_at ?? null,
+    server_time: raw.server_time ?? null
   }
 }
 
@@ -226,23 +278,47 @@ function mapOrderItem(raw: any): CustomerOrderItem {
 
 function unwrapOrderResponse(response: any): any {
   if (!response) return null
-  if (response.data?.order) return response.data.order
+  
+  if (response.data?.order) {
+    return {
+      ...response.data.order,
+      qris_data: response.data.payment?.qris_data ?? response.data.order.qris_data,
+      payment_expires_at: response.data.payment?.payment_expires_at ?? response.data.order.payment_expires_at,
+      server_time: response.data.server_time ?? response.server_time
+    }
+  }
+
+  if (response.order) {
+    return {
+      ...response.order,
+      qris_data: response.payment?.qris_data ?? response.order.qris_data,
+      payment_expires_at: response.payment?.payment_expires_at ?? response.order.payment_expires_at,
+      server_time: response.server_time
+    }
+  }
+
   if (response.data) return response.data
-  if (response.order) return response.order
+  
   return response
 }
 
 /**
  * Sinkronisasi total order ke session store untuk konsistensi UI.
+ *
+ * ATURAN: Hanya update openBill jika session ini memang open bill.
+ * Untuk table order biasa, jangan menyentuh openBill di store.
  */
 function syncToSessionStore(raw: any) {
   const sessionStore = useCustomerSessionStore()
-  if (sessionStore.openBill) {
-    sessionStore.setOpenBill({
-      id: raw.public_token,
-      bill_number: raw.order_number,
-      status: raw.bill_status,
-      total_amount: Number(raw.total_amount ?? 0)
-    })
-  }
+
+  // Guard: hanya sync openBill untuk open_bill session
+  if (sessionStore.sessionType !== 'open_bill') return
+  if (!sessionStore.openBill) return
+
+  sessionStore.setOpenBill({
+    id: raw.public_token,
+    bill_number: raw.order_number,
+    status: raw.bill_status,
+    total_amount: Number(raw.total_amount ?? 0)
+  })
 }

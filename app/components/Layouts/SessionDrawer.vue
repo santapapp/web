@@ -28,6 +28,17 @@ const emit = defineEmits<{
 const route = useRoute()
 const router = useRouter()
 const session = useCustomerSession()
+const { hasSession, sessionMode, clearSession } = session
+
+// Ambil state tabel/bill dari session store
+const store = useCustomerSessionStore()
+
+const tableInfo = computed(() => {
+  if (sessionMode.value === 'table' || sessionMode.value === 'tracking_order') {
+    return store.table
+  }
+  return null
+})
 
 const showExitConfirm = ref(false)
 
@@ -36,7 +47,7 @@ const handleExitSession = () => {
 }
 
 const handleConfirmExit = () => {
-  session.clearSession()
+  clearSession()
   showExitConfirm.value = false
   emit('close')
   router.push(`/o/${route.params.orgSlug}`)

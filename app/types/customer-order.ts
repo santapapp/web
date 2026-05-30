@@ -86,6 +86,10 @@ export interface CustomerOrderDetail {
   dining_table: OrderDiningTable | null
   items: CustomerOrderItem[]
   created_at: string
+  // Atomic Checkout additions
+  qris_data?: { qr_url?: string; qr_string?: string } | null
+  payment_expires_at?: string | null
+  server_time?: string | null
 }
 
 export interface CustomerOrderDetailResponse {

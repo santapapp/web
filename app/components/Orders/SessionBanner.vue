@@ -35,7 +35,8 @@ const modeIcon = computed(() => {
       <!-- Info Context -->
       <div class="min-w-0">
         <p class="text-[10px] font-extrabold uppercase tracking-widest text-amber-700 leading-none mb-1">
-          Sesi Aktif • {{ modeLabel }}
+          <template v-if="session.sessionMode.value === 'table'">Meja Aktif</template>
+          <template v-else>Sesi Aktif • {{ modeLabel }}</template>
         </p>
         <p class="text-xs sm:text-sm font-bold text-stone-900 leading-normal truncate">
           <span v-if="session.sessionMode.value === 'table'">Anda sedang memesan untuk <strong>Meja {{ tableLabel }}</strong></span>
@@ -45,6 +46,7 @@ const modeIcon = computed(() => {
     </div>
     
     <UBadge
+      v-if="session.sessionMode.value === 'open_bill'"
       label="Sesi Aktif"
       color="success"
       variant="soft"

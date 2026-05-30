@@ -1,5 +1,5 @@
 <template>
-  <main ref="mainRef">
+  <main ref="mainRef" class="overflow-x-hidden w-full">
 
     <!-- ── HERO — Curtain Reveal ──────────────────────────── -->
     <AppPageHeroCurtain
@@ -23,8 +23,8 @@
     >
       <!-- Background image -->
       <img
-        src="https://images.unsplash.com/photo-1552581230-c013b1e4c987?w=1800&q=80&fit=crop"
-        alt="Kolaborasi tim support"
+        src="https://images.unsplash.com/photo-1556740734-7f95cb935515?w=1800&q=80&fit=crop"
+        alt="Barista ramah melayani transaksi POS pelanggan di kafe"
         class="absolute inset-0 w-full h-full object-cover object-center"
         loading="eager"
       />

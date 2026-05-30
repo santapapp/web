@@ -15,7 +15,7 @@
 const props = defineProps<{
   open: boolean
   hasCartItems?: boolean
-  sessionMode?: 'table' | 'open_bill' | null
+  sessionMode?: 'table' | 'open_bill' | 'tracking_order' | null
 }>()
 
 const emit = defineEmits<{

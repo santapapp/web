@@ -13,6 +13,21 @@ import { ref } from 'vue'
 import type { CustomerOrderDetail } from '~/types/customer-order'
 import { mapToHistoryStatus } from '~/composables/useOrderHistory'
 
+/**
+ * Status yang menandakan order sudah selesai dan tidak perlu di-refresh lagi.
+ * Middleware backend (EnsureCustomerToken) mengembalikan 403 jika bill_status bukan 'open'.
+ */
+const isOrderTerminal = (raw: {
+  bill_status?: string
+  payment_status?: string
+  order_status?: string
+}): boolean => {
+  if (raw.bill_status === 'closed' || raw.bill_status === 'cancelled') return true
+  if (raw.payment_status === 'paid' || raw.payment_status === 'cancelled') return true
+  if (raw.order_status === 'cancelled') return true
+  return false
+}
+
 export const useActiveOrder = (orgSlug: string) => {
   const api = useCustomerApi()
   const sessionStore = useCustomerSessionStore()
@@ -24,10 +39,22 @@ export const useActiveOrder = (orgSlug: string) => {
   /**
    * Refresh status order aktif dari backend.
    * Menggunakan X-Public-Token dari session store.
+   *
+   * Behavior:
+   * - 403/401: token tidak valid atau order sudah closed → clear order, stop
+   * - 404: order tidak ditemukan → clear order, stop
+   * - Order terminal (paid/closed/cancelled): sync ke history, clear active
+   * - Error network/lainnya: tampilkan pesan error, tapi jangan clear order
    */
   const refresh = async (): Promise<void> => {
     if (!import.meta.client) return
     if (!sessionStore.hasSession) return
+
+    // Jangan polling order backend jika session ini murni table_order lokal
+    if (sessionStore.sessionType === 'table_order') {
+      order.value = null
+      return
+    }
 
     isRefreshing.value = true
     refreshError.value = null
@@ -41,7 +68,7 @@ export const useActiveOrder = (orgSlug: string) => {
         return
       }
 
-      // Map ke CustomerOrderDetail (gunakan field yang sudah ada)
+      // Map ke CustomerOrderDetail
       order.value = {
         id: raw.id,
         order_number: raw.order_number ?? '-',
@@ -91,9 +118,28 @@ export const useActiveOrder = (orgSlug: string) => {
 
       // Sync ke history localStorage
       syncToHistory()
+
+      // Jika order sudah terminal → pindahkan ke history tapi jangan tampilkan sebagai aktif
+      if (isOrderTerminal(raw)) {
+        order.value = null
+      }
     } catch (err: any) {
-      refreshError.value = err?.message ?? 'Gagal memuat status order.'
-      order.value = null
+      const statusCode = err?.statusCode ?? err?.status
+
+      if (statusCode === 403 || statusCode === 401) {
+        // Token tidak valid atau order sudah closed — ini expected behavior
+        // Middleware EnsureCustomerToken mengembalikan 403 jika bill_status bukan 'open'
+        // Jangan tampilkan sebagai error ke user — cukup clear active order
+        order.value = null
+        refreshError.value = null
+      } else if (statusCode === 404) {
+        // Order tidak ditemukan
+        order.value = null
+        refreshError.value = null
+      } else {
+        // Error lain (network, 500) — tampilkan pesan tapi jangan clear state yang ada
+        refreshError.value = err?.message ?? 'Gagal memuat status pesanan.'
+      }
     } finally {
       isRefreshing.value = false
     }

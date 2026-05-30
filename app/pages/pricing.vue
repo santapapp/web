@@ -1,5 +1,5 @@
 <template>
-  <main ref="mainRef">
+  <main ref="mainRef" class="overflow-x-hidden w-full">
 
     <!-- ── HERO — Curtain Reveal ──────────────────────────── -->
     <AppPageHeroCurtain

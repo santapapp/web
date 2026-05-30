@@ -7,7 +7,7 @@
  */
 
 import { defineStore } from 'pinia'
-import type { CustomerSessionOrg, CustomerSessionTable, StoredSessionOpenBill } from '~/types/customer-session'
+import type { CustomerSessionOrg, CustomerSessionTable, StoredSessionOpenBill, CustomerSessionType } from '~/types/customer-session'
 
 const STORAGE_KEY = 'customer_session'
 
@@ -17,6 +17,13 @@ interface CustomerSessionState {
   organization: CustomerSessionOrg | null
   table: CustomerSessionTable | null
   openBill: StoredSessionOpenBill | null
+  /**
+   * Tipe session aktif — ditentukan HANYA dari response backend.
+   * 'table_order' : scan QR meja / input manual kode meja
+   * 'open_bill'   : scan QR open bill dari kasir
+   * null          : tidak ada session aktif
+   */
+  sessionType: CustomerSessionType | null
   restored: boolean
 }
 
@@ -27,6 +34,7 @@ export const useCustomerSessionStore = defineStore('customer-session', {
     organization: null,
     table: null,
     openBill: null,
+    sessionType: null,
     restored: false
   }),
 
@@ -51,21 +59,29 @@ export const useCustomerSessionStore = defineStore('customer-session', {
 
   actions: {
     /**
-     * Simpan session token ke localStorage dan state.
-     * Dipanggil setelah sukses POST /api/v1/customer/sessions/start
+     * Simpan session ke localStorage dan state.
+     * Dipanggil setelah sukses scan QR meja atau QR open bill.
+     *
+     * session_type WAJIB diisi dari response backend:
+     * - 'table_order' : scan QR meja / input manual
+     * - 'open_bill'   : scan QR open bill dari kasir
+     *
+     * open_bill boleh null (untuk table order biasa).
      */
     setSession(data: {
       session_token: string
       expires_at: string
       organization: CustomerSessionOrg
       table: CustomerSessionTable
-      open_bill: StoredSessionOpenBill
+      session_type: CustomerSessionType
+      open_bill: StoredSessionOpenBill | null
     }) {
       this.sessionToken = data.session_token
       this.expiresAt = data.expires_at
       this.organization = data.organization
       this.table = data.table
-      this.openBill = data.open_bill
+      this.sessionType = data.session_type
+      this.openBill = data.open_bill  // null untuk table order
 
       this.persist()
     },
@@ -103,6 +119,7 @@ export const useCustomerSessionStore = defineStore('customer-session', {
         this.organization = meta.organization
         this.table = meta.table
         this.openBill = meta.openBill
+        this.sessionType = meta.sessionType ?? null  // backward compat: meta lama tidak punya sessionType
 
         if (this.isExpired) {
           this.clear()
@@ -128,7 +145,8 @@ export const useCustomerSessionStore = defineStore('customer-session', {
           expiresAt: this.expiresAt,
           organization: this.organization,
           table: this.table,
-          openBill: this.openBill
+          openBill: this.openBill,
+          sessionType: this.sessionType
         })
       )
     },
@@ -139,6 +157,7 @@ export const useCustomerSessionStore = defineStore('customer-session', {
       this.organization = null
       this.table = null
       this.openBill = null
+      this.sessionType = null
 
       if (import.meta.client) {
         localStorage.removeItem(STORAGE_KEY)

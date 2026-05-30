@@ -10,15 +10,19 @@ const orgSlug = computed(() => String(route.params.orgSlug || ''))
 
 // Composables
 const customerSession = useCustomerSession()
-const { openBill, billPending, fetchOpenBill } = useCustomerOrder()
+const sessionStore = useCustomerSessionStore()
+const { openBill, billPending, fetchOpenBill, fetchOrderStatus } = useCustomerOrder()
 const {
   payment,
   isPaid,
   isFailed,
+  isExpired,
+  countdown,
   isPolling,
   initiatePending,
   cancelPending,
   initiatePayment,
+  setExternalPayment,
   startPolling,
   stopPolling,
   cancelPayment
@@ -32,7 +36,56 @@ const qrDataUrl = ref<string | null>(null)
 // Clear session when payment is successful to prevent 403 Forbidden on future requests
 watch(isPaid, (newVal) => {
   if (newVal) {
+    if (openBill.value) {
+      const raw = openBill.value
+      const history = useOrderHistory(orgSlug.value)
+      history.addOrUpdate({
+        order_public_id: raw.public_token,
+        order_code: raw.order_number,
+        org_slug: orgSlug.value,
+        org_name: customerSession.organization.value?.name ?? undefined,
+        table_label: raw.dining_table?.name ?? raw.dining_table?.code ?? undefined,
+        mode: 'table',
+        status: mapToHistoryStatus(raw.order_status, raw.payment_status, raw.bill_status),
+        total_amount: Number(raw.total_amount ?? 0),
+        created_at: raw.created_at ?? new Date().toISOString(),
+        last_seen_at: new Date().toISOString()
+      })
+    }
+
+    const isOpenBill = customerSession.sessionMode.value === 'open_bill'
+    const originalTable = customerSession.table.value
+    const originalOrg = customerSession.organization.value
+
+    // Bersihkan cart lokal untuk order meja biasa
+    const cartMode = isOpenBill ? 'open_bill' : 'table_order'
+    const cart = useOrderCart(ref(cartMode))
+    cart.clearCart()
+
     customerSession.clearSession()
+
+    if (!isOpenBill && originalTable && originalOrg) {
+      // Kembalikan ke table order lokal agar bisa pesan lagi
+      sessionStore.setSession({
+        session_token: originalTable.code,
+        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        organization: originalOrg,
+        table: originalTable,
+        session_type: 'table_order',
+        open_bill: null
+      })
+    }
+
+    // Auto-redirect ke tracking status setelah 2 detik
+    const orderNumber = openBill.value?.order_number
+    if (orderNumber) {
+      setTimeout(() => {
+        router.push({
+          path: `/o/${orgSlug.value}/orders`,
+          query: { order: orderNumber }
+        })
+      }, 2000)
+    }
   }
 })
 
@@ -42,6 +95,13 @@ const formatCurrency = (value: number) =>
     currency: 'IDR',
     maximumFractionDigits: 0
   }).format(value)
+
+// Format countdown (detik) menjadi mm:ss
+const formatCountdown = (seconds: number): string => {
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return `${m}:${String(s).padStart(2, '0')}`
+}
 
 const formatTime = (isoString: string) => {
   return new Date(isoString).toLocaleTimeString('id-ID', {
@@ -88,27 +148,115 @@ const handleCancelPayment = async () => {
 }
 
 onMounted(async () => {
+  // Pre-load session dari URL query parameter jika ada
+  let isTableOrder = false
+  let trackingIdentifier = ''
+
+  if (route.query.order && typeof route.query.order === 'string') {
+    isTableOrder = true
+    trackingIdentifier = route.query.order
+  } else if (route.query.bill && typeof route.query.bill === 'string') {
+    sessionStore.sessionToken = route.query.bill
+    sessionStore.sessionType = 'open_bill'
+    sessionStore.persist()
+    trackingIdentifier = route.query.bill
+  }
+
   // Restore session
   const isValid = customerSession.restoreLocal()
 
-  if (!isValid) {
+  if (!isValid && !isTableOrder) {
     // Redirect ke orders agar user bisa mulai sesi baru
     router.replace(`/o/${orgSlug.value}/orders`)
     return
   }
 
   // Load order aktif
-  await fetchOpenBill()
+  if (isTableOrder) {
+    await fetchOrderStatus(orgSlug.value, trackingIdentifier)
+  } else {
+    await fetchOpenBill()
+  }
 
-  // Jika order sudah terbayar atau pending
-  if (openBill.value?.payment_status === 'paid') {
+  const bill = openBill.value
+
+  if (!bill) {
+    // Tidak ada order aktif sama sekali — kembali ke orders
+    router.replace(`/o/${orgSlug.value}/orders`)
+    return
+  }
+
+  if (bill.payment_status === 'paid') {
+    // Order sudah terbayar
     isPaid.value = true
-  } else if (openBill.value?.payment_status === 'pending') {
-    await handleInitiatePayment()
+    
+    if (isTableOrder) {
+      // Untuk Table Order, hapus cart karena pembayaran berhasil
+      const cart = useOrderCart(ref('table_order'))
+      cart.clearCart()
+    } else {
+      const isOpenBill = customerSession.sessionMode.value === 'open_bill'
+      const originalTable = customerSession.table.value
+      const originalOrg = customerSession.organization.value
+      
+      customerSession.clearSession()
+      
+      if (!isOpenBill && originalTable && originalOrg) {
+        sessionStore.setSession({
+          session_token: originalTable.code,
+          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+          organization: originalOrg,
+          table: originalTable,
+          session_type: 'table_order',
+          open_bill: null
+        })
+      }
+    }
+    return
+  }
+
+  // Order closed tapi bukan karena paid (expired/invalid dari sisi backend)
+  if (bill.bill_status === 'closed') {
+    isExpired.value = true
+    isFailed.value = true
+    return
+  }
+
+  if (bill.payment_status === 'pending' || !qrDataUrl.value) {
+    const qrisData = bill.qris_data
+    const expiresAt = bill.payment_expires_at
+
+    if (qrisData && (qrisData.qr_url || qrisData.qr_string) && expiresAt) {
+      const qrSource = qrisData.qr_url || qrisData.qr_string
+      qrDataUrl.value = await generateQrDataUrl(qrSource!)
+      setExternalPayment(
+        qrSource!,
+        bill.payment_reference,
+        expiresAt,
+        bill.server_time
+      )
+      if (isTableOrder) {
+        startPolling(async () => {
+          const res = await fetchOrderStatus(orgSlug.value, trackingIdentifier)
+          return res.data?.payment_status
+        })
+      } else {
+        startPolling()
+      }
+    } else if (!isTableOrder) {
+      // Inisiasi mandiri untuk Open Bill
+      await handleInitiatePayment()
+    } else {
+      // Fallback jika tidak ada data QR di Table Order (seharusnya tidak terjadi)
+      isFailed.value = true
+      initError.value = 'Data pembayaran tidak ditemukan. Silakan kembali ke menu dan coba checkout ulang.'
+    }
   }
 })
 
-onUnmounted(() => stopPolling())
+onUnmounted(() => {
+  stopPolling()
+})
 </script>
 
 <template>
@@ -153,11 +301,21 @@ onUnmounted(() => stopPolling())
           </NuxtLink>
         </div>
 
-        <!-- ── Payment Gagal ── -->
+        <!-- ── Payment Expired (timeout 5 menit) ── -->
+        <div v-else-if="isExpired" class="expired-card">
+          <div class="state-icon">⏰</div>
+          <h2>Waktu pembayaran habis</h2>
+          <p>Pesanan belum dibuat karena pembayaran belum selesai. Silakan coba bayar ulang atau buat ulang pesanan.</p>
+          <NuxtLink :to="`/o/${orgSlug}/orders`" class="btn-primary-full">
+            Kembali ke Menu
+          </NuxtLink>
+        </div>
+
+        <!-- ── Payment Dibatalkan ── -->
         <div v-else-if="isFailed" class="failed-card">
           <div class="state-icon">❌</div>
-          <h2>Pembayaran Gagal</h2>
-          <p>Transaksi dibatalkan atau kedaluwarsa. Silakan coba lagi.</p>
+          <h2>Pembayaran Dibatalkan</h2>
+          <p>Transaksi dibatalkan. Silakan coba lagi jika ingin melanjutkan pembayaran.</p>
           <button class="btn-primary-full" @click="handleInitiatePayment">
             Coba Lagi
           </button>
@@ -216,40 +374,42 @@ onUnmounted(() => stopPolling())
           <!-- QRIS Payment Section -->
           <div v-if="openBill && openBill.total_amount > 0" class="qris-section">
 
-            <!-- QR Code Display -->
-            <div v-if="qrDataUrl && !isPaid && !isFailed" class="qr-container">
-              <div class="qr-header">
-                <h3>Scan QRIS untuk Membayar</h3>
-                <div v-if="isPolling" class="polling-indicator">
-                  <span class="poll-dot" />
-                  Menunggu pembayaran...
+              <!-- QR Code Display -->
+              <div v-if="qrDataUrl && !isPaid && !isFailed && !isExpired" class="qr-container">
+                <div class="qr-header">
+                  <h3>Scan QRIS untuk Membayar</h3>
+                  <div v-if="isPolling" class="polling-indicator">
+                    <span class="poll-dot" />
+                    Menunggu pembayaran...
+                  </div>
                 </div>
+
+                <div class="qr-image-wrapper">
+                  <img :src="qrDataUrl" alt="QRIS QR Code" class="qr-image" />
+                  <div v-if="isPolling" class="qr-overlay-pulse" />
+                </div>
+
+                <!-- Countdown timer -->
+                <div v-if="countdown > 0" class="qr-countdown" :class="{ 'countdown-urgent': countdown < 60 }">
+                  <span class="countdown-icon">⏱</span>
+                  <span>Berlaku {{ formatCountdown(countdown) }}</span>
+                </div>
+
+                <p class="qr-hint">
+                  Buka aplikasi bank atau dompet digital Anda, pilih "Scan QR", lalu arahkan ke kode di atas.
+                </p>
+
+                <button
+                  class="btn-cancel"
+                  :disabled="cancelPending"
+                  @click="handleCancelPayment"
+                >
+                  {{ cancelPending ? 'Membatalkan...' : 'Batalkan Pembayaran' }}
+                </button>
               </div>
-
-              <div class="qr-image-wrapper">
-                <img :src="qrDataUrl" alt="QRIS QR Code" class="qr-image" />
-                <div v-if="isPolling" class="qr-overlay-pulse" />
-              </div>
-
-              <div v-if="payment?.expires_at" class="qr-expiry">
-                ⏱ Berlaku sampai pukul {{ formatTime(payment.expires_at) }}
-              </div>
-
-              <p class="qr-hint">
-                Buka aplikasi bank atau dompet digital Anda, pilih "Scan QR", lalu arahkan ke kode di atas.
-              </p>
-
-              <button
-                class="btn-cancel"
-                :disabled="cancelPending"
-                @click="handleCancelPayment"
-              >
-                {{ cancelPending ? 'Membatalkan...' : 'Batalkan Pembayaran' }}
-              </button>
-            </div>
 
             <!-- Initiate Payment Button -->
-            <div v-else-if="!qrDataUrl && !isPaid && !isFailed" class="initiate-section">
+            <div v-else-if="!qrDataUrl && !isPaid && !isFailed && !isExpired" class="initiate-section">
               <div class="qris-logo">
                 <span class="qris-text">QRIS</span>
               </div>
@@ -567,11 +727,30 @@ onUnmounted(() => stopPolling())
   50% { opacity: 0.3; }
 }
 
-.qr-expiry {
-  font-size: 13px;
+.qr-countdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 14px;
   color: #e67e22;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 12px;
+  letter-spacing: 0.02em;
+}
+
+.countdown-icon {
+  font-size: 16px;
+}
+
+.countdown-urgent {
+  color: #c0392b;
+  animation: urgentPulse 1s infinite;
+}
+
+@keyframes urgentPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
 .qr-hint {
@@ -602,13 +781,18 @@ onUnmounted(() => stopPolling())
   cursor: not-allowed;
 }
 
-/* ── Success / Failed Cards ──────────────────────────── */
-.success-card, .failed-card {
+/* ── Success / Failed / Expired Cards ───────────────── */
+.success-card, .failed-card, .expired-card {
   text-align: center;
   background: white;
   border-radius: 20px;
   padding: 40px 24px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+.expired-card {
+  border: 1px solid #fde8cc;
+  background: linear-gradient(135deg, #fffbf5, #fff8f0);
 }
 
 .success-icon {

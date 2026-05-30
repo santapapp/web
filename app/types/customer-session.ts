@@ -3,6 +3,12 @@
 // Validasi sesi aktif → GET /v1/customer/order (header: X-Public-Token)
 
 /**
+ * Tipe session yang dihasilkan dari response backend.
+ * Hanya ada 2 nilai yang valid — tidak ada heuristik.
+ */
+export type CustomerSessionType = 'table_order' | 'open_bill' | 'tracking_order'
+
+/**
  * Payload untuk startSession() di composable.
  * Hanya membutuhkan qr_token — scan QR meja sudah cukup.
  * organization_slug dan table_code tidak diperlukan oleh API.
@@ -72,4 +78,23 @@ export interface StoredSessionOpenBill {
   bill_number: string
   status: 'open' | 'locked' | 'closed'
   total_amount: number
+}
+
+/**
+ * Hasil normalisasi response dari backend sebelum disimpan ke store.
+ * Dipakai secara internal di useCustomerSession.ts.
+ *
+ * session_type ditentukan HANYA dari response backend:
+ * - 'table_order': scan QR meja / input manual kode meja
+ * - 'open_bill': scan QR open bill dari kasir (ada field open_bill/bill eksplisit)
+ *
+ * open_bill = null untuk table order biasa.
+ */
+export interface NormalizedSession {
+  session_token: string
+  expires_at: string
+  organization: CustomerSessionOrg
+  table: CustomerSessionTable
+  session_type: CustomerSessionType
+  open_bill: StoredSessionOpenBill | null
 }

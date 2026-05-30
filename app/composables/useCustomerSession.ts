@@ -2,20 +2,13 @@ import { storeToRefs } from 'pinia'
 import type {
   CustomerSessionOrg,
   CustomerSessionTable,
-  StoredSessionOpenBill
+  StoredSessionOpenBill,
+  NormalizedSession
 } from '~/types/customer-session'
 import type { CustomerApiError } from './useCustomerApi'
 
 type StartSessionOptions = {
   orgSlug?: string
-}
-
-type NormalizedSession = {
-  session_token: string
-  expires_at: string
-  organization: CustomerSessionOrg
-  table: CustomerSessionTable
-  open_bill: StoredSessionOpenBill
 }
 
 const DEFAULT_SESSION_HOURS = 24
@@ -103,55 +96,90 @@ const normalizeTable = (raw: any): CustomerSessionTable | null => {
   }
 }
 
-const normalizeSessionResponse = (response: any): NormalizedSession | null => {
+/**
+ * Normalisasi response dari backend menjadi NormalizedSession.
+ *
+ * ATURAN PENTING:
+ * - sessionType = 'table_order' jika response hanya punya field 'order' (dari scan QR meja)
+ * - sessionType = 'open_bill' HANYA jika response punya field 'open_bill' atau 'bill' secara eksplisit
+ *
+ * Jangan pernah menetapkan sessionType 'open_bill' berdasarkan:
+ * - keberadaan order_number
+ * - keberadaan public_token
+ * - keberadaan active order
+ * - input manual nomor meja
+ */
+const normalizeSessionResponse = (response: any, fallbackToken?: string): NormalizedSession | null => {
   const root = unwrapData(response)
   if (!isObject(root)) return null
 
-  const order = root.order ?? root.open_bill ?? root.bill ?? root.active_order
-  const organization = normalizeOrg(root.organization ?? root.org ?? order?.organization)
-  const table = normalizeTable(root.table ?? root.dining_table ?? order?.dining_table ?? order?.table)
+  // open bill HANYA dari key eksplisit 'open_bill' atau 'bill'
+  const openBillData = root.open_bill ?? root.bill ?? null
 
+  const organization = normalizeOrg(
+    root.organization ?? root.org ?? openBillData?.organization
+  )
+  const table = normalizeTable(
+    root.table ?? root.dining_table ?? openBillData?.dining_table
+  )
+
+  if (!organization || !table) return null
+
+  // sessionType ditentukan HANYA dari response — tidak ada heuristik frontend
+  const sessionType: NormalizedSession['session_type'] = openBillData
+    ? 'open_bill'
+    : 'table_order'
+
+  // session token fallback:
+  // 1. root.session_token / root.public_token / root.token
+  // 2. openBillData?.public_token
+  // 3. qrToken (dikirim via arg fallbackToken)
+  // JANGAN ambil dari root.order karena kita tidak membuat order di awal
   const sessionToken =
     root.session_token ??
     root.sessionToken ??
     root.public_token ??
     root.token ??
-    order?.public_token ??
-    order?.session_token
+    openBillData?.public_token ??
+    fallbackToken
 
-  if (!sessionToken || !organization || !table) return null
+  if (!sessionToken) return null
 
-  const billSource = root.open_bill ?? root.bill ?? order ?? {}
+  // open_bill: null untuk table order, objek untuk open bill session
+  const normalizedOpenBill: StoredSessionOpenBill | null = openBillData
+    ? {
+        id: String(openBillData.id ?? openBillData.public_token ?? sessionToken),
+        bill_number: String(openBillData.bill_number ?? openBillData.order_number ?? openBillData.number ?? '-'),
+        status: normalizeBillStatus(openBillData.status ?? openBillData.bill_status),
+        total_amount: Number(openBillData.total_amount ?? openBillData.total ?? 0)
+      }
+    : null
 
   return {
     session_token: String(sessionToken),
-    expires_at: String(root.expires_at ?? root.expiresAt ?? order?.expires_at ?? fallbackExpiresAt()),
+    expires_at: String(root.expires_at ?? root.expiresAt ?? fallbackExpiresAt()),
     organization,
     table,
-    open_bill: {
-      id: String(billSource.id ?? billSource.public_token ?? sessionToken),
-      bill_number: String(billSource.bill_number ?? billSource.order_number ?? billSource.number ?? '-'),
-      status: normalizeBillStatus(billSource.status ?? billSource.bill_status),
-      total_amount: Number(billSource.total_amount ?? billSource.total ?? 0)
-    }
+    session_type: sessionType,
+    open_bill: normalizedOpenBill
   }
 }
 
+/**
+ * Sync response dari GET /v1/customer/order ke session store.
+ *
+ * Response ini adalah OrderDetailResource yang mengandung order_type.
+ * order_type adalah sumber kebenaran untuk menentukan tipe session:
+ * - 'table_order' → session table biasa, jangan isi openBill
+ * - 'open_bill'   → update openBill di store
+ */
 const syncValidationResponse = (response: any) => {
   const store = useCustomerSessionStore()
-  const normalized = normalizeSessionResponse(response)
-
-  if (normalized) {
-    store.setSession(normalized)
-    return normalized.organization.slug
-  }
-
   const root = unwrapData(response)
   if (!isObject(root)) return null
 
-  const order = root.order ?? root.open_bill ?? root.bill ?? root
-  const organization = normalizeOrg(root.organization ?? root.org ?? order?.organization)
-  const table = normalizeTable(root.table ?? root.dining_table ?? order?.dining_table ?? order?.table)
+  const organization = normalizeOrg(root.organization ?? root.org ?? root.dining_table?.organization)
+  const table = normalizeTable(root.dining_table ?? root.table)
 
   if (organization) store.organization = organization
   if (table) store.table = table
@@ -159,13 +187,31 @@ const syncValidationResponse = (response: any) => {
     store.expiresAt = String(root.expires_at ?? root.expiresAt)
   }
 
-  if (isObject(order) && (order.order_number || order.bill_number || order.public_token)) {
-    store.setOpenBill({
-      id: String(order.id ?? order.public_token ?? store.sessionToken ?? ''),
-      bill_number: String(order.bill_number ?? order.order_number ?? '-'),
-      status: normalizeBillStatus(order.status ?? order.bill_status),
-      total_amount: Number(order.total_amount ?? order.total ?? 0)
-    })
+  // Gunakan order_type dari backend sebagai penentu tipe session
+  const orderType = String(root.order_type ?? root.type ?? 'table_order')
+  const isOpenBill = orderType === 'open_bill'
+
+  if (isOpenBill) {
+    store.sessionType = 'open_bill'
+    // Update openBill hanya untuk open bill session
+    if (root.order_number || root.public_token) {
+      store.setOpenBill({
+        id: String(root.id ?? root.public_token ?? store.sessionToken ?? ''),
+        bill_number: String(root.order_number ?? root.bill_number ?? '-'),
+        status: normalizeBillStatus(root.bill_status),
+        total_amount: Number(root.total_amount ?? root.total ?? 0)
+      })
+    }
+  } else {
+    // Table order → pastikan sessionType benar
+    // Jangan ubah openBill (tetap null untuk table order)
+    if (!store.sessionType) {
+      store.sessionType = 'table_order'
+    } else if (store.sessionType !== 'table_order') {
+      // Koreksi jika sessionType sebelumnya salah
+      store.sessionType = 'table_order'
+      store.openBill = null
+    }
   }
 
   return organization?.slug ?? null
@@ -179,7 +225,7 @@ export const useCustomerSession = () => {
   const startSession = async (qrToken: string, options: StartSessionOptions = {}) => {
     try {
       const response = await api.scanTable(qrToken)
-      const normalized = normalizeSessionResponse(response)
+      const normalized = normalizeSessionResponse(response, qrToken)
 
       if (!normalized) {
         store.clear()
@@ -211,6 +257,49 @@ export const useCustomerSession = () => {
       return { success: true, data: response }
     } catch (error) {
       return { success: false, error: error as CustomerApiError }
+    }
+  }
+
+  const startSessionForOpenBill = async (billToken: string, options: StartSessionOptions = {}) => {
+    // Inject token to localStorage manually so validateSession can use it
+    store.sessionToken = billToken
+    store.sessionType = 'open_bill'
+    store.persist()
+
+    try {
+      const response = await api.validateSession()
+      const root = unwrapData(response)
+      
+      if (!isObject(root) || (root.order_type !== 'open_bill' && root.type !== 'open_bill')) {
+         store.clear()
+         return {
+           success: false,
+           error: 'Token bukan merupakan Open Bill yang valid.'
+         }
+      }
+
+      if (
+        options.orgSlug &&
+        root.dining_table?.organization?.slug &&
+        normalizeSlug(root.dining_table.organization.slug) !== normalizeSlug(options.orgSlug)
+      ) {
+        store.clear()
+        return {
+          success: false,
+          correctSlug: root.dining_table.organization.slug,
+          error: 'Bill tidak cocok dengan outlet ini.'
+        }
+      }
+
+      syncValidationResponse(response)
+      return { success: true, data: response }
+    } catch (error) {
+      store.clear()
+      const apiErr = error as CustomerApiError
+      if (apiErr?.statusCode === 404 || apiErr?.statusCode === 401) {
+          return { success: false, error: 'Bill tidak valid atau sudah kedaluwarsa.' }
+      }
+      return { success: false, error: 'Gagal memuat Open Bill.' }
     }
   }
 
@@ -261,6 +350,11 @@ export const useCustomerSession = () => {
       return false
     }
 
+    // Untuk table_order, session bersifat lokal, tidak perlu divalidasi ke backend.
+    if (store.sessionType === 'table_order') {
+      return true
+    }
+
     try {
       const response = await api.validateSession()
       syncValidationResponse(response)
@@ -282,6 +376,11 @@ export const useCustomerSession = () => {
     if (normalizeSlug(store.organization.slug) !== normalizeSlug(orgSlug)) {
       store.clear()
       return false
+    }
+
+    // Untuk table_order, session bersifat lokal, tidak perlu divalidasi ke backend.
+    if (store.sessionType === 'table_order') {
+      return true
     }
 
     try {
@@ -312,16 +411,22 @@ export const useCustomerSession = () => {
   const clearSession = () => store.clear()
 
   /**
-   * Mode sesi saat ini: 'table' untuk table_order, 'open_bill' untuk open bill.
-   * null jika tidak ada sesi aktif.
+   * Mode sesi saat ini.
+   *
+   * Ditentukan HANYA dari store.sessionType yang di-set dari response backend.
+   * Tidak ada heuristik — tidak ada pengecekan bill_number atau openBill.
+   *
+   * - 'table': table order biasa (scan QR meja / input manual)
+   * - 'open_bill': open bill dari kasir
+   * - null: tidak ada session aktif
    */
-  const sessionMode = computed<'table' | 'open_bill' | null>(() => {
+  const sessionMode = computed<'table' | 'open_bill' | 'tracking_order' | null>(() => {
     if (!store.hasSession) return null
-    // open_bill ditandai dengan adanya bill_number yang bukan '-'
-    if (store.openBill?.bill_number && store.openBill.bill_number !== '-') {
-      // Cek apakah ini benar-benar open bill mode berdasarkan bill_number format
-      return 'open_bill'
-    }
+    if (store.sessionType === 'open_bill') return 'open_bill'
+    if (store.sessionType === 'tracking_order') return 'tracking_order'
+    if (store.sessionType === 'table_order') return 'table'
+    // Fallback: ada session tapi sessionType belum di-set (data lama dari localStorage)
+    // Default ke 'table' karena table order jauh lebih umum
     return 'table'
   })
 
@@ -359,6 +464,7 @@ export const useCustomerSession = () => {
     ...refs,
     startSession,
     startSessionFromToken,
+    startSessionForOpenBill,
     restoreAndValidate,
     restoreAndValidateForOrg,
     restoreLocal,

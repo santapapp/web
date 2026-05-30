@@ -45,7 +45,16 @@ export const useCustomerApi = () => {
 
   const getToken = (): string | null => {
     if (!import.meta.client) return null
-    return localStorage.getItem(SESSION_STORAGE_KEY)
+    try {
+      const stored = localStorage.getItem(SESSION_STORAGE_KEY)
+      if (!stored) return null
+      const parsed = JSON.parse(stored)
+      // table_order = lokal, jangan kirim token ke backend
+      if (parsed.sessionType === 'table_order') return null
+      return parsed.sessionToken || null
+    } catch {
+      return null
+    }
   }
 
   const buildHeaders = (requiresToken = true): Record<string, string> => {
@@ -144,9 +153,7 @@ export const useCustomerApi = () => {
 
     async validateSession(): Promise<any> {
       return firstSuccessfulRequest<any>([
-        '/v1/customer/order',
-        '/api/v1/customer/order',
-        '/api/v1/customer/sessions/current'
+        '/v1/customer/order'
       ])
     },
 
@@ -184,6 +191,13 @@ export const useCustomerApi = () => {
         }
       }
       return this.getMenu(orgId, false)
+    },
+
+    async createOrder(payload: any): Promise<any> {
+      return publicRequest<any>('/v1/customer/order', {
+        method: 'POST',
+        body: payload
+      })
     },
 
     async addItems(payload: CreateOrderPayload): Promise<any> {

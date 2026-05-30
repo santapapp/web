@@ -13,12 +13,13 @@ const orgSlug = computed(() => String(route.params.orgSlug || ''))
 const {
   mode,
   tableToken,
+  billToken,
   orderToken,
   invalidReason
 } = useOrderMode()
 
 const customerSession = useCustomerSession()
-const sessionLoading = ref(mode.value === 'table_order' && Boolean(tableToken.value))
+const sessionLoading = ref(mode.value !== 'invalid')
 const sessionError = ref<string | null>(null)
 const isSessionReady = ref(false)
 const showScanner = ref(false)
@@ -42,7 +43,7 @@ const {
 } = useCustomerOrder()
 
 const cartMode = computed<CartMode>(() =>
-  String(order.value?.order_type || '').includes('open_bill') ? 'open_bill' : 'table_order'
+  customerSession.sessionMode.value === 'open_bill' ? 'open_bill' : 'table_order'
 )
 
 const cart = useOrderCart(cartMode)
@@ -59,9 +60,7 @@ const tableLabel = computed(() => {
   return table.name || table.code
 })
 
-const isOpenBill = computed(() =>
-  String(order.value?.order_type || '').includes('open_bill')
-)
+const isOpenBill = computed(() => customerSession.sessionMode.value === 'open_bill')
 
 const statusErrorMessage = computed(() =>
   statusError.value?.message ?? null
@@ -76,10 +75,14 @@ const loadOrderingUi = async () => {
   isSessionReady.value = true
   sessionError.value = null
 
-  const [menuResult, orderResult] = await Promise.all([
-    loadForSession(),
-    fetchOpenBill()
-  ])
+  // fetchOpenBill() is ONLY for open_bill session mode
+  const fetchTasks: Promise<any>[] = [loadForSession()]
+  if (isOpenBill.value) {
+    fetchTasks.push(fetchOpenBill())
+  }
+
+  const results = await Promise.all(fetchTasks)
+  const orderResult = isOpenBill.value ? results[1] : null
 
   if (orderResult && !orderResult.success) {
     customerSession.clearSession()
@@ -121,6 +124,7 @@ let initRun = 0
 
 const initialize = async () => {
   if (!import.meta.client) return
+  await nextTick()
 
   const run = ++initRun
   sessionError.value = null
@@ -144,6 +148,27 @@ const initialize = async () => {
 
   if (mode.value === 'table_order' && tableToken.value) {
     await startSessionFromToken(tableToken.value, true)
+    return
+  }
+
+  if (mode.value === 'open_bill' && billToken.value) {
+    sessionLoading.value = true
+    const result = await customerSession.startSessionForOpenBill(billToken.value, { orgSlug: orgSlug.value })
+    if (!result.success) {
+       sessionLoading.value = false
+       if (result.correctSlug) {
+           await router.replace({
+             path: `/o/${result.correctSlug}/orders`,
+             query: { bill: billToken.value }
+           })
+           return
+       }
+       sessionError.value = result.error ?? 'Bill tidak valid.'
+       return
+    }
+    await loadOrderingUi()
+    sessionLoading.value = false
+    await clearQuery()
     return
   }
 

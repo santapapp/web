@@ -75,7 +75,7 @@ export function mapToHistoryStatus(
   billStatus: RawOrderStatus
 ): OrderHistoryItem['status'] {
   if (paymentStatus === 'paid' || billStatus === 'closed') return 'paid'
-  if (orderStatus === 'cancelled') return 'cancelled'
+  if (orderStatus === 'cancelled' || paymentStatus === 'cancelled') return 'cancelled'
   if (paymentStatus === 'pending') return 'waiting_payment'
   if (orderStatus === 'confirmed' || orderStatus === 'processing') return 'processing'
   if (orderStatus === 'completed') return 'completed'
@@ -148,7 +148,7 @@ export const useOrderHistory = (orgSlug: string) => {
 
     const idx = items.value.findIndex((i) => i.order_public_id === orderPublicId)
     if (idx !== -1) {
-      items.value[idx] = { ...items.value[idx], ...patch }
+      items.value[idx] = { ...items.value[idx], ...patch } as OrderHistoryItem
       writeStorage(orgSlug, items.value)
     }
   }
@@ -180,15 +180,20 @@ export const useOrderHistory = (orgSlug: string) => {
   /**
    * Refresh status order ke backend, lalu update localStorage.
    * Dipanggil saat drawer dibuka.
+   *
+   * Hanya me-refresh item yang belum terminal (non-final status).
+   * Item yang mendapat 403/404 akan ditandai 'expired'.
    */
   const refreshFromBackend = async () => {
     if (!import.meta.client || items.value.length === 0) return
 
     const api = useCustomerApi()
 
-    // Refresh hanya item yang non-final (paid/cancelled/completed tidak perlu)
+    // Status terminal — tidak perlu di-refresh lagi
+    const TERMINAL_STATUSES: OrderHistoryItem['status'][] = ['paid', 'cancelled', 'completed', 'expired']
+
     const toRefresh = items.value.filter(
-      (i) => i.status !== 'paid' && i.status !== 'cancelled' && i.status !== 'completed'
+      (i) => !TERMINAL_STATUSES.includes(i.status ?? 'pending')
     )
 
     await Promise.allSettled(
@@ -210,8 +215,19 @@ export const useOrderHistory = (orgSlug: string) => {
             total_amount: Number(raw.total_amount ?? raw.total ?? item.total_amount ?? 0),
             last_seen_at: new Date().toISOString()
           })
-        } catch {
-          // Gagal refresh satu item — lanjut item berikutnya
+        } catch (err: any) {
+          const statusCode = err?.statusCode ?? err?.status
+
+          if (statusCode === 403 || statusCode === 404) {
+            // Order tidak ditemukan atau session sudah tidak valid
+            // Tandai sebagai 'expired' agar tidak terus di-refresh
+            updateStatus(item.order_public_id, {
+              status: 'expired',
+              last_seen_at: new Date().toISOString()
+            })
+          }
+          // Error lain (network error, 500) — biarkan status tidak berubah
+          // agar bisa di-retry pada kunjungan berikutnya
         }
       })
     )

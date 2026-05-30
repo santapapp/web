@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 import { useRoute } from '#imports'
 
-export type OrderPageMode = 'empty' | 'table_order' | 'order_detail' | 'invalid'
+export type OrderPageMode = 'empty' | 'table_order' | 'open_bill' | 'order_detail' | 'invalid'
 
 export type InvalidOrderModeReason =
   | 'mixed_query'
@@ -12,6 +12,7 @@ export type InvalidOrderModeReason =
 export interface OrderModeState {
   mode: OrderPageMode
   tableToken?: string
+  billToken?: string
   orderToken?: string
   reason?: InvalidOrderModeReason
 }
@@ -65,21 +66,22 @@ export const resolveOrderMode = (query: QueryRecord): OrderModeState => {
     }
   }
 
-  if ((table.isPresent && !table.value) || (order.isPresent && !order.value)) {
+  if ((table.isPresent && !table.value) || (order.isPresent && !order.value) || (bill.isPresent && !bill.value)) {
     return {
       mode: 'invalid',
       reason: 'empty_query_value'
     }
   }
 
-  if (bill.isPresent || bills.isPresent) {
+  // Treat 'bills' as alias for 'bill' if needed, or block it. We'll block bills if we only want 'bill'
+  if (bills.isPresent) {
     return {
       mode: 'invalid',
       reason: 'unsupported_query'
     }
   }
 
-  const activeModes = [table.value, order.value].filter(Boolean)
+  const activeModes = [table.value, order.value, bill.value].filter(Boolean)
 
   if (activeModes.length > 1) {
     return {
@@ -92,6 +94,13 @@ export const resolveOrderMode = (query: QueryRecord): OrderModeState => {
     return {
       mode: 'table_order',
       tableToken: table.value
+    }
+  }
+
+  if (bill.value) {
+    return {
+      mode: 'open_bill',
+      billToken: bill.value
     }
   }
 
@@ -116,6 +125,7 @@ export const useOrderMode = () => {
     state,
     mode: computed(() => state.value.mode),
     tableToken: computed(() => state.value.tableToken),
+    billToken: computed(() => state.value.billToken),
     orderToken: computed(() => state.value.orderToken),
     invalidReason: computed(() => state.value.reason)
   }

@@ -19,6 +19,7 @@ export type OrderHistoryStatus =
   | 'processing'
   | 'completed'
   | 'cancelled'
+  | 'expired'  // order tidak ditemukan / session expired / 403 dari backend
 
 export interface OrderHistoryItem {
   /** public_token dari backend — identifier utama untuk fetch ulang ke API */

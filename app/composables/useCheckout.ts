@@ -15,7 +15,7 @@ type CheckoutCart = ReturnType<typeof useOrderCart>
 
 export const useCheckout = (orgSlug: MaybeRefOrGetter<string>, cart: CheckoutCart) => {
   const router = useRouter()
-  const { placeOrder } = useCustomerOrder()
+  const { placeOrder, createNewOrder } = useCustomerOrder()
   const sessionStore = useCustomerSessionStore()
 
   const submitting = ref(false)
@@ -27,16 +27,40 @@ export const useCheckout = (orgSlug: MaybeRefOrGetter<string>, cart: CheckoutCar
     submitting.value = true
     error.value = null
 
-    const result = await placeOrder(cart.orderPayload.value)
+    const isModeOpenBill = sessionStore.sessionType === 'open_bill'
+    let result
+
+    if (isModeOpenBill) {
+      result = await placeOrder(cart.orderPayload.value)
+    } else {
+      const tableToken = sessionStore.table?.code // wait, what token is stored for table_order? 
+      // table_order actually stores the token in 'code' or we need to extract from URL?
+      // Wait, we need the actual qrToken! It's saved as sessionToken for table_order.
+      const qrToken = sessionStore.sessionToken
+      if (!qrToken) {
+        submitting.value = false
+        error.value = 'Token meja tidak ditemukan.'
+        return
+      }
+      result = await createNewOrder(qrToken, cart.orderPayload.value)
+      
+      // Do not alter sessionStore for Table Order to keep it stateless.
+    }
+
     submitting.value = false
+
+    // Jangan bersihkan cart di sini untuk Table Order.
+    // Cart hanya dibersihkan saat benar-benar paid/success di halaman tracking.
+    if (isModeOpenBill) {
+      cart.clearCart()
+    }
 
     if (!result.success) {
       error.value = result.error?.message ?? 'Gagal mengirim pesanan.'
       return
     }
-
-    // ── Sync ke order history langsung setelah checkout sukses ──────────────
-    if (import.meta.client && result.data) {
+    
+    if (import.meta.client && result.data && isModeOpenBill) {
       try {
         const raw = result.data
         const slug = toValue(orgSlug)
@@ -45,10 +69,6 @@ export const useCheckout = (orgSlug: MaybeRefOrGetter<string>, cart: CheckoutCar
 
         if (slug && publicToken && orderCode) {
           const history = useOrderHistory(slug)
-          const mode = String(raw.order_type ?? '').includes('open_bill')
-            ? 'open_bill'
-            : 'table'
-
           history.addOrUpdate({
             order_public_id: String(publicToken),
             order_code: String(orderCode),
@@ -59,7 +79,7 @@ export const useCheckout = (orgSlug: MaybeRefOrGetter<string>, cart: CheckoutCar
               raw.dining_table?.label ??
               sessionStore.tableName ??
               undefined,
-            mode,
+            mode: 'open_bill',
             status: mapToHistoryStatus(
               raw.order_status ?? raw.status,
               raw.payment_status,
@@ -73,15 +93,20 @@ export const useCheckout = (orgSlug: MaybeRefOrGetter<string>, cart: CheckoutCar
       } catch {
         // Jangan block redirect jika sync history gagal
       }
+
+      // Open bill: langsung bersihkan cart karena order sudah di-sync ke backend open bill
+      cart.clearCart()
     }
 
-    const orderNumber = result.data?.order_number
-    cart.clearCart()
-
-    if (orderNumber) {
+    const trackingIdentifier = isModeOpenBill
+      ? (result.data?.public_token ?? result.data?.token)
+      : (result.data?.order_number ?? result.data?.order_no ?? result.data?.public_token)
+    
+    if (trackingIdentifier) {
+      // Langsung redirect ke halaman payments
       await router.push({
-        path: `/o/${toValue(orgSlug)}/orders`,
-        query: { order: orderNumber }
+        path: `/o/${toValue(orgSlug)}/payments`,
+        query: isModeOpenBill ? { bill: trackingIdentifier } : { order: trackingIdentifier }
       })
       return
     }
