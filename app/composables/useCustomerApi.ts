@@ -215,24 +215,8 @@ export const useCustomerApi = () => {
       const encodedOrg = encodeURIComponent(orgSlug)
       const encodedOrder = encodeURIComponent(orderToken)
 
-      const token = getToken()
-      if (token) {
-        try {
-          const res = await this.getOrder()
-          const raw = res?.data ?? res
-          if (
-            raw &&
-            (String(raw.order_number) === orderToken ||
-              String(raw.public_token) === orderToken ||
-              String(raw.id) === orderToken)
-          ) {
-            return res
-          }
-        } catch {
-          // ignore and fall back
-        }
-      }
-
+      // Table order tracking bersifat PUBLIK — tidak butuh X-Public-Token / session.
+      // Endpoint final: GET /v1/customer/orders/{order_number_or_public_token}
       try {
         return await publicRequest<any>(`/v1/customer/orders/${encodedOrder}`)
       } catch (primaryError) {
@@ -242,6 +226,18 @@ export const useCustomerApi = () => {
           throw primaryError
         }
       }
+    },
+
+    /**
+     * Public payment status untuk TABLE ORDER (poll/refresh).
+     * Endpoint: GET /v1/customer/orders/{order_number_or_public_token}/payment-status
+     *
+     * PENTING: publik — tidak mengirim X-Public-Token, tidak butuh session/table token.
+     * Jangan gunakan endpoint /v1/customer/order/qris-status (itu khusus open bill).
+     */
+    async getPublicPaymentStatus(orderToken: string): Promise<any> {
+      const encodedOrder = encodeURIComponent(orderToken)
+      return publicRequest<any>(`/v1/customer/orders/${encodedOrder}/payment-status`)
     },
 
     async initiateQris(): Promise<any> {

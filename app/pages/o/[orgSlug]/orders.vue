@@ -147,7 +147,10 @@ const initialize = async () => {
   }
 
   if (mode.value === 'table_order' && tableToken.value) {
-    await startSessionFromToken(tableToken.value, true)
+    // Table order: pertahankan token di URL sebagai entry point sementara.
+    // JANGAN clearQuery — token meja bukan session; jika halaman di-refresh, konteks
+    // dibangun ulang dari URL sebagai order BARU (bukan melanjutkan session lama).
+    await startSessionFromToken(tableToken.value, false)
     return
   }
 
@@ -172,14 +175,22 @@ const initialize = async () => {
     return
   }
 
+  // Tanpa query table/order/bill:
+  // - Open bill yang tersimpan (session sah) boleh dipulihkan & dilanjutkan.
+  // - Table order BUKAN session, jadi TIDAK pernah auto-restore. Tampilkan entry state
+  //   agar user scan/masukkan kode meja untuk memulai order baru.
   sessionLoading.value = true
 
   const restored = await customerSession.restoreAndValidateForOrg(orgSlug.value)
   if (run !== initRun) return
 
-  if (restored) {
+  if (restored && customerSession.sessionMode.value === 'open_bill') {
     await loadOrderingUi()
   } else {
+    // Pastikan tidak ada sisa konteks meja yang membuat UI ordering terbuka tanpa scan.
+    if (customerSession.sessionMode.value !== 'open_bill') {
+      customerSession.clearSession()
+    }
     isSessionReady.value = false
     sessionError.value = 'no_session'
   }

@@ -18,6 +18,11 @@ const customerSession = useCustomerSession()
 const isSessionDrawerOpen = ref(false)
 const isOrdersDrawerOpen = ref(false)
 
+// Izinkan halaman child membuka drawer "Pesanan Saya" (mis. tombol Riwayat di landing).
+provide('openOrdersDrawer', () => {
+  isOrdersDrawerOpen.value = true
+})
+
 onMounted(() => {
   customerSession.restoreLocal()
 })

@@ -72,7 +72,8 @@ export const useCustomerOrder = () => {
         items: items.map((item) => ({
           menu_id: item.menu_id,
           quantity: item.quantity,
-          notes: item.notes ?? null,
+          // Contract create table order memakai `note` (singular)
+          note: item.notes ?? null,
           selected_variants: item.selected_variants ?? []
         }))
       }
@@ -168,6 +169,9 @@ export const useCustomerOrder = () => {
   /**
    * Ambil detail/status order publik dari query ?order.
    * Query hanya menjadi entry point; data final selalu dari backend.
+   *
+   * Endpoint publik: GET /v1/customer/orders/{order_number_or_public_token}
+   * Tidak butuh session / X-Public-Token.
    */
   const fetchOrderStatus = async (orgSlug: string, orderToken: string) => {
     statusPending.value = true
@@ -193,6 +197,50 @@ export const useCustomerOrder = () => {
     }
   }
 
+  /**
+   * Poll/refresh status pembayaran TABLE ORDER (publik).
+   * Endpoint: GET /v1/customer/orders/{order_number_or_public_token}/payment-status
+   *
+   * Tidak butuh session, table token, maupun X-Public-Token.
+   * Mengembalikan payment_status + field status order ringan,
+   * dan ikut memperbarui beberapa field di `order` jika sudah ada.
+   */
+  const fetchPublicPaymentStatus = async (orderToken: string) => {
+    try {
+      const response = await api.getPublicPaymentStatus(orderToken)
+      const raw = unwrapOrderResponse(response)
+
+      if (!raw) {
+        return { success: true, data: null }
+      }
+
+      // Update field status ringan pada order aktif jika sudah ada
+      if (order.value) {
+        order.value = {
+          ...order.value,
+          payment_status: raw.payment_status ?? order.value.payment_status,
+          order_status: raw.order_status ?? order.value.order_status,
+          bill_status: raw.bill_status ?? order.value.bill_status,
+          paid_at: raw.paid_at ?? order.value.paid_at,
+          cancel_reason: raw.cancel_reason ?? order.value.cancel_reason ?? null
+        }
+      }
+
+      return {
+        success: true,
+        data: {
+          payment_status: raw.payment_status,
+          order_status: raw.order_status,
+          bill_status: raw.bill_status,
+          paid_at: raw.paid_at ?? null,
+          cancel_reason: raw.cancel_reason ?? null
+        }
+      }
+    } catch (err) {
+      return { success: false, error: err as CustomerApiError }
+    }
+  }
+
   return {
     order,
     orderPending,
@@ -209,7 +257,8 @@ export const useCustomerOrder = () => {
     createNewOrder,
     placeOrder,
     fetchOpenBill,
-    fetchOrderStatus
+    fetchOrderStatus,
+    fetchPublicPaymentStatus
   }
 }
 
@@ -221,15 +270,17 @@ export const useCustomerOrder = () => {
  */
 function mapOrderResponse(raw: any): CustomerOrderDetail {
   return {
-    id: raw.id ?? raw.uuid ?? raw.token ?? raw.order_token ?? raw.order_number,
+    id: raw.id ?? raw.order_id ?? raw.uuid ?? raw.token ?? raw.order_token ?? raw.order_number,
+    order_id: raw.order_id ?? raw.id ?? undefined,
     order_number: raw.order_number ?? raw.token ?? raw.order_token ?? '-',
     public_token: raw.public_token ?? raw.token ?? raw.order_token ?? raw.order_number ?? '',
     order_type: raw.order_type ?? raw.type ?? 'table_order',
-    bill_status: raw.bill_status ?? raw.bill?.status ?? 'open',
+    bill_status: raw.bill_status ?? raw.bill?.status ?? 'none',
     order_status: raw.order_status ?? raw.status ?? 'pending',
     payment_status: raw.payment_status ?? raw.payment?.status ?? 'unpaid',
     payment_method: raw.payment_method ?? null,
-    payment_reference: raw.payment_reference ?? null,
+    payment_reference: raw.payment_reference ?? raw.qris_data?.payment_reference ?? null,
+    cancel_reason: raw.cancel_reason ?? null,
     subtotal_amount: Number(raw.subtotal_amount ?? raw.subtotal ?? 0),
     discount_amount: Number(raw.discount_amount ?? 0),
     tax_amount: Number(raw.tax_amount ?? raw.tax ?? 0),

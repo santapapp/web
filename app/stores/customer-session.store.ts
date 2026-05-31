@@ -96,30 +96,38 @@ export const useCustomerSessionStore = defineStore('customer-session', {
 
     /**
      * Restore state dari localStorage saat app dimuat.
+     *
+     * PENTING: hanya OPEN BILL yang dipersist & boleh di-restore dari localStorage.
+     * Table order BUKAN session — datanya hanya hidup di memory selama proses pesan,
+     * jadi tidak pernah dipulihkan dari localStorage. Data table order lama (mis. dari
+     * versi sebelumnya) akan ikut dibersihkan di sini.
      */
     restore() {
       if (!import.meta.client || this.restored) return
       this.restored = true
 
-      const token = localStorage.getItem(STORAGE_KEY)
-      if (!token) return
-
-      // Coba baca metadata session dari storage terpisah
       const raw = localStorage.getItem(`${STORAGE_KEY}.meta`)
       if (!raw) {
-        // Token ada tapi meta tidak — simpan token saja, meta akan diisi saat cek session
-        this.sessionToken = token
+        // Tidak ada metadata sesi — bersihkan token lepas (mis. sisa table order lama).
+        localStorage.removeItem(STORAGE_KEY)
         return
       }
 
       try {
         const meta = JSON.parse(raw) as Omit<CustomerSessionState, 'restored'>
+
+        // Hanya open bill yang merupakan session valid yang boleh dipulihkan.
+        if (meta.sessionType !== 'open_bill') {
+          this.clear()
+          return
+        }
+
         this.sessionToken = meta.sessionToken
         this.expiresAt = meta.expiresAt
         this.organization = meta.organization
         this.table = meta.table
         this.openBill = meta.openBill
-        this.sessionType = meta.sessionType ?? null  // backward compat: meta lama tidak punya sessionType
+        this.sessionType = meta.sessionType
 
         if (this.isExpired) {
           this.clear()
@@ -131,6 +139,15 @@ export const useCustomerSessionStore = defineStore('customer-session', {
 
     persist() {
       if (!import.meta.client) return
+
+      // Hanya OPEN BILL yang dipersist ke localStorage.
+      // Table order bersifat sementara (in-memory) dan TIDAK boleh menjadi session
+      // permanen — jadi setiap kali state bukan open_bill, bersihkan localStorage.
+      if (this.sessionType !== 'open_bill') {
+        localStorage.removeItem(STORAGE_KEY)
+        localStorage.removeItem(`${STORAGE_KEY}.meta`)
+        return
+      }
 
       // Simpan token di key utama (sesuai docs: 'customer_session')
       if (this.sessionToken) {

@@ -75,7 +75,12 @@ export function mapToHistoryStatus(
   billStatus: RawOrderStatus
 ): OrderHistoryItem['status'] {
   if (paymentStatus === 'paid' || billStatus === 'closed') return 'paid'
-  if (orderStatus === 'cancelled' || paymentStatus === 'cancelled') return 'cancelled'
+  if (
+    orderStatus === 'cancelled' ||
+    paymentStatus === 'cancelled' ||
+    paymentStatus === 'failed' ||
+    billStatus === 'cancelled'
+  ) return 'cancelled'
   if (paymentStatus === 'pending') return 'waiting_payment'
   if (orderStatus === 'confirmed' || orderStatus === 'processing') return 'processing'
   if (orderStatus === 'completed') return 'completed'
@@ -198,8 +203,11 @@ export const useOrderHistory = (orgSlug: string) => {
 
     await Promise.allSettled(
       toRefresh.map(async (item) => {
+        // Identifier publik untuk tracking: utamakan public_token, fallback ke order_number.
+        const identifier = item.public_token ?? item.order_public_id ?? item.order_code
+
         try {
-          const res = await api.getPublicOrder(orgSlug, item.order_public_id)
+          const res = await api.getPublicOrder(orgSlug, identifier)
           const raw = res?.data ?? res
 
           if (!raw) return

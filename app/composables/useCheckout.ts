@@ -33,9 +33,8 @@ export const useCheckout = (orgSlug: MaybeRefOrGetter<string>, cart: CheckoutCar
     if (isModeOpenBill) {
       result = await placeOrder(cart.orderPayload.value)
     } else {
-      const tableToken = sessionStore.table?.code // wait, what token is stored for table_order? 
-      // table_order actually stores the token in 'code' or we need to extract from URL?
-      // Wait, we need the actual qrToken! It's saved as sessionToken for table_order.
+      // Table order: qr_token meja dipegang sementara di memory (sessionStore.sessionToken)
+      // hanya untuk membuat order baru. Konteks ini dibersihkan setelah order dibuat.
       const qrToken = sessionStore.sessionToken
       if (!qrToken) {
         submitting.value = false
@@ -43,43 +42,42 @@ export const useCheckout = (orgSlug: MaybeRefOrGetter<string>, cart: CheckoutCar
         return
       }
       result = await createNewOrder(qrToken, cart.orderPayload.value)
-      
-      // Do not alter sessionStore for Table Order to keep it stateless.
     }
 
     submitting.value = false
-
-    // Jangan bersihkan cart di sini untuk Table Order.
-    // Cart hanya dibersihkan saat benar-benar paid/success di halaman tracking.
-    if (isModeOpenBill) {
-      cart.clearCart()
-    }
 
     if (!result.success) {
       error.value = result.error?.message ?? 'Gagal mengirim pesanan.'
       return
     }
-    
-    if (import.meta.client && result.data && isModeOpenBill) {
+
+    const slug = toValue(orgSlug)
+
+    // Simpan reference order ke history SEGERA setelah order berhasil dibuat —
+    // bukan menunggu payment paid. Jika user menutup browser saat payment pending,
+    // order sudah ada di backend dan tetap harus muncul di riwayat/tracking.
+    if (import.meta.client && result.data && slug) {
       try {
         const raw = result.data
-        const slug = toValue(orgSlug)
         const publicToken = raw.public_token ?? raw.token ?? raw.order_token
         const orderCode = raw.order_number
 
-        if (slug && publicToken && orderCode) {
+        if (publicToken || orderCode) {
           const history = useOrderHistory(slug)
           history.addOrUpdate({
-            order_public_id: String(publicToken),
-            order_code: String(orderCode),
+            order_public_id: String(publicToken ?? orderCode),
+            order_code: String(orderCode ?? publicToken),
+            order_id: raw.order_id ?? raw.id ?? undefined,
+            public_token: publicToken ? String(publicToken) : undefined,
             org_slug: slug,
             org_name: sessionStore.orgName ?? undefined,
             table_label:
               raw.dining_table?.name ??
               raw.dining_table?.label ??
+              raw.dining_table?.code ??
               sessionStore.tableName ??
               undefined,
-            mode: 'open_bill',
+            mode: isModeOpenBill ? 'open_bill' : 'table',
             status: mapToHistoryStatus(
               raw.order_status ?? raw.status,
               raw.payment_status,
@@ -87,31 +85,40 @@ export const useCheckout = (orgSlug: MaybeRefOrGetter<string>, cart: CheckoutCar
             ),
             total_amount: Number(raw.total_amount ?? 0),
             created_at: raw.created_at ?? new Date().toISOString(),
-            last_seen_at: new Date().toISOString()
+            last_seen_at: new Date().toISOString(),
+            qris_data: raw.qris_data
           })
         }
       } catch {
         // Jangan block redirect jika sync history gagal
       }
+    }
 
-      // Open bill: langsung bersihkan cart karena order sudah di-sync ke backend open bill
-      cart.clearCart()
+    // Bersihkan cart untuk SEMUA mode segera setelah order berhasil dibuat.
+    // Jangan menunggu payment paid.
+    cart.clearCart()
+
+    // Table order BUKAN session: bersihkan konteks meja sementara setelah order dibuat.
+    // Open bill dibiarkan — sesinya memang dibutuhkan untuk lanjut menambah item.
+    if (!isModeOpenBill) {
+      sessionStore.clear()
     }
 
     const trackingIdentifier = isModeOpenBill
       ? (result.data?.public_token ?? result.data?.token)
-      : (result.data?.order_number ?? result.data?.order_no ?? result.data?.public_token)
-    
+      : (result.data?.order_number ?? result.data?.public_token)
+
     if (trackingIdentifier) {
-      // Langsung redirect ke halaman payments
+      // Langsung redirect ke halaman payments/tracking.
+      // Table order memakai order_number (sesuai contract), open bill memakai bill token.
       await router.push({
-        path: `/o/${toValue(orgSlug)}/payments`,
+        path: `/o/${slug}/payments`,
         query: isModeOpenBill ? { bill: trackingIdentifier } : { order: trackingIdentifier }
       })
       return
     }
 
-    await router.push(`/o/${toValue(orgSlug)}/orders`)
+    await router.push(`/o/${slug}/orders`)
   }
 
   return {

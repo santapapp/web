@@ -35,6 +35,32 @@ const paymentTo = computed(() => ({
   path: `/o/${props.orgSlug}/payments`,
   query: { order: props.orderToken || props.order?.order_number }
 }))
+
+const orderStatusLabel = computed(() => {
+  const s = props.order?.order_status
+  if (s === 'confirmed') return 'Dikonfirmasi'
+  if (s === 'processing') return 'Diproses'
+  if (s === 'completed') return 'Selesai'
+  if (s === 'cancelled') return 'Dibatalkan'
+  return 'Menunggu'
+})
+
+const billStatusLabel = computed(() => {
+  const s = props.order?.bill_status
+  if (s === 'open') return 'Terbuka'
+  if (s === 'closed') return 'Ditutup'
+  if (s === 'cancelled') return 'Dibatalkan'
+  return null // 'none' (table order) — tidak ada konsep bill, sembunyikan
+})
+
+// Tombol bayar hanya relevan jika masih menunggu pembayaran.
+const canPay = computed(() =>
+  props.order
+    ? props.order.payment_status !== 'paid' &&
+      props.order.payment_status !== 'cancelled' &&
+      props.order.order_status !== 'cancelled'
+    : false
+)
 </script>
 
 <template>
@@ -66,11 +92,11 @@ const paymentTo = computed(() => ({
         <div class="mt-5 grid grid-cols-2 gap-3">
           <div class="rounded-lg bg-gray-50 p-3">
             <p class="text-xs text-gray-500">Order</p>
-            <p class="mt-1 text-sm font-semibold text-gray-950">{{ order.order_status }}</p>
+            <p class="mt-1 text-sm font-semibold text-gray-950">{{ orderStatusLabel }}</p>
           </div>
-          <div class="rounded-lg bg-gray-50 p-3">
+          <div v-if="billStatusLabel" class="rounded-lg bg-gray-50 p-3">
             <p class="text-xs text-gray-500">Tagihan</p>
-            <p class="mt-1 text-sm font-semibold text-gray-950">{{ order.bill_status }}</p>
+            <p class="mt-1 text-sm font-semibold text-gray-950">{{ billStatusLabel }}</p>
           </div>
         </div>
       </div>
@@ -106,7 +132,7 @@ const paymentTo = computed(() => ({
 
       <div class="flex flex-col gap-2 sm:flex-row">
         <UButton
-          v-if="order.payment_status !== 'paid'"
+          v-if="canPay"
           :to="paymentTo"
           block
           color="primary"

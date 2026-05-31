@@ -44,9 +44,9 @@ export interface CustomerOrderItem {
 
 // ─── Order Detail (dari OrderDetailResource) ──────────────────────────────────
 
-export type BillStatus = 'open' | 'closed' | 'cancelled'
-export type OrderStatus = 'pending' | 'confirmed' | 'cancelled'
-export type PaymentStatus = 'unpaid' | 'pending' | 'paid' | 'cancelled'
+export type BillStatus = 'none' | 'open' | 'closed' | 'cancelled'
+export type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'completed' | 'cancelled'
+export type PaymentStatus = 'unpaid' | 'pending' | 'paid' | 'cancelled' | 'failed'
 
 export interface OrderDiningTable {
   id: number
@@ -61,6 +61,8 @@ export interface OrderDiningTable {
  */
 export interface CustomerOrderDetail {
   id: number | string
+  /** order_id numerik dari backend (raw DB id) — opsional untuk reference */
+  order_id?: number | string
   order_number: string
   public_token: string
   order_type: string
@@ -69,6 +71,8 @@ export interface CustomerOrderDetail {
   payment_status: PaymentStatus
   payment_method: 'qris' | 'cash' | null
   payment_reference: string | null
+  /** Alasan pembatalan (mis. "Payment Timeout") dari payment-status */
+  cancel_reason?: string | null
   // Financial
   subtotal_amount: number
   discount_amount: number
@@ -87,7 +91,7 @@ export interface CustomerOrderDetail {
   items: CustomerOrderItem[]
   created_at: string
   // Atomic Checkout additions
-  qris_data?: { qr_url?: string; qr_string?: string } | null
+  qris_data?: { qr_url?: string; qr_string?: string; payment_reference?: string } | null
   payment_expires_at?: string | null
   server_time?: string | null
 }

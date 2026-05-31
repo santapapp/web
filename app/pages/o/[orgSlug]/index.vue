@@ -17,7 +17,7 @@ const {
   org,
   openingStatus,
   fullAddress,
-  hasLocalSession,
+  hasOrderHistory,
   isLoading,
   isNotFound
 } = usePublicOrg(orgSlug)
@@ -29,6 +29,9 @@ const {
 } = useOrderMenu()
 
 const loadedMenuSlug = ref('')
+
+// Disediakan oleh layout `org` — buka drawer "Pesanan Saya" untuk melihat riwayat.
+const openOrdersDrawer = inject<() => void>('openOrdersDrawer', () => {})
 
 watch(
   org,
@@ -89,7 +92,11 @@ useSeoMeta({
 
       <div class="space-y-5 pb-10">
         <OrgTransactionInfoCard :org="org" :full-address="fullAddress" />
-        <OrgStartOrderCard :order-to="orderPath" :has-local-session="hasLocalSession" />
+        <OrgStartOrderCard
+          :order-to="orderPath"
+          :has-order-history="hasOrderHistory"
+          @open-history="openOrdersDrawer"
+        />
         <OrgMenuPreviewSection
           :products="products"
           :loading="menuPending"

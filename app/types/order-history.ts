@@ -28,6 +28,12 @@ export interface OrderHistoryItem {
   /** order_number dari backend — kode yang ditampilkan ke customer */
   order_code: string
 
+  /** raw order id numerik dari backend (reference, bukan identifier customer-facing) */
+  order_id?: number | string
+
+  /** public_token eksplisit (mirror order_public_id) untuk kejelasan reference */
+  public_token?: string
+
   org_slug: string
   org_name?: string
 
@@ -45,6 +51,12 @@ export interface OrderHistoryItem {
 
   /** Diperbarui setiap kali drawer dibuka dan status di-refresh */
   last_seen_at: string
+
+  qris_data?: {
+    qr_url?: string | null
+    qr_string?: string | null
+    payment_reference?: string | null
+  }
 }
 
 /** Metadata storage agar bisa versioning dan cleanup */

@@ -11,7 +11,7 @@ const orgSlug = computed(() => String(route.params.orgSlug || ''))
 // Composables
 const customerSession = useCustomerSession()
 const sessionStore = useCustomerSessionStore()
-const { openBill, billPending, fetchOpenBill, fetchOrderStatus } = useCustomerOrder()
+const { openBill, billPending, fetchOpenBill, fetchOrderStatus, fetchPublicPaymentStatus } = useCustomerOrder()
 const {
   payment,
   isPaid,
@@ -32,20 +32,26 @@ const {
 const sessionError = ref<string | null>(null)
 const initError = ref<string | null>(null)
 const qrDataUrl = ref<string | null>(null)
+// true jika halaman ini melacak TABLE ORDER (query ?order=), false untuk open bill (?bill=)
+const isTableOrderPage = ref(false)
 
-// Clear session when payment is successful to prevent 403 Forbidden on future requests
+// Saat pembayaran sukses: catat reference ke history & bersihkan cart.
+// Table order BUKAN session — JANGAN buat ulang session meja apa pun.
 watch(isPaid, (newVal) => {
   if (newVal) {
     if (openBill.value) {
       const raw = openBill.value
+      const isOpenBillOrder = customerSession.sessionMode.value === 'open_bill'
       const history = useOrderHistory(orgSlug.value)
       history.addOrUpdate({
         order_public_id: raw.public_token,
         order_code: raw.order_number,
+        order_id: raw.order_id ?? raw.id ?? undefined,
+        public_token: raw.public_token ?? undefined,
         org_slug: orgSlug.value,
         org_name: customerSession.organization.value?.name ?? undefined,
         table_label: raw.dining_table?.name ?? raw.dining_table?.code ?? undefined,
-        mode: 'table',
+        mode: isOpenBillOrder ? 'open_bill' : 'table',
         status: mapToHistoryStatus(raw.order_status, raw.payment_status, raw.bill_status),
         total_amount: Number(raw.total_amount ?? 0),
         created_at: raw.created_at ?? new Date().toISOString(),
@@ -54,27 +60,15 @@ watch(isPaid, (newVal) => {
     }
 
     const isOpenBill = customerSession.sessionMode.value === 'open_bill'
-    const originalTable = customerSession.table.value
-    const originalOrg = customerSession.organization.value
 
-    // Bersihkan cart lokal untuk order meja biasa
+    // Bersihkan cart sesuai mode
     const cartMode = isOpenBill ? 'open_bill' : 'table_order'
     const cart = useOrderCart(ref(cartMode))
     cart.clearCart()
 
+    // Open bill: clear session (sudah selesai dibayar). Table order: tidak ada session
+    // yang perlu dipertahankan maupun dibuat ulang.
     customerSession.clearSession()
-
-    if (!isOpenBill && originalTable && originalOrg) {
-      // Kembalikan ke table order lokal agar bisa pesan lagi
-      sessionStore.setSession({
-        session_token: originalTable.code,
-        expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-        organization: originalOrg,
-        table: originalTable,
-        session_type: 'table_order',
-        open_bill: null
-      })
-    }
 
     // Auto-redirect ke tracking status setelah 2 detik
     const orderNumber = openBill.value?.order_number
@@ -162,6 +156,9 @@ onMounted(async () => {
     trackingIdentifier = route.query.bill
   }
 
+  // Tandai mode halaman untuk template (sembunyikan aksi khusus open bill saat table order).
+  isTableOrderPage.value = isTableOrder
+
   // Restore session
   const isValid = customerSession.restoreLocal()
 
@@ -189,41 +186,41 @@ onMounted(async () => {
   if (bill.payment_status === 'paid') {
     // Order sudah terbayar
     isPaid.value = true
-    
-    if (isTableOrder) {
-      // Untuk Table Order, hapus cart karena pembayaran berhasil
-      const cart = useOrderCart(ref('table_order'))
-      cart.clearCart()
-    } else {
-      const isOpenBill = customerSession.sessionMode.value === 'open_bill'
-      const originalTable = customerSession.table.value
-      const originalOrg = customerSession.organization.value
-      
+
+    // Bersihkan cart sesuai mode. Table order BUKAN session — tidak ada session
+    // meja yang perlu dipertahankan atau dibuat ulang di sini.
+    const cartMode = isTableOrder ? 'table_order' : 'open_bill'
+    const cart = useOrderCart(ref(cartMode))
+    cart.clearCart()
+
+    if (!isTableOrder) {
       customerSession.clearSession()
-      
-      if (!isOpenBill && originalTable && originalOrg) {
-        sessionStore.setSession({
-          session_token: originalTable.code,
-          expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-          organization: originalOrg,
-          table: originalTable,
-          session_type: 'table_order',
-          open_bill: null
-        })
-      }
     }
     return
   }
 
-  // Order closed tapi bukan karena paid (expired/invalid dari sisi backend)
-  if (bill.bill_status === 'closed') {
+  // Cancelled/expired: untuk table order ditandai payment_status/order_status = 'cancelled'
+  // (bill_status tetap 'none'). Untuk open bill ditandai bill_status 'closed'.
+  if (
+    bill.payment_status === 'cancelled' ||
+    bill.order_status === 'cancelled' ||
+    bill.bill_status === 'closed' ||
+    bill.bill_status === 'cancelled'
+  ) {
     isExpired.value = true
     isFailed.value = true
     return
   }
 
   if (bill.payment_status === 'pending' || !qrDataUrl.value) {
-    const qrisData = bill.qris_data
+    // Cari history untuk melihat apakah ada qris_data cache (untuk table order yang fetch public tidak mengembalikan qris_data)
+    const history = useOrderHistory(orgSlug.value)
+    const historyItem = history.items.value.find(i => 
+      i.order_code === trackingIdentifier || i.order_public_id === trackingIdentifier
+    )
+    const cachedQris = historyItem?.qris_data
+
+    const qrisData = bill.qris_data || cachedQris
     const expiresAt = bill.payment_expires_at
 
     if (qrisData && (qrisData.qr_url || qrisData.qr_string) && expiresAt) {
@@ -231,13 +228,15 @@ onMounted(async () => {
       qrDataUrl.value = await generateQrDataUrl(qrSource!)
       setExternalPayment(
         qrSource!,
-        bill.payment_reference,
+        qrisData.payment_reference || bill.payment_reference,
         expiresAt,
         bill.server_time
       )
       if (isTableOrder) {
+        // Table order: poll endpoint PUBLIK /v1/customer/orders/{order}/payment-status.
+        // Tidak memakai session, table token, maupun X-Public-Token.
         startPolling(async () => {
-          const res = await fetchOrderStatus(orgSlug.value, trackingIdentifier)
+          const res = await fetchPublicPaymentStatus(trackingIdentifier)
           return res.data?.payment_status
         })
       } else {
@@ -247,9 +246,12 @@ onMounted(async () => {
       // Inisiasi mandiri untuk Open Bill
       await handleInitiatePayment()
     } else {
-      // Fallback jika tidak ada data QR di Table Order (seharusnya tidak terjadi)
-      isFailed.value = true
-      initError.value = 'Data pembayaran tidak ditemukan. Silakan kembali ke menu dan coba checkout ulang.'
+      // Tidak ada data QR di Table Order (misalnya pesanan dibayar di kasir).
+      // Alih-alih gagal, kita mulai polling untuk menunggu kasir mengubah status menjadi paid.
+      startPolling(async () => {
+        const res = await fetchPublicPaymentStatus(trackingIdentifier)
+        return res.data?.payment_status
+      })
     }
   }
 })
@@ -399,7 +401,17 @@ onUnmounted(() => {
                   Buka aplikasi bank atau dompet digital Anda, pilih "Scan QR", lalu arahkan ke kode di atas.
                 </p>
 
+                <!-- Opsi Kasir -->
+                <div v-if="isTableOrderPage" class="mt-4 text-center">
+                  <p class="text-sm font-medium text-gray-500" style="color: #6b7280;">
+                    Atau silakan lakukan pembayaran langsung di kasir.
+                  </p>
+                </div>
+
+                <!-- Batalkan hanya untuk open bill (endpoint qris-cancel butuh X-Public-Token).
+                     Table order dibatalkan otomatis oleh backend saat timeout. -->
                 <button
+                  v-if="!isTableOrderPage"
                   class="btn-cancel"
                   :disabled="cancelPending"
                   @click="handleCancelPayment"
@@ -408,8 +420,8 @@ onUnmounted(() => {
                 </button>
               </div>
 
-            <!-- Initiate Payment Button -->
-            <div v-else-if="!qrDataUrl && !isPaid && !isFailed && !isExpired" class="initiate-section">
+            <!-- Initiate Payment Button — khusus open bill (table order sudah punya QR dari create order) -->
+            <div v-else-if="!isTableOrderPage && !qrDataUrl && !isPaid && !isFailed && !isExpired" class="initiate-section">
               <div class="qris-logo">
                 <span class="qris-text">QRIS</span>
               </div>
@@ -428,6 +440,28 @@ onUnmounted(() => {
                 <span v-if="initiatePending">Membuat QR...</span>
                 <span v-else>💳 Bayar {{ formatCurrency(openBill?.total_amount ?? 0) }}</span>
               </button>
+            </div>
+
+            <!-- Pesan bayar di kasir — khusus table order yang tidak punya data QR -->
+            <div v-else-if="isTableOrderPage && !qrDataUrl && !isPaid && !isFailed && !isExpired" class="initiate-section">
+              <div class="qris-logo" style="background: linear-gradient(135deg, #8a7f6e, #6b6055);">
+                <span class="text-white text-3xl font-black">🏪</span>
+              </div>
+              <h3 style="font-size: 18px; font-weight: 700; color: #1a1714; margin-bottom: 12px;">Pembayaran di Kasir</h3>
+              <p class="initiate-desc">
+                Pesanan Anda telah tercatat. Silakan lakukan pembayaran langsung di kasir atau tunggu staf kami datang ke meja Anda.
+              </p>
+
+              <!-- Countdown timer -->
+              <div v-if="countdown > 0" class="qr-countdown mt-4 mx-auto" :class="{ 'countdown-urgent': countdown < 60 }" style="margin-bottom: 0; width: max-content;">
+                <span class="countdown-icon">⏱</span>
+                <span>Batas Waktu {{ formatCountdown(countdown) }}</span>
+              </div>
+
+              <div class="polling-indicator mt-6" style="justify-content: center;">
+                <span class="poll-dot" />
+                Menunggu konfirmasi pembayaran...
+              </div>
             </div>
           </div>
 

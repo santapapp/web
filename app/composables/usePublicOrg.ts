@@ -97,18 +97,21 @@ export const usePublicOrg = (orgSlug: MaybeRefOrGetter<string>) => {
   const isLoading = computed(() => status.value === 'pending' || status.value === 'idle')
   const isNotFound = computed(() => Boolean(error.value) || (status.value === 'success' && !org.value))
 
-  const hasLocalSession = ref(false)
+  // Table order BUKAN session — landing tidak boleh menawarkan "lanjutkan sesi meja".
+  // Sebagai gantinya, kita hanya menandai apakah ada RIWAYAT pesanan tersimpan untuk org ini.
+  const hasOrderHistory = ref(false)
 
-  onMounted(async () => {
-    const customerSession = useCustomerSession()
-    hasLocalSession.value = await customerSession.restoreAndValidateForOrg(normalizedSlug.value)
+  onMounted(() => {
+    if (!normalizedSlug.value) return
+    const history = useOrderHistory(normalizedSlug.value)
+    hasOrderHistory.value = history.items.value.length > 0
   })
 
   return {
     org,
     openingStatus,
     fullAddress,
-    hasLocalSession,
+    hasOrderHistory,
     isLoading,
     isNotFound,
     error,
