@@ -13,6 +13,7 @@
  */
 
 import type { OrderStatus } from '~/types/customer-order'
+import { ORDER_STATUS_RANK } from '~/composables/useOrderStatus'
 
 const props = defineProps<{
   status: OrderStatus
@@ -22,18 +23,8 @@ const props = defineProps<{
 
 const isOpenBill = computed(() => props.orderType === 'open_bill')
 
-// Rank status untuk menentukan progres (semakin besar = semakin maju).
-// Sinkron dengan App\Enums\OrderStatus backend. 'processing' = alias legacy 'preparing'.
-const STATUS_RANK: Record<string, number> = {
-  pending: 0,
-  confirmed: 1,
-  preparing: 2,
-  processing: 2,
-  ready: 3,
-  completed: 4
-}
-
-const currentRank = computed(() => STATUS_RANK[props.status] ?? 0)
+// Rank progres order_status (sumber tunggal di useOrderStatus).
+const currentRank = computed(() => ORDER_STATUS_RANK[props.status] ?? 0)
 
 interface TimelineStep {
   label: string

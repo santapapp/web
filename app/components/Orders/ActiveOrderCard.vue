@@ -12,6 +12,7 @@
  */
 
 import type { CustomerOrderDetail } from '~/types/customer-order'
+import { paymentStatusConfig, orderStatusLabel } from '~/composables/useOrderStatus'
 
 const props = defineProps<{
   order: CustomerOrderDetail | null
@@ -32,23 +33,10 @@ const isOpenBill = computed(() =>
   props.order?.order_type === 'open_bill'
 )
 
-const paymentConfig = computed(() => {
-  const p = props.order?.payment_status
-  if (p === 'paid') return { label: 'Lunas', color: 'success' as const }
-  if (p === 'pending') return { label: 'Menunggu Bayar', color: 'warning' as const }
-  if (p === 'cancelled' || p === 'failed') return { label: 'Dibatalkan', color: 'error' as const }
-  return { label: 'Belum Bayar', color: 'neutral' as const }
-})
+// Label & warna status → sumber tunggal di useOrderStatus.
+const paymentConfig = computed(() => paymentStatusConfig(props.order?.payment_status))
 
-const orderStatusLabel = computed(() => {
-  const s = props.order?.order_status
-  if (s === 'confirmed') return 'Dikonfirmasi'
-  if (s === 'preparing' || s === 'processing') return 'Diproses'
-  if (s === 'ready') return 'Siap'
-  if (s === 'completed') return 'Selesai'
-  if (s === 'cancelled') return 'Dibatalkan'
-  return 'Menunggu'
-})
+const orderStatusText = computed(() => orderStatusLabel(props.order?.order_status))
 
 const itemCount = computed(() => props.order?.items?.length ?? 0)
 
@@ -107,7 +95,7 @@ const statusRoute = computed(() => ({
       <div class="stats-row">
         <div class="stat-item">
           <span class="stat-label">Status Order</span>
-          <span class="stat-val">{{ orderStatusLabel }}</span>
+          <span class="stat-val">{{ orderStatusText }}</span>
         </div>
         <div class="stat-divider" />
         <div class="stat-item">

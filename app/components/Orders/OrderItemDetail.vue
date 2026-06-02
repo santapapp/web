@@ -11,7 +11,8 @@
  * `children` sudah dinormalisasi oleh parent (nested maupun flat parent_item_id).
  */
 
-import type { CustomerOrderItem, OrderItemStatus } from '~/types/customer-order'
+import type { CustomerOrderItem } from '~/types/customer-order'
+import { itemStatusConfig } from '~/composables/useOrderStatus'
 
 const props = defineProps<{
   item: CustomerOrderItem
@@ -26,26 +27,16 @@ const formatPrice = (v: number) =>
     maximumFractionDigits: 0
   }).format(v)
 
-const statusConfig = (status?: OrderItemStatus | null) => {
-  switch (status) {
-    case 'preparing': return { label: 'Disiapkan', color: 'info' as const }
-    case 'ready': return { label: 'Siap', color: 'warning' as const }
-    case 'served': return { label: 'Disajikan', color: 'success' as const }
-    case 'cancelled': return { label: 'Dibatalkan', color: 'error' as const }
-    case 'pending': return { label: 'Menunggu', color: 'neutral' as const }
-    default: return null
-  }
-}
-
+// Label & warna status item → sumber tunggal di useOrderStatus.
 const status = computed(() => {
   // Bila order dibatalkan, status item non-final (mis. "Menunggu"/"Disiapkan")
   // tidak relevan — tampilkan "Dibatalkan" atau sembunyikan agar tidak menyesatkan.
   if (props.orderCancelled) {
     return props.item.item_status === 'cancelled'
-      ? statusConfig('cancelled')
+      ? itemStatusConfig('cancelled')
       : null
   }
-  return statusConfig(props.item.item_status)
+  return itemStatusConfig(props.item.item_status)
 })
 
 // Kelompokkan children berdasarkan tipe agar variant & addon terlihat rapi.

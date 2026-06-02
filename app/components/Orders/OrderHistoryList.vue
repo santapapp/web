@@ -11,6 +11,7 @@
  */
 
 import type { OrderHistoryItem } from '~/types/order-history'
+import { historyStatusConfig } from '~/composables/useOrderStatus'
 
 const props = defineProps<{
   items: OrderHistoryItem[]
@@ -66,16 +67,8 @@ const formatDate = (iso: string) => {
   }
 }
 
-const statusConfig = (status?: string) => {
-  switch (status) {
-    case 'paid': return { label: 'Lunas', color: 'success' as const }
-    case 'waiting_payment': return { label: 'Menunggu Bayar', color: 'warning' as const }
-    case 'processing': return { label: 'Diproses', color: 'info' as const }
-    case 'completed': return { label: 'Selesai', color: 'success' as const }
-    case 'cancelled': return { label: 'Dibatalkan', color: 'error' as const }
-    default: return { label: 'Pending', color: 'neutral' as const }
-  }
-}
+// Label & warna status riwayat → sumber tunggal di useOrderStatus.
+const statusConfig = historyStatusConfig
 
 const orderDetailRoute = (item: OrderHistoryItem) => ({
   path: `/o/${props.orgSlug}/orders`,

@@ -173,8 +173,17 @@ export const useCustomerOrder = () => {
    * Endpoint publik: GET /v1/customer/orders/{order_number_or_public_token}
    * Tidak butuh session / X-Public-Token.
    */
-  const fetchOrderStatus = async (orgSlug: string, orderToken: string) => {
-    statusPending.value = true
+  const fetchOrderStatus = async (
+    orgSlug: string,
+    orderToken: string,
+    opts: { silent?: boolean } = {}
+  ) => {
+    // silent = polling background. Tujuannya: refresh data diam-diam tanpa memicu
+    // skeleton/loading dan tanpa mengosongkan state valid terakhir saat 1 request gagal.
+    // Loading (statusPending) hanya untuk load awal / aksi penting.
+    const { silent = false } = opts
+
+    if (!silent) statusPending.value = true
     statusError.value = null
 
     try {
@@ -182,6 +191,8 @@ export const useCustomerOrder = () => {
       const raw = unwrapOrderResponse(response)
 
       if (!raw) {
+        // Load awal: tampilkan state kosong + error. Polling: pertahankan state terakhir.
+        if (silent) return { success: false }
         order.value = null
         throw { message: 'Order tidak ditemukan atau sudah kedaluwarsa.', statusCode: 404 }
       }
@@ -189,11 +200,14 @@ export const useCustomerOrder = () => {
       order.value = mapOrderResponse(raw)
       return { success: true, data: order.value }
     } catch (err) {
+      // Saat polling background, JANGAN hapus tampilan valid hanya karena error transien
+      // (network/500). Biarkan UI tetap stabil dan coba lagi pada poll berikutnya.
+      if (silent) return { success: false, error: err as CustomerApiError }
       statusError.value = err as CustomerApiError
       order.value = null
       return { success: false, error: err as CustomerApiError }
     } finally {
-      statusPending.value = false
+      if (!silent) statusPending.value = false
     }
   }
 

@@ -74,28 +74,37 @@ export function mapToHistoryStatus(
   paymentStatus: RawOrderStatus,
   billStatus: RawOrderStatus
 ): OrderHistoryItem['status'] {
-  // Urutan presedensi penting: terminal cancelled & completed menang, baru paid.
+  // Selaras dengan enum backend api-santap:
+  //   order_status   : pending | confirmed | preparing | ready | completed | cancelled
+  //   payment_status : unpaid | pending | paid | failed | cancelled
+  //   bill_status    : none | open | closed   (backend tidak mengirim 'cancelled')
+  // 'processing' = alias legacy untuk 'preparing'.
+
+  // 1) Terminal negatif menang.
   if (
     orderStatus === 'cancelled' ||
     paymentStatus === 'cancelled' ||
-    paymentStatus === 'failed' ||
-    billStatus === 'cancelled'
+    paymentStatus === 'failed'
   ) return 'cancelled'
 
+  // 2) Terminal selesai.
   if (orderStatus === 'completed') return 'completed'
 
-  // Sudah dibayar tapi belum selesai → tetap "lunas".
-  if (paymentStatus === 'paid' || billStatus === 'closed') return 'paid'
-
-  if (paymentStatus === 'pending') return 'waiting_payment'
-
-  // Dalam proses dapur (confirmed → preparing → ready). 'processing' = alias legacy.
+  // 3) Progres dapur didahulukan agar riwayat mencerminkan flow asli backend:
+  //    order yang sudah dibayar & sedang diproses tampil "Diproses"/"Siap",
+  //    bukan terjebak di "Lunas". (order_status di-roll up dari item_status.)
+  if (orderStatus === 'ready') return 'ready'
   if (
-    orderStatus === 'confirmed' ||
     orderStatus === 'preparing' ||
-    orderStatus === 'ready' ||
+    orderStatus === 'confirmed' ||
     orderStatus === 'processing'
   ) return 'processing'
+
+  // 4) Sudah dibayar tetapi belum masuk antrian dapur (order_status masih pending).
+  if (paymentStatus === 'paid' || billStatus === 'closed') return 'paid'
+
+  // 5) Menunggu pembayaran (QRIS pending).
+  if (paymentStatus === 'pending') return 'waiting_payment'
 
   return 'pending'
 }
@@ -128,6 +137,7 @@ export const useOrderHistory = (orgSlug: string) => {
       (i) =>
         i.status === 'pending' ||
         i.status === 'processing' ||
+        i.status === 'ready' ||
         i.status === 'waiting_payment'
     ).length
   )

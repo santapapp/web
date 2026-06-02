@@ -16,7 +16,8 @@ export type OrderHistoryStatus =
   | 'pending'
   | 'waiting_payment'
   | 'paid'
-  | 'processing'
+  | 'processing'    // order_status confirmed/preparing (alias legacy: processing)
+  | 'ready'         // order_status ready — pesanan siap disajikan
   | 'completed'
   | 'cancelled'
   | 'expired'  // order tidak ditemukan / session expired / 403 dari backend

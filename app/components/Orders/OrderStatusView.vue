@@ -12,6 +12,7 @@
  */
 
 import type { CustomerOrderDetail } from '~/types/order'
+import { paymentStatusConfig } from '~/composables/useOrderStatus'
 
 const props = defineProps<{
   order: CustomerOrderDetail | null
@@ -27,20 +28,10 @@ const isPaymentFailed = computed(() =>
   props.order?.payment_status === 'failed'
 )
 
-const paymentTone = computed(() => {
-  if (!props.order) return 'neutral'
-  if (props.order.payment_status === 'paid') return 'success'
-  if (isPaymentFailed.value) return 'error'
-  return 'warning'
-})
-
-const paymentLabel = computed(() => {
-  if (!props.order) return 'Tidak tersedia'
-  if (props.order.payment_status === 'paid') return 'Sudah dibayar'
-  if (props.order.payment_status === 'pending') return 'Menunggu pembayaran'
-  if (isPaymentFailed.value) return 'Dibatalkan'
-  return 'Belum dibayar'
-})
+// Badge pembayaran → sumber tunggal di useOrderStatus.
+const paymentBadge = computed(() => paymentStatusConfig(props.order?.payment_status))
+const paymentTone = computed(() => paymentBadge.value.color)
+const paymentLabel = computed(() => paymentBadge.value.label)
 
 const paymentTo = computed(() => ({
   path: `/o/${props.orgSlug}/payments`,

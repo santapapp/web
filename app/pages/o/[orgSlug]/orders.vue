@@ -108,7 +108,9 @@ const startTrackingPoll = () => {
       stopTrackingPoll()
       return
     }
-    await fetchOrderStatus(orgSlug.value, orderToken.value || '')
+    // silent: refresh diam-diam di background — tampilan tidak berubah jadi loading,
+    // hanya ter-update in-place saat status benar-benar berubah.
+    await fetchOrderStatus(orgSlug.value, orderToken.value || '', { silent: true })
     if (isOrderTerminal(order.value)) stopTrackingPoll()
   }, TRACKING_POLL_MS)
 }

@@ -46,6 +46,8 @@ export interface CustomerOrderItem {
 
 // ─── Order Detail (dari OrderDetailResource) ──────────────────────────────────
 
+// Backend App\Enums\BillStatus hanya mengirim: none | open | closed.
+// 'cancelled' dipertahankan sebagai toleransi defensif (tidak pernah dikirim backend).
 export type BillStatus = 'none' | 'open' | 'closed' | 'cancelled'
 // Sinkron dengan App\Enums\OrderStatus di backend (pending, confirmed, preparing,
 // ready, completed, cancelled). 'processing' dipertahankan sebagai alias legacy.
