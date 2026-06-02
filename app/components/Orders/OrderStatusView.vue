@@ -1,4 +1,16 @@
 <script setup lang="ts">
+/**
+ * OrderStatusView — Halaman detail/status pesanan customer.
+ *
+ * Slicing UI mengikuti referensi: header konfirmasi, badge kode order,
+ * timeline status, ringkasan pembayaran, info banner, dan CTA.
+ *
+ * LOGIC TIDAK BERUBAH:
+ * - Data sepenuhnya dari prop `order` (CustomerOrderDetail dari backend).
+ * - paymentTone/paymentLabel/canPay/paymentTo tetap seperti sebelumnya.
+ * - Tidak ada perhitungan total/pajak baru — semua dari field existing.
+ */
+
 import type { CustomerOrderDetail } from '~/types/order'
 
 const props = defineProps<{
@@ -9,17 +21,16 @@ const props = defineProps<{
   orderToken?: string | null
 }>()
 
-const formatPrice = (value: number) =>
-  new Intl.NumberFormat('id-ID', {
-    style: 'currency',
-    currency: 'IDR',
-    maximumFractionDigits: 0
-  }).format(value)
+// 'failed' diperlakukan setara 'cancelled' (kegagalan terminal).
+const isPaymentFailed = computed(() =>
+  props.order?.payment_status === 'cancelled' ||
+  props.order?.payment_status === 'failed'
+)
 
 const paymentTone = computed(() => {
   if (!props.order) return 'neutral'
   if (props.order.payment_status === 'paid') return 'success'
-  if (props.order.payment_status === 'cancelled') return 'error'
+  if (isPaymentFailed.value) return 'error'
   return 'warning'
 })
 
@@ -27,7 +38,7 @@ const paymentLabel = computed(() => {
   if (!props.order) return 'Tidak tersedia'
   if (props.order.payment_status === 'paid') return 'Sudah dibayar'
   if (props.order.payment_status === 'pending') return 'Menunggu pembayaran'
-  if (props.order.payment_status === 'cancelled') return 'Dibatalkan'
+  if (isPaymentFailed.value) return 'Dibatalkan'
   return 'Belum dibayar'
 })
 
@@ -36,35 +47,76 @@ const paymentTo = computed(() => ({
   query: { order: props.orderToken || props.order?.order_number }
 }))
 
-const orderStatusLabel = computed(() => {
-  const s = props.order?.order_status
-  if (s === 'confirmed') return 'Dikonfirmasi'
-  if (s === 'processing') return 'Diproses'
-  if (s === 'completed') return 'Selesai'
-  if (s === 'cancelled') return 'Dibatalkan'
-  return 'Menunggu'
-})
-
-const billStatusLabel = computed(() => {
-  const s = props.order?.bill_status
-  if (s === 'open') return 'Terbuka'
-  if (s === 'closed') return 'Ditutup'
-  if (s === 'cancelled') return 'Dibatalkan'
-  return null // 'none' (table order) — tidak ada konsep bill, sembunyikan
-})
-
 // Tombol bayar hanya relevan jika masih menunggu pembayaran.
 const canPay = computed(() =>
   props.order
     ? props.order.payment_status !== 'paid' &&
-      props.order.payment_status !== 'cancelled' &&
+      !isPaymentFailed.value &&
       props.order.order_status !== 'cancelled'
     : false
 )
+
+const isCancelled = computed(() =>
+  props.order?.order_status === 'cancelled' ||
+  isPaymentFailed.value
+)
+
+const isPaid = computed(() => props.order?.payment_status === 'paid')
+const isCompleted = computed(() => props.order?.order_status === 'completed')
+const isReady = computed(() => props.order?.order_status === 'ready')
+const isPreparing = computed(() =>
+  ['confirmed', 'preparing', 'processing'].includes(props.order?.order_status ?? '')
+)
+
+// Header dinamis berdasarkan status existing — tidak mengarang state baru.
+const header = computed(() => {
+  if (isCancelled.value) {
+    return {
+      icon: 'i-lucide-circle-x',
+      tone: 'error' as const,
+      title: 'PESANAN DIBATALKAN',
+      subtitle: props.order?.cancel_reason || 'Pesanan ini telah dibatalkan'
+    }
+  }
+  if (isCompleted.value) {
+    return {
+      icon: 'i-lucide-check-check',
+      tone: 'success' as const,
+      title: 'PESANAN SELESAI',
+      subtitle: 'Selamat menikmati makananmu ❤️'
+    }
+  }
+  if (isReady.value) {
+    return {
+      icon: 'i-lucide-hand-platter',
+      tone: 'success' as const,
+      title: 'PESANAN SIAP DISAJIKAN',
+      subtitle: 'Pesananmu sudah siap'
+    }
+  }
+  if (isPaid.value) {
+    return {
+      icon: 'i-lucide-clipboard-check',
+      tone: 'success' as const,
+      title: 'PESANAN DIKONFIRMASI!',
+      subtitle: isPreparing.value
+        ? 'Dapur sedang menyiapkan pesananmu'
+        : 'Pembayaran berhasil diterima'
+    }
+  }
+  return {
+    icon: 'i-lucide-clock',
+    tone: 'warning' as const,
+    title: 'MENUNGGU PEMBAYARAN',
+    subtitle: 'Selesaikan pembayaran untuk memproses pesananmu'
+  }
+})
+
+const tableLabel = computed(() => props.order?.dining_table?.name ?? null)
 </script>
 
 <template>
-  <section class="mx-auto w-full max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
+  <section class="mx-auto w-full max-w-md px-4 py-6 sm:py-8">
     <OrdersOrderSkeleton v-if="loading" />
 
     <OrdersOrderErrorState
@@ -74,80 +126,106 @@ const canPay = computed(() =>
       icon="i-lucide-file-warning"
     />
 
-    <div v-else class="space-y-4">
-      <div class="rounded-lg border border-gray-200 bg-white p-5">
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-wide text-primary">Status order</p>
-            <h1 class="mt-1 text-2xl font-bold tracking-normal text-gray-950">
-              {{ order.order_number }}
-            </h1>
-            <p v-if="order.dining_table" class="mt-2 text-sm text-gray-500">
-              {{ order.dining_table.name }}
-            </p>
-          </div>
-          <UBadge :label="paymentLabel" :color="paymentTone" variant="soft" />
+    <div v-else class="flex flex-col gap-4">
+      <!-- Confirmation header -->
+      <header class="text-center pt-2">
+        <div
+          class="mx-auto size-16 rounded-2xl flex items-center justify-center mb-3"
+          :class="{
+            'bg-green-100 text-green-600': header.tone === 'success',
+            'bg-amber-100 text-amber-600': header.tone === 'warning',
+            'bg-rose-100 text-rose-600': header.tone === 'error'
+          }"
+        >
+          <UIcon :name="header.icon" class="size-8" />
         </div>
 
-        <div class="mt-5 grid grid-cols-2 gap-3">
-          <div class="rounded-lg bg-gray-50 p-3">
-            <p class="text-xs text-gray-500">Order</p>
-            <p class="mt-1 text-sm font-semibold text-gray-950">{{ orderStatusLabel }}</p>
-          </div>
-          <div v-if="billStatusLabel" class="rounded-lg bg-gray-50 p-3">
-            <p class="text-xs text-gray-500">Tagihan</p>
-            <p class="mt-1 text-sm font-semibold text-gray-950">{{ billStatusLabel }}</p>
-          </div>
+        <h1 class="text-xl font-extrabold tracking-tight text-stone-900">
+          {{ header.title }}
+        </h1>
+        <p class="text-sm text-stone-500 mt-1">{{ header.subtitle }}</p>
+
+        <!-- Order code badge -->
+        <span
+          class="inline-flex items-center mt-3 px-4 py-1.5 rounded-full bg-amber-100 text-amber-700 text-sm font-extrabold tracking-wide"
+        >
+          #{{ order.order_number }}
+        </span>
+      </header>
+
+      <!-- Status timeline card (sembunyikan bila dibatalkan) -->
+      <div
+        v-if="!isCancelled"
+        class="bg-white rounded-3xl shadow-sm border border-stone-200/70 p-5"
+      >
+        <div class="flex items-center justify-between gap-2 mb-4">
+          <h2 class="text-xs font-extrabold uppercase tracking-wide text-stone-800">
+            Status Pesanan
+          </h2>
+          <UBadge :label="paymentLabel" :color="paymentTone" variant="soft" size="sm" />
         </div>
+
+        <OrdersStatusTimeline
+          :status="order.order_status"
+          :order-type="order.order_type"
+          :created-at="order.created_at"
+        />
       </div>
 
-      <div class="rounded-lg border border-gray-200 bg-white">
-        <div class="border-b border-gray-100 px-5 py-4">
-          <h2 class="text-base font-bold text-gray-950">Item pesanan</h2>
-        </div>
+      <!-- Full item breakdown (detail menu lengkap dalam pesanan) -->
+      <OrdersOrderItemsCard :order="order" />
 
-        <div v-if="order.items.length > 0" class="divide-y divide-gray-100">
-          <div v-for="item in order.items" :key="item.id" class="px-5 py-4">
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <p class="text-sm font-semibold text-gray-950">{{ item.name }}</p>
-                <p class="mt-1 text-xs text-gray-500">Qty {{ item.quantity }}</p>
-              </div>
-              <p class="text-sm font-bold text-gray-950">{{ formatPrice(item.subtotal) }}</p>
-            </div>
-          </div>
-        </div>
+      <!-- Payment summary -->
+      <OrdersOrderSummaryCard :order="order" />
 
-        <div v-else class="px-5 py-6 text-sm text-gray-500">
-          Detail item belum tersedia.
-        </div>
-
-        <div class="border-t border-gray-100 px-5 py-4">
-          <div class="flex items-center justify-between">
-            <span class="text-sm text-gray-500">Total</span>
-            <strong class="text-lg text-gray-950">{{ formatPrice(order.total_amount) }}</strong>
-          </div>
-        </div>
+      <!-- Info banner -->
+      <div
+        v-if="!isCancelled"
+        class="flex items-start gap-2.5 rounded-2xl bg-amber-50 border border-amber-200/60 px-4 py-3"
+      >
+        <UIcon name="i-lucide-info" class="size-4 text-amber-600 flex-shrink-0 mt-0.5" />
+        <p class="text-xs text-stone-600 leading-relaxed">
+          <template v-if="canPay">
+            Selesaikan pembayaran agar pesananmu segera diproses.
+          </template>
+          <template v-else>
+            Pesanan akan segera disiapkan.
+            <template v-if="tableLabel">
+              Tetap di <strong class="font-bold text-stone-800">{{ tableLabel }}</strong> ya,
+              kami akan mengantarkan langsung ke mejamu.
+            </template>
+          </template>
+        </p>
       </div>
 
-      <div class="flex flex-col gap-2 sm:flex-row">
-        <UButton
+      <!-- Actions -->
+      <div class="flex flex-col gap-2.5">
+        <button
           v-if="canPay"
-          :to="paymentTo"
-          block
-          color="primary"
-          icon="i-lucide-credit-card"
-          label="Bayar Sekarang"
-        />
-        <UButton
+          type="button"
+          class="w-full min-h-[52px] px-6 py-3.5 rounded-full bg-amber-600 text-white hover:bg-amber-700 active:scale-[0.99] shadow-lg shadow-amber-600/25 font-bold flex items-center justify-center gap-2 transition-all duration-150 cursor-pointer"
+          @click="$router.push(paymentTo)"
+        >
+          <UIcon name="i-lucide-credit-card" class="size-5" />
+          <span>Bayar Sekarang</span>
+        </button>
+
+        <NuxtLink
           :to="`/o/${orgSlug}/orders`"
-          block
-          color="neutral"
-          variant="soft"
-          icon="i-lucide-utensils"
-          label="Kembali ke Menu"
-        />
+          class="w-full min-h-[52px] px-6 py-3.5 rounded-full font-bold flex items-center justify-center gap-2 transition-all duration-150 cursor-pointer active:scale-[0.99]"
+          :class="canPay
+            ? 'bg-white border border-stone-200 text-stone-700 hover:bg-stone-50'
+            : 'bg-amber-600 text-white hover:bg-amber-700 shadow-lg shadow-amber-600/25'"
+        >
+          <UIcon name="i-lucide-plus" class="size-5" />
+          <span>Tambah Pesanan Lagi</span>
+        </NuxtLink>
       </div>
+
+      <!-- Footer note -->
+      <p class="text-center text-xs text-stone-400 pt-1 pb-2">
+        Terima kasih sudah memilih Santap ❤️
+      </p>
     </div>
   </section>
 </template>

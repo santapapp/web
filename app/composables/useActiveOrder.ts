@@ -23,8 +23,12 @@ const isOrderTerminal = (raw: {
   order_status?: string
 }): boolean => {
   if (raw.bill_status === 'closed' || raw.bill_status === 'cancelled') return true
-  if (raw.payment_status === 'paid' || raw.payment_status === 'cancelled') return true
-  if (raw.order_status === 'cancelled') return true
+  if (
+    raw.payment_status === 'paid' ||
+    raw.payment_status === 'cancelled' ||
+    raw.payment_status === 'failed'
+  ) return true
+  if (raw.order_status === 'cancelled' || raw.order_status === 'completed') return true
   return false
 }
 

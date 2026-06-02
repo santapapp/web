@@ -2,19 +2,21 @@
 /**
  * ProductDetailSheet — Bottom sheet / slideover untuk detail product & pilih variant.
  *
- * Alur:
+ * Alur (LOGIC TIDAK BERUBAH):
  * 1. Tampilkan info product (image, nama, harga dasar, deskripsi)
- * 2. Untuk setiap variant_group, tampilkan pilihan:
- *    - max_select = 1 → radio (URadioGroup)
- *    - max_select > 1 → checkbox (UCheckbox)
+ * 2. Untuk setiap variant_group, tampilkan pilihan via OrdersOptionGroup:
+ *    - max_select = 1 → radio (single select)
+ *    - max_select > 1 → checkbox (multi select)
  * 3. Validasi is_required + min_select sebelum submit
  * 4. Emit 'add-to-cart' dengan payload mentah (product, qty, note, selected_variants)
  *    — Cart store yang bertanggung jawab membuat CartItem dan cart key
  *
  * Tidak menyimpan CartItem final — hanya emit pilihan user.
+ * Slicing UI mengikuti referensi: card putih, image+nama+harga di tengah,
+ * section per grup dengan divider, quantity control, sticky CTA orange.
  */
 
-import type { MenuProduct, MenuVariantGroup, MenuVariant } from '~/types/customer-menu'
+import type { MenuProduct, MenuVariantGroup } from '~/types/customer-menu'
 import type { SelectedVariant } from '~/stores/cart.store'
 
 const props = defineProps<{
@@ -82,8 +84,9 @@ const previewTotal = computed(() => {
 
 // ─── Selection Helpers ────────────────────────────────────────────────────────
 
-const isSelected = (groupId: number, variantId: number): boolean =>
-  selections.value[groupId]?.has(variantId) ?? false
+/** Array variant_id terpilih untuk satu group (untuk prop OrdersOptionGroup) */
+const selectedIdsFor = (groupId: number): number[] =>
+  Array.from(selections.value[groupId] ?? [])
 
 const toggleVariant = (group: MenuVariantGroup, variantId: number) => {
   const set = selections.value[group.id] ?? new Set<number>()
@@ -164,126 +167,106 @@ const handleAddToCart = () => {
     @update:open="(v) => !v && emit('close')"
   >
     <template #content>
-      <div v-if="product" class="bg-white rounded-t-2xl flex flex-col w-full h-full max-h-[92dvh] outline-none">
-        
-        <!-- Handle (mobile) -->
+      <div
+        v-if="product"
+        class="bg-stone-100 rounded-t-3xl flex flex-col w-full h-full max-h-[94dvh] outline-none"
+      >
+        <!-- Drag handle (mobile) -->
         <div class="flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div class="w-10 h-1.5 rounded-full bg-gray-200" />
+          <div class="w-10 h-1.5 rounded-full bg-stone-300" />
         </div>
 
-        <!-- Scrollable content -->
-        <div class="flex-1 overflow-y-auto">
-
-          <!-- Image -->
-          <div class="relative aspect-video bg-gray-100">
-            <img
-              v-if="product.image"
-              :src="product.image"
-              :alt="product.name"
-              class="w-full h-full object-cover"
-            />
-            <div v-else class="w-full h-full flex items-center justify-center text-5xl">
-              🍽️
-            </div>
-          </div>
-
-          <!-- Info -->
-          <div class="px-5 py-4 border-b border-gray-100">
-            <h2 class="text-xl font-bold text-gray-900 mb-1">{{ product.name }}</h2>
-            <p v-if="product.description" class="text-sm text-gray-500 leading-relaxed mb-2">
-              {{ product.description }}
-            </p>
-            <p class="text-lg font-bold text-primary">{{ formatPrice(product.price) }}</p>
-          </div>
-
-          <!-- Variant Groups -->
-          <div
-            v-for="group in product.variant_groups"
-            :key="group.id"
-            class="px-5 py-4 border-b border-gray-100"
+        <!-- Header: back / title / spacer -->
+        <header class="flex-shrink-0 flex items-center justify-between gap-2 px-3 py-2">
+          <button
+            type="button"
+            class="size-10 rounded-full flex items-center justify-center text-stone-700 hover:bg-stone-200 active:scale-90 transition-all duration-150 cursor-pointer"
+            aria-label="Kembali"
+            @click="emit('close')"
           >
-            <div class="flex items-center justify-between mb-3">
-              <span class="text-sm font-semibold text-gray-900">{{ group.name }}</span>
-              <div class="flex gap-1.5">
-                <UBadge
-                  v-if="group.is_required"
-                  label="Wajib"
-                  color="error"
-                  variant="soft"
-                  size="sm"
+            <UIcon name="i-lucide-arrow-left" class="size-5" />
+          </button>
+
+          <h2 class="text-base font-bold text-stone-900 truncate">Pesanan saat ini</h2>
+
+          <!-- Spacer untuk menjaga title tetap center (slot opsi bisa ditambah bila ada kebutuhan) -->
+          <span class="size-10 flex-shrink-0" aria-hidden="true" />
+        </header>
+
+        <!-- Scrollable content -->
+        <div class="flex-1 overflow-y-auto px-4 pb-4">
+          <!-- White product card -->
+          <div class="bg-white rounded-3xl shadow-sm border border-stone-200/70 px-5 pt-6 pb-2">
+            <!-- Product image (centered) -->
+            <div class="flex justify-center">
+              <div class="size-40 sm:size-44 rounded-2xl overflow-hidden flex items-center justify-center">
+                <img
+                  v-if="product.image"
+                  :src="product.image"
+                  :alt="product.name"
+                  class="w-full h-full object-contain"
                 />
-                <UBadge
-                  v-if="group.max_select > 1"
-                  :label="`Max ${group.max_select}`"
-                  color="neutral"
-                  variant="soft"
-                  size="sm"
-                />
+                <div
+                  v-else
+                  class="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-100 via-orange-50 to-stone-100"
+                >
+                  <UIcon name="i-lucide-utensils" class="size-10 text-amber-900/20" />
+                </div>
               </div>
             </div>
 
-            <!-- Variants -->
-            <div class="space-y-2">
-              <button
-                v-for="variant in group.variants"
-                :key="variant.id"
-                type="button"
-                class="w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all duration-150 text-left"
-                :class="[
-                  isSelected(group.id, variant.id)
-                    ? 'border-primary bg-primary/5 ring-1 ring-primary'
-                    : 'border-gray-200 bg-white hover:border-gray-300',
-                  !variant.is_available ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-                ]"
-                :disabled="!variant.is_available"
-                @click="toggleVariant(group, variant.id)"
+            <!-- Name + price (centered) -->
+            <div class="text-center mt-3 mb-1">
+              <h1 class="text-lg font-extrabold uppercase tracking-wide text-stone-900">
+                {{ product.name }}
+              </h1>
+              <p class="text-base font-bold text-amber-600 mt-1">
+                {{ formatPrice(product.price) }}
+              </p>
+              <p
+                v-if="product.description"
+                class="text-sm text-stone-500 leading-relaxed mt-2 max-w-sm mx-auto"
               >
-                <div class="flex items-center gap-3">
-                  <!-- Radio / Checkbox indicator -->
-                  <span
-                    class="size-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors"
-                    :class="[
-                      group.max_select === 1 ? 'rounded-full' : 'rounded-md',
-                      isSelected(group.id, variant.id)
-                        ? 'border-primary bg-primary'
-                        : 'border-gray-300'
-                    ]"
-                  >
-                    <UIcon
-                      v-if="isSelected(group.id, variant.id)"
-                      :name="group.max_select === 1 ? 'i-lucide-circle' : 'i-lucide-check'"
-                      class="size-3 text-white"
-                    />
-                  </span>
-                  <span class="text-sm font-medium text-gray-800">{{ variant.name }}</span>
-                </div>
-                <span v-if="variant.price > 0" class="text-sm font-semibold text-primary">
-                  +{{ formatPrice(variant.price) }}
-                </span>
-              </button>
+                {{ product.description }}
+              </p>
+            </div>
+
+            <!-- Option groups: divider antar section -->
+            <div v-if="product.variant_groups.length" class="mt-2 divide-y divide-stone-100">
+              <OrdersOptionGroup
+                v-for="group in product.variant_groups"
+                :key="group.id"
+                :group="group"
+                :selected-ids="selectedIdsFor(group.id)"
+                @toggle="(variantId) => toggleVariant(group, variantId)"
+              />
+            </div>
+
+            <!-- Note per item -->
+            <div class="border-t border-stone-100 py-4">
+              <label
+                class="block text-xs font-extrabold uppercase tracking-wide text-stone-800 mb-2 px-1"
+                for="product-note"
+              >
+                Catatan (opsional)
+              </label>
+              <UTextarea
+                id="product-note"
+                v-model="note"
+                placeholder="Contoh: Tidak pedas, tanpa bawang"
+                :rows="2"
+                :maxlength="150"
+                class="w-full"
+                resize
+              />
             </div>
           </div>
-
-          <!-- Note per item -->
-          <div class="px-5 py-4 border-b border-gray-100">
-            <label class="block text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2" for="product-note">
-              Catatan (opsional)
-            </label>
-            <UTextarea
-              id="product-note"
-              v-model="note"
-              placeholder="Contoh: Tidak pedas, tanpa bawang"
-              :rows="2"
-              :maxlength="150"
-              resize
-            />
-          </div>
-
         </div>
 
-        <!-- Sticky Footer -->
-        <div class="flex-shrink-0 border-t border-gray-100 bg-white px-5 py-4 pb-[max(16px,env(safe-area-inset-bottom))]">
-
+        <!-- Sticky Footer: quantity + CTA -->
+        <div
+          class="flex-shrink-0 border-t border-stone-200 bg-stone-100/95 backdrop-blur px-5 pt-3 pb-[max(16px,env(safe-area-inset-bottom))] space-y-3"
+        >
           <!-- Validation error -->
           <UAlert
             v-if="validationError"
@@ -291,47 +274,19 @@ const handleAddToCart = () => {
             color="error"
             variant="soft"
             :description="validationError"
-            class="mb-3"
+            class="rounded-xl"
           />
 
-          <div class="flex items-center gap-3">
-            <!-- Qty stepper -->
-            <div class="flex items-center gap-2 border border-gray-200 rounded-xl px-3 py-2">
-              <UButton
-                icon="i-lucide-minus"
-                size="xs"
-                color="neutral"
-                variant="ghost"
-                :disabled="quantity <= 1"
-                aria-label="Kurangi"
-                @click="quantity = Math.max(1, quantity - 1)"
-              />
-              <span class="text-sm font-bold text-gray-900 w-6 text-center tabular-nums">
-                {{ quantity }}
-              </span>
-              <UButton
-                icon="i-lucide-plus"
-                size="xs"
-                color="neutral"
-                variant="ghost"
-                aria-label="Tambah"
-                @click="quantity++"
-              />
-            </div>
+          <!-- Quantity -->
+          <OrdersQuantityControl v-model="quantity" :min="1" />
 
-            <!-- Add to cart CTA -->
-            <UButton
-              block
-              size="lg"
-              color="primary"
-              :label="`Tambah — ${formatPrice(previewTotal)}`"
-              icon="i-lucide-shopping-bag"
-              class="flex-1"
-              @click="handleAddToCart"
-            />
-          </div>
+          <!-- Add to cart CTA -->
+          <OrdersStickyCartButton
+            label="Tambah ke Keranjang"
+            :total="previewTotal"
+            @click="handleAddToCart"
+          />
         </div>
-
       </div>
     </template>
   </UDrawer>

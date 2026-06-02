@@ -323,6 +323,7 @@ function mapOrderItem(raw: any): CustomerOrderItem {
     subtotal: Number(raw.subtotal ?? raw.subtotal_amount ?? 0),
     item_status: raw.item_status ?? raw.status ?? null,
     note: raw.note ?? raw.notes ?? null,
+    image: raw.image ?? raw.image_url ?? raw.menu_image ?? raw.menu?.image ?? raw.menu?.image_url ?? null,
     children: Array.isArray(raw.children) ? raw.children.map(mapOrderItem) : []
   }
 }

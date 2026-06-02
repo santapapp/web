@@ -42,6 +42,9 @@ const {
   fetchOrderStatus
 } = useCustomerOrder()
 
+// Riwayat pesanan terbaru per org (localStorage) — untuk ditampilkan di entry state.
+const orderHistory = useOrderHistory(orgSlug.value)
+
 const cartMode = computed<CartMode>(() =>
   customerSession.sessionMode.value === 'open_bill' ? 'open_bill' : 'table_order'
 )
@@ -70,6 +73,47 @@ const clearQuery = async () => {
   if (Object.keys(route.query).length === 0) return
   await router.replace({ path: route.path })
 }
+
+// ── Live polling untuk tracking view (mode order_detail) ──────────────────────
+// Status final selalu dibaca dari Laravel (gateway = source of truth). Endpoint
+// publik /orders/{order} men-sinkronkan pembayaran ke provider, jadi polling ini
+// otomatis menangkap pembayaran yang baru settle maupun progres dapur.
+const TRACKING_POLL_MS = 8000
+let trackingPoll: ReturnType<typeof setInterval> | null = null
+
+const isOrderTerminal = (o: typeof order.value): boolean => {
+  if (!o) return false
+  return (
+    o.order_status === 'completed' ||
+    o.order_status === 'cancelled' ||
+    o.payment_status === 'cancelled' ||
+    o.payment_status === 'failed'
+  )
+}
+
+const stopTrackingPoll = () => {
+  if (trackingPoll) {
+    clearInterval(trackingPoll)
+    trackingPoll = null
+  }
+}
+
+const startTrackingPoll = () => {
+  stopTrackingPoll()
+  // Tidak perlu polling kalau sudah status final.
+  if (isOrderTerminal(order.value)) return
+
+  trackingPoll = setInterval(async () => {
+    if (mode.value !== 'order_detail') {
+      stopTrackingPoll()
+      return
+    }
+    await fetchOrderStatus(orgSlug.value, orderToken.value || '')
+    if (isOrderTerminal(order.value)) stopTrackingPoll()
+  }, TRACKING_POLL_MS)
+}
+
+onUnmounted(stopTrackingPoll)
 
 const loadOrderingUi = async () => {
   isSessionReady.value = true
@@ -128,6 +172,8 @@ const initialize = async () => {
 
   const run = ++initRun
   sessionError.value = null
+  // Hentikan polling tracking sebelumnya saat route berubah / re-init.
+  stopTrackingPoll()
 
   if (mode.value === 'invalid') {
     customerSession.clearSession()
@@ -143,6 +189,9 @@ const initialize = async () => {
     isSessionReady.value = false
     sessionLoading.value = false
     await fetchOrderStatus(orgSlug.value, orderToken.value || '')
+    if (run !== initRun) return
+    // Mulai polling live agar status pembayaran & dapur ter-update tanpa refresh manual.
+    startTrackingPoll()
     return
   }
 
@@ -193,6 +242,8 @@ const initialize = async () => {
     }
     isSessionReady.value = false
     sessionError.value = 'no_session'
+    // Segarkan status riwayat (non-final) agar badge di entry state akurat.
+    orderHistory.refreshFromBackend()
   }
 
   sessionLoading.value = false
@@ -249,6 +300,8 @@ const handleDecrease = (product: any) => {
       v-else-if="!isSessionReady"
       :session-error="sessionError"
       :loading="sessionLoading"
+      :history-items="orderHistory.items.value"
+      :org-slug="orgSlug"
       @open-scanner="showScanner = true"
       @submit-manual="handleManualSubmit"
     />

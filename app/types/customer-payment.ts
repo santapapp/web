@@ -3,7 +3,9 @@
 // Cek status    → GET  /v1/customer/order/qris-status (header: X-Public-Token)
 // Batalkan      → DELETE /v1/customer/order/qris-cancel (header: X-Public-Token)
 
-export type QrisPaymentStatus = 'unpaid' | 'pending' | 'paid' | 'cancelled'
+// Sinkron dengan App\Enums\PaymentStatus backend. 'failed' diperlakukan setara
+// 'cancelled' (kegagalan terminal) di seluruh UI.
+export type QrisPaymentStatus = 'unpaid' | 'pending' | 'paid' | 'cancelled' | 'failed'
 
 // ─── Initiate QRIS Payment ────────────────────────────────────────────────────
 

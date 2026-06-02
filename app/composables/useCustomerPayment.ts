@@ -10,10 +10,9 @@
  * 1. initiatePayment() → dapat qr_url dan payment_reference
  * 2. Render QR dari qr_url
  * 3. startPolling() → check tiap 5 detik sampai paid/cancelled
- * 4. Countdown 5 menit berjalan paralel — jika habis, isFailed + isExpired = true
- *
- * TODO backend: tambahkan expires_at di response POST /v1/customer/order/pay-qris
- * agar timeout tidak hardcoded di frontend.
+ * 4. Countdown berjalan paralel. Saat habis TIDAK langsung menandai gagal —
+ *    melakukan satu FINAL CHECK ke Laravel (gateway = source of truth). Status
+ *    final (paid/cancelled/expired) hanya diputuskan dari response API.
  */
 
 import { ref, onUnmounted } from 'vue'
@@ -37,20 +36,25 @@ export const useCustomerPayment = () => {
   const payment = ref<LocalQrisPayment | null>(null)
   const isPaid = ref(false)
   const isFailed = ref(false)
-  const isExpired = ref(false)  // payment expired karena timeout 15 menit
+  const isExpired = ref(false)  // payment expired (dikonfirmasi API setelah final check)
   const isPolling = ref(false)
+  const isChecking = ref(false) // sedang melakukan final check ke API saat timeout
   const initiatePending = ref(false)
   const cancelPending = ref(false)
   const paymentError = ref<CustomerApiError | null>(null)
 
-  // Countdown dalam detik tersisa (0 = expired)
+  // Countdown dalam detik tersisa (0 = waktu habis)
   const countdown = ref(0)
-  
+
   // Offset waktu antara server dan client
   const timeOffset = ref(0)
 
   let pollingInterval: ReturnType<typeof setInterval> | null = null
   let countdownInterval: ReturnType<typeof setInterval> | null = null
+  // Fungsi cek status aktif (custom utk table order, default utk open bill).
+  // Dipakai ulang oleh final check saat countdown habis.
+  let activeCheckFn: (() => Promise<QrisPaymentStatus | undefined>) | null = null
+  let finalizing = false
   
   const setServerTime = (serverTimeStr?: string | null) => {
     if (serverTimeStr) {
@@ -71,7 +75,7 @@ export const useCustomerPayment = () => {
       isPaid.value = true
       isFailed.value = false
       stopCountdown()
-    } else if (status === 'cancelled') {
+    } else if (status === 'cancelled' || status === 'failed') {
       isFailed.value = true
       isPaid.value = false
       stopCountdown()
@@ -110,16 +114,55 @@ export const useCustomerPayment = () => {
       countdown.value = Math.floor(remaining / 1000)
 
       if (remaining <= 0) {
-        // Timeout — tandai sebagai expired
-        isExpired.value = true
-        isFailed.value = true
-        stopPolling()
+        // Waktu habis — JANGAN langsung tandai gagal. Konfirmasi dulu ke API
+        // (gateway = source of truth) lewat final check.
         stopCountdown()
+        void finalizeOnTimeout()
       }
     }
 
     tick()  // jalankan sekali langsung
     countdownInterval = setInterval(tick, 1000)
+  }
+
+  /**
+   * Cek status default ke API (open bill — token di header).
+   */
+  const defaultCheck = async (): Promise<QrisPaymentStatus | undefined> => {
+    const response = await api.checkQrisStatus()
+    return response.data?.payment_status as QrisPaymentStatus | undefined
+  }
+
+  /**
+   * Final check saat countdown habis. Status final hanya diputuskan dari
+   * response Laravel: kalau paid → sukses; selain itu baru expired.
+   * Jika API tak terjangkau, fallback ke expired agar UI tidak menggantung.
+   */
+  const finalizeOnTimeout = async () => {
+    if (finalizing) return
+    finalizing = true
+    isChecking.value = true
+
+    try {
+      const check = activeCheckFn ?? defaultCheck
+      const status = await check()
+      applyStatus(status)
+    } catch (err) {
+      console.warn('[useCustomerPayment] Final check error:', err)
+    } finally {
+      isChecking.value = false
+      finalizing = false
+    }
+
+    if (isPaid.value) {
+      stopPolling()
+      return
+    }
+
+    // Belum paid setelah konfirmasi API → baru tandai expired.
+    isExpired.value = true
+    isFailed.value = true
+    stopPolling()
   }
 
   /**
@@ -226,22 +269,18 @@ export const useCustomerPayment = () => {
     isPolling.value = true
     isPaid.value = false
     isFailed.value = false
+    // Simpan fungsi cek aktif agar final check saat timeout memakai endpoint yang sama.
+    activeCheckFn = customCheckFn ?? defaultCheck
 
     pollingInterval = setInterval(async () => {
-      // Stop jika sudah expired dari countdown
-      if (isExpired.value) {
+      // Stop hanya jika status final sudah dikonfirmasi.
+      if (isExpired.value || isPaid.value || isFailed.value) {
         stopPolling()
         return
       }
 
       try {
-        let status: QrisPaymentStatus | undefined
-        if (customCheckFn) {
-          status = await customCheckFn()
-        } else {
-          const response = await api.checkQrisStatus()
-          status = response.data?.payment_status as QrisPaymentStatus | undefined
-        }
+        const status = await (activeCheckFn ?? defaultCheck)()
         applyStatus(status)
 
         if (isPaid.value || isFailed.value) {
@@ -303,6 +342,7 @@ export const useCustomerPayment = () => {
     isExpired,
     countdown,
     isPolling,
+    isChecking,
     initiatePending,
     cancelPending,
     paymentError,

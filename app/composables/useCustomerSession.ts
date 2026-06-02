@@ -66,7 +66,7 @@ export const extractQrToken = (rawInput: string): string | null => {
 const normalizeBillStatus = (status: unknown): StoredSessionOpenBill['status'] => {
   const value = String(status || '').toLowerCase()
   if (value === 'locked') return 'locked'
-  if (['closed', 'cancelled', 'paid', 'expired'].includes(value)) return 'closed'
+  if (['closed', 'cancelled', 'failed', 'paid', 'expired'].includes(value)) return 'closed'
   return 'open'
 }
 

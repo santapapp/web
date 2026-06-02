@@ -203,6 +203,7 @@ onMounted(async () => {
   // (bill_status tetap 'none'). Untuk open bill ditandai bill_status 'closed'.
   if (
     bill.payment_status === 'cancelled' ||
+    bill.payment_status === 'failed' ||
     bill.order_status === 'cancelled' ||
     bill.bill_status === 'closed' ||
     bill.bill_status === 'cancelled'

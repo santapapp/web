@@ -39,13 +39,24 @@ export interface CustomerOrderItem {
   subtotal: number
   item_status: OrderItemStatus | null
   note: string | null
+  /** URL gambar menu (opsional — fallback ke placeholder bila kosong) */
+  image: string | null
   children: CustomerOrderItem[]
 }
 
 // ─── Order Detail (dari OrderDetailResource) ──────────────────────────────────
 
 export type BillStatus = 'none' | 'open' | 'closed' | 'cancelled'
-export type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'completed' | 'cancelled'
+// Sinkron dengan App\Enums\OrderStatus di backend (pending, confirmed, preparing,
+// ready, completed, cancelled). 'processing' dipertahankan sebagai alias legacy.
+export type OrderStatus =
+  | 'pending'
+  | 'confirmed'
+  | 'preparing'
+  | 'ready'
+  | 'processing'
+  | 'completed'
+  | 'cancelled'
 export type PaymentStatus = 'unpaid' | 'pending' | 'paid' | 'cancelled' | 'failed'
 
 export interface OrderDiningTable {

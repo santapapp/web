@@ -36,13 +36,16 @@ const paymentConfig = computed(() => {
   const p = props.order?.payment_status
   if (p === 'paid') return { label: 'Lunas', color: 'success' as const }
   if (p === 'pending') return { label: 'Menunggu Bayar', color: 'warning' as const }
-  if (p === 'cancelled') return { label: 'Dibatalkan', color: 'error' as const }
+  if (p === 'cancelled' || p === 'failed') return { label: 'Dibatalkan', color: 'error' as const }
   return { label: 'Belum Bayar', color: 'neutral' as const }
 })
 
 const orderStatusLabel = computed(() => {
   const s = props.order?.order_status
   if (s === 'confirmed') return 'Dikonfirmasi'
+  if (s === 'preparing' || s === 'processing') return 'Diproses'
+  if (s === 'ready') return 'Siap'
+  if (s === 'completed') return 'Selesai'
   if (s === 'cancelled') return 'Dibatalkan'
   return 'Menunggu'
 })

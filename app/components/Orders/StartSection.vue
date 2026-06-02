@@ -6,10 +6,14 @@
  */
 
 import { ref } from 'vue'
+import type { OrderHistoryItem } from '~/types/order-history'
 
 const props = defineProps<{
   sessionError?: string | null
   loading?: boolean
+  /** Riwayat pesanan terbaru per org (dari localStorage via useOrderHistory) */
+  historyItems?: OrderHistoryItem[]
+  orgSlug?: string
 }>()
 
 const emit = defineEmits<{
@@ -160,6 +164,14 @@ const submitManualCode = () => {
           </div>
 
         </div>
+
+        <!-- Recent order history (returning customers) -->
+        <OrdersRecentHistory
+          v-if="orgSlug && historyItems && historyItems.length"
+          :items="historyItems"
+          :org-slug="orgSlug"
+          :step="5"
+        />
 
       </div>
 

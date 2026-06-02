@@ -74,16 +74,29 @@ export function mapToHistoryStatus(
   paymentStatus: RawOrderStatus,
   billStatus: RawOrderStatus
 ): OrderHistoryItem['status'] {
-  if (paymentStatus === 'paid' || billStatus === 'closed') return 'paid'
+  // Urutan presedensi penting: terminal cancelled & completed menang, baru paid.
   if (
     orderStatus === 'cancelled' ||
     paymentStatus === 'cancelled' ||
     paymentStatus === 'failed' ||
     billStatus === 'cancelled'
   ) return 'cancelled'
-  if (paymentStatus === 'pending') return 'waiting_payment'
-  if (orderStatus === 'confirmed' || orderStatus === 'processing') return 'processing'
+
   if (orderStatus === 'completed') return 'completed'
+
+  // Sudah dibayar tapi belum selesai → tetap "lunas".
+  if (paymentStatus === 'paid' || billStatus === 'closed') return 'paid'
+
+  if (paymentStatus === 'pending') return 'waiting_payment'
+
+  // Dalam proses dapur (confirmed → preparing → ready). 'processing' = alias legacy.
+  if (
+    orderStatus === 'confirmed' ||
+    orderStatus === 'preparing' ||
+    orderStatus === 'ready' ||
+    orderStatus === 'processing'
+  ) return 'processing'
+
   return 'pending'
 }
 
