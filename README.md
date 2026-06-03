@@ -29,6 +29,8 @@ NUXT_PUBLIC_API_BASE_URL=http://localhost:8000
 NUXT_PUBLIC_USE_MOCK_API=false
 ```
 
+> Default production (tanpa env) menunjuk ke `https://api.santap.app`. Set `NUXT_PUBLIC_API_BASE_URL` hanya untuk dev lokal / staging.
+
 ## Development
 
 ```bash

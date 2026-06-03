@@ -41,7 +41,7 @@ const normalizeCustomerApiError = (error: unknown): CustomerApiError => {
 
 export const useCustomerApi = () => {
   const config = useRuntimeConfig()
-  const baseUrl = String(config.public.apiBaseUrl || 'http://localhost:8000').replace(/\/$/, '')
+  const baseUrl = String(config.public.apiBaseUrl || 'https://api.santap.app').replace(/\/$/, '')
 
   const getToken = (): string | null => {
     if (!import.meta.client) return null
