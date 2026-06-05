@@ -44,62 +44,61 @@ const handleAction = () => {
 
 <template>
   <article
-    class="bg-white rounded-2xl overflow-hidden border border-stone-200 shadow-sm hover:border-amber-300 hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col h-full relative"
-    :class="{ 'opacity-65 cursor-not-allowed': isUnavailable }"
+    class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col h-full relative"
+    :class="{ 'opacity-60 cursor-not-allowed': isUnavailable }"
     @click="handleAction"
   >
     <!-- Image with fallback warm gradient -->
-    <div class="relative aspect-[4/3] bg-gradient-to-br from-amber-100 via-orange-50 to-stone-100 flex-shrink-0 overflow-hidden">
+    <div class="relative aspect-[4/3] bg-gradient-to-br from-orange-50 via-gray-50 to-gray-100 flex-shrink-0 overflow-hidden">
       <img
         v-if="product.image"
         :src="product.image"
         :alt="product.name"
-        class="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+        class="w-full h-full object-cover transition-transform duration-500 hover:scale-105 rounded-xl"
         loading="lazy"
       />
       <div v-else class="w-full h-full flex items-center justify-center bg-transparent">
-        <UIcon name="i-lucide-utensils" class="size-8 text-amber-900/20" />
+        <UIcon name="i-lucide-utensils" class="size-8 text-gray-300" />
       </div>
 
       <!-- Badge: Out of stock -->
-      <UBadge
-        v-if="isUnavailable"
-        label="Habis"
-        color="neutral"
-        variant="solid"
-        class="absolute top-2 left-2 font-bold px-2 py-0.5 rounded-full text-[10px]"
-      />
-
-      <!-- Badge: Cart quantity (only shown for variant items) -->
       <span
-        v-if="cartQty && cartQty > 0 && !isUnavailable && hasVariants"
-        class="absolute top-2 right-2 size-6 rounded-full bg-amber-700 text-white text-xs font-bold flex items-center justify-center shadow-md animate-scale-in"
+        v-if="isUnavailable"
+        class="absolute top-2 left-2 bg-gray-800 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"
+      >
+        Habis
+      </span>
+
+      <!-- Badge: Cart quantity (circular, orange/red) -->
+      <span
+        v-if="cartQty && cartQty > 0 && !isUnavailable"
+        class="absolute top-2 right-2 size-6 rounded-full bg-orange-600 text-white text-xs font-bold flex items-center justify-center shadow-md animate-scale-in"
       >
         {{ cartQty }}
       </span>
     </div>
 
     <!-- Body text and pricing details -->
-    <div class="p-4 flex flex-col gap-1.5 flex-1 justify-between">
-      <div class="flex flex-col gap-1">
-        <h4 class="text-sm font-bold text-stone-900 leading-snug line-clamp-2">
+    <div class="p-3 flex flex-col gap-1.5 flex-1 justify-between">
+      <div class="flex flex-col gap-0.5">
+        <h4 class="text-sm font-bold text-gray-900 leading-snug line-clamp-2">
           {{ product.name }}
         </h4>
-        <p v-if="product.description" class="text-xs text-stone-500 leading-relaxed line-clamp-2 font-medium">
+        <p v-if="product.description" class="text-xs text-gray-400 leading-relaxed line-clamp-1 font-medium">
           {{ product.description }}
         </p>
       </div>
 
-      <div class="flex items-center justify-between mt-auto pt-2.5 gap-2">
-        <span class="text-sm font-extrabold text-amber-700 whitespace-nowrap">{{ formatPrice(product.price) }}</span>
-        
+      <div class="flex items-center justify-between mt-auto pt-2 gap-2">
+        <span class="text-sm font-extrabold text-orange-600 whitespace-nowrap">{{ formatPrice(product.price) }}</span>
+
         <!-- Action Buttons -->
         <div v-if="!isUnavailable" class="flex-shrink-0" @click.stop>
           <!-- Choose variant button -->
           <button
             v-if="hasVariants"
             type="button"
-            class="px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 font-extrabold text-xs flex items-center gap-1 transition-all duration-150 cursor-pointer shadow-sm"
+            class="px-3 py-1.5 rounded-full bg-orange-50 text-orange-600 border border-orange-200 hover:bg-orange-100 font-bold text-xs flex items-center gap-1 transition-all duration-150 cursor-pointer"
             @click="handleAction"
           >
             <span>Pilih</span>
@@ -109,24 +108,24 @@ const handleAction = () => {
           <!-- Stepper for non-variant products -->
           <div
             v-else-if="cartQty && cartQty > 0"
-            class="flex items-center gap-1.5 border border-amber-250 bg-amber-50/50 rounded-xl px-1 py-0.5 shadow-sm animate-scale-in"
+            class="flex items-center gap-1 bg-gray-50 rounded-full px-1 py-0.5 border border-gray-200 shadow-sm animate-scale-in"
           >
             <!-- Minus -->
             <button
               type="button"
-              class="size-8 rounded-lg text-amber-850 hover:bg-amber-100/50 active:scale-90 flex items-center justify-center transition-all cursor-pointer"
+              class="size-7 rounded-full text-orange-600 hover:bg-orange-50 active:scale-90 flex items-center justify-center transition-all cursor-pointer"
               aria-label="Kurangi"
               @click="emit('decrease', product)"
             >
               <UIcon name="i-lucide-minus" class="size-3.5" />
             </button>
-            <span class="text-xs font-black text-stone-900 w-5 text-center tabular-nums">
+            <span class="text-xs font-black text-gray-900 w-4 text-center tabular-nums">
               {{ cartQty }}
             </span>
             <!-- Plus -->
             <button
               type="button"
-              class="size-8 rounded-lg text-amber-850 hover:bg-amber-100/50 active:scale-90 flex items-center justify-center transition-all cursor-pointer"
+              class="size-7 rounded-full text-orange-600 hover:bg-orange-50 active:scale-90 flex items-center justify-center transition-all cursor-pointer"
               aria-label="Tambah"
               @click="emit('increase', product)"
             >
@@ -138,7 +137,7 @@ const handleAction = () => {
           <button
             v-else
             type="button"
-            class="size-8 rounded-xl bg-amber-700 text-white hover:bg-amber-800 active:scale-95 flex items-center justify-center shadow-sm transition-all duration-150 cursor-pointer"
+            class="size-8 rounded-full bg-orange-600 text-white hover:bg-orange-700 active:scale-95 flex items-center justify-center shadow-sm shadow-orange-200 transition-all duration-150 cursor-pointer"
             :aria-label="`Tambah ${product.name}`"
             @click="handleAction"
           >

@@ -31,10 +31,15 @@ export default defineNuxtRouteMiddleware((to) => {
   const bills = readQuery('bills')
 
   const hasMultipleValues = [table, order, bill, bills].some((value) => value.hasMultipleValues)
-  const hasUnsupportedBillQuery = bill.isPresent || bills.isPresent
+  // `bill` (open bill dari kasir) didukung; hanya `bills` (plural) yang tidak. Selaras
+  // dengan resolveOrderMode di useOrderMode.ts yang menerima `bill` → mode 'open_bill'.
+  const hasUnsupportedBillQuery = bills.isPresent
   const hasEmptyAllowedQuery =
-    (table.isPresent && !table.hasValue) || (order.isPresent && !order.hasValue)
-  const hasMixedAllowedQuery = [table.hasValue, order.hasValue].filter(Boolean).length > 1
+    (table.isPresent && !table.hasValue) ||
+    (order.isPresent && !order.hasValue) ||
+    (bill.isPresent && !bill.hasValue)
+  const hasMixedAllowedQuery =
+    [table.hasValue, order.hasValue, bill.hasValue].filter(Boolean).length > 1
 
   if (hasMultipleValues || hasUnsupportedBillQuery || hasEmptyAllowedQuery || hasMixedAllowedQuery) {
     return navigateTo({ path: to.path }, { replace: true })

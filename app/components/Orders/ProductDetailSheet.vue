@@ -12,8 +12,6 @@
  *    — Cart store yang bertanggung jawab membuat CartItem dan cart key
  *
  * Tidak menyimpan CartItem final — hanya emit pilihan user.
- * Slicing UI mengikuti referensi: card putih, image+nama+harga di tengah,
- * section per grup dengan divider, quantity control, sticky CTA orange.
  */
 
 import type { MenuProduct, MenuVariantGroup } from '~/types/customer-menu'
@@ -169,34 +167,34 @@ const handleAddToCart = () => {
     <template #content>
       <div
         v-if="product"
-        class="bg-stone-100 rounded-t-3xl flex flex-col w-full h-full max-h-[94dvh] outline-none"
+        class="bg-white rounded-t-3xl flex flex-col w-full h-full max-h-[94dvh] outline-none"
       >
         <!-- Drag handle (mobile) -->
         <div class="flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div class="w-10 h-1.5 rounded-full bg-stone-300" />
+          <div class="w-10 h-1 rounded-full bg-gray-200" />
         </div>
 
         <!-- Header: back / title / spacer -->
-        <header class="flex-shrink-0 flex items-center justify-between gap-2 px-3 py-2">
+        <header class="flex-shrink-0 flex items-center justify-between gap-2 px-4 py-3">
           <button
             type="button"
-            class="size-10 rounded-full flex items-center justify-center text-stone-700 hover:bg-stone-200 active:scale-90 transition-all duration-150 cursor-pointer"
+            class="size-10 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100 active:scale-90 transition-all duration-150 cursor-pointer"
             aria-label="Kembali"
             @click="emit('close')"
           >
             <UIcon name="i-lucide-arrow-left" class="size-5" />
           </button>
 
-          <h2 class="text-base font-bold text-stone-900 truncate">Pesanan saat ini</h2>
+          <h2 class="text-base font-bold text-gray-900 truncate">Pesanan saat ini</h2>
 
-          <!-- Spacer untuk menjaga title tetap center (slot opsi bisa ditambah bila ada kebutuhan) -->
+          <!-- Spacer -->
           <span class="size-10 flex-shrink-0" aria-hidden="true" />
         </header>
 
         <!-- Scrollable content -->
         <div class="flex-1 overflow-y-auto px-4 pb-4">
           <!-- White product card -->
-          <div class="bg-white rounded-3xl shadow-sm border border-stone-200/70 px-5 pt-6 pb-2">
+          <div class="bg-gray-50 rounded-2xl px-5 pt-6 pb-2">
             <!-- Product image (centered) -->
             <div class="flex justify-center">
               <div class="size-40 sm:size-44 rounded-2xl overflow-hidden flex items-center justify-center">
@@ -208,31 +206,31 @@ const handleAddToCart = () => {
                 />
                 <div
                   v-else
-                  class="w-full h-full flex items-center justify-center bg-gradient-to-br from-amber-100 via-orange-50 to-stone-100"
+                  class="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 via-gray-50 to-gray-100"
                 >
-                  <UIcon name="i-lucide-utensils" class="size-10 text-amber-900/20" />
+                  <UIcon name="i-lucide-utensils" class="size-10 text-gray-300" />
                 </div>
               </div>
             </div>
 
             <!-- Name + price (centered) -->
-            <div class="text-center mt-3 mb-1">
-              <h1 class="text-lg font-extrabold uppercase tracking-wide text-stone-900">
+            <div class="text-center mt-4 mb-1">
+              <h1 class="text-lg font-extrabold uppercase tracking-wide text-gray-900">
                 {{ product.name }}
               </h1>
-              <p class="text-base font-bold text-amber-600 mt-1">
+              <p class="text-base font-bold text-orange-600 mt-1">
                 {{ formatPrice(product.price) }}
               </p>
               <p
                 v-if="product.description"
-                class="text-sm text-stone-500 leading-relaxed mt-2 max-w-sm mx-auto"
+                class="text-sm text-gray-500 leading-relaxed mt-2 max-w-sm mx-auto"
               >
                 {{ product.description }}
               </p>
             </div>
 
             <!-- Option groups: divider antar section -->
-            <div v-if="product.variant_groups.length" class="mt-2 divide-y divide-stone-100">
+            <div v-if="product.variant_groups.length" class="mt-3 divide-y divide-gray-100">
               <OrdersOptionGroup
                 v-for="group in product.variant_groups"
                 :key="group.id"
@@ -243,9 +241,9 @@ const handleAddToCart = () => {
             </div>
 
             <!-- Note per item -->
-            <div class="border-t border-stone-100 py-4">
+            <div class="border-t border-gray-100 py-4">
               <label
-                class="block text-xs font-extrabold uppercase tracking-wide text-stone-800 mb-2 px-1"
+                class="block text-xs font-extrabold uppercase tracking-wide text-gray-700 mb-2 px-1"
                 for="product-note"
               >
                 Catatan (opsional)
@@ -265,7 +263,7 @@ const handleAddToCart = () => {
 
         <!-- Sticky Footer: quantity + CTA -->
         <div
-          class="flex-shrink-0 border-t border-stone-200 bg-stone-100/95 backdrop-blur px-5 pt-3 pb-[max(16px,env(safe-area-inset-bottom))] space-y-3"
+          class="flex-shrink-0 border-t border-gray-100 bg-white px-5 pt-4 pb-[max(20px,env(safe-area-inset-bottom))] space-y-4"
         >
           <!-- Validation error -->
           <UAlert

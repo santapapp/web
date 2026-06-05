@@ -1,8 +1,9 @@
 <script setup lang="ts">
 /**
  * CategoryTabs.vue
- * Elegant category navigation tab bar with smooth scroll,
- * styled to match the warm amber brand theme.
+ * Pill-style horizontal-scroll category navigation.
+ * Active: solid orange bg + white text.
+ * Inactive: light gray bg + dark gray text.
  */
 
 import type { CustomerMenuCategoryGroup } from '~/types/customer-menu'
@@ -18,32 +19,26 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="flex min-h-11 items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none flex-shrink-0">
+  <div class="flex min-h-11 items-center gap-2 overflow-x-auto pb-1 scrollbar-none flex-shrink-0 -mx-1 px-1">
     <button
       v-for="category in categories"
       :key="category.id"
       type="button"
-      class="shrink-0 px-4 py-2 rounded-full font-bold text-xs sm:text-sm tracking-wide transition-all duration-200 cursor-pointer shadow-sm"
+      class="shrink-0 px-4 py-2 rounded-full font-semibold text-[13px] tracking-wide transition-all duration-200 cursor-pointer"
       :class="[
         activeCategory === category.id
-          ? 'bg-amber-700 text-white shadow-sm scale-[1.01]'
-          : 'bg-white text-stone-700 border border-stone-200/80 hover:border-amber-300 hover:bg-amber-50/50 hover:text-amber-800'
+          ? 'bg-orange-600 text-white shadow-sm shadow-orange-200'
+          : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800'
       ]"
       @click="$emit('change', category.id)"
     >
       {{ category.name }}
-      <span 
-        class="ml-1 text-[10px] font-black"
-        :class="activeCategory === category.id ? 'text-amber-200' : 'text-stone-400'"
-      >
-        {{ category.menus.length }}
-      </span>
     </button>
   </div>
 </template>
 
 <style scoped>
-/* Hide scrollbars for a clean floating look */
+/* Hide scrollbars for a clean pill-row look */
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }

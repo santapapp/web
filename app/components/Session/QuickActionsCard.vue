@@ -2,10 +2,10 @@
 /**
  * QuickActionsCard — Aksi cepat di session drawer kiri
  *
- * Emits:
- * - open-cart: buka cart (mobile — di desktop sudah ada CartSidebar)
- * - scan-code: buka scanner / input kode ulang
- * - exit-session: trigger confirm modal keluar sesi
+ * Logika tombol per mode sesi:
+ * - table   → Lihat Keranjang + Ganti Meja + Keluar Sesi
+ * - open_bill → Lihat Keranjang + info (sesi diakhiri kasir/admin)
+ * - no session → Lihat Keranjang saja
  */
 
 defineEmits<{
@@ -15,128 +15,72 @@ defineEmits<{
 }>()
 
 const session = useCustomerSession()
+const isTable = computed(() => session.sessionMode.value === 'table')
+const isOpenBill = computed(() => session.sessionMode.value === 'open_bill')
 </script>
 
 <template>
-  <div class="quick-actions">
-    <h4 class="section-title">Aksi Cepat</h4>
+  <div class="flex flex-col gap-1.5">
+    <h4 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 px-0.5">Aksi Cepat</h4>
 
-    <!-- Lihat Keranjang (mobile: tampil selalu, desktop: hidden karena ada sidebar) -->
+    <!-- Lihat Keranjang — always visible -->
     <button
-      class="action-btn"
+      class="w-full bg-white border border-slate-100 rounded-xl px-3.5 py-3 text-[13px] font-semibold text-slate-700 cursor-pointer flex items-center justify-between gap-3 hover:bg-orange-50 hover:border-orange-200 transition-all duration-150"
       aria-label="Lihat keranjang belanja"
       @click="$emit('open-cart')"
     >
-      <div class="action-btn-left">
-        <span class="action-icon">
-          <UIcon name="i-lucide-shopping-bag" class="size-4 text-amber-700" />
+      <div class="flex items-center gap-3">
+        <span class="size-8 rounded-lg bg-orange-50 flex items-center justify-center flex-shrink-0">
+          <UIcon name="i-lucide-shopping-bag" class="size-4 text-orange-500" />
         </span>
-        <span>Lihat Keranjang</span>
+        <span class="text-slate-700">Lihat Keranjang</span>
       </div>
-      <UIcon name="i-lucide-chevron-right" class="size-4 text-gray-400" />
+      <UIcon name="i-lucide-chevron-right" class="size-4 text-slate-300 flex-shrink-0" />
     </button>
 
-    <!-- Scan / Input Ulang Kode -->
+    <!-- Table only: Ganti Meja -->
     <button
-      v-if="session.hasSession.value"
-      class="action-btn"
-      aria-label="Scan atau input ulang kode meja"
+      v-if="isTable"
+      class="w-full bg-white border border-slate-100 rounded-xl px-3.5 py-3 text-[13px] font-semibold text-slate-700 cursor-pointer flex items-center justify-between gap-3 hover:bg-slate-50 hover:border-slate-200 transition-all duration-150"
+      aria-label="Ganti meja dengan scan QR baru"
       @click="$emit('scan-code')"
     >
-      <div class="action-btn-left">
-        <span class="action-icon">
-          <UIcon name="i-lucide-scan-line" class="size-4 text-gray-600" />
+      <div class="flex items-center gap-3">
+        <span class="size-8 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+          <UIcon name="i-lucide-scan-line" class="size-4 text-slate-500" />
         </span>
-        <span>Scan / Input Ulang Kode</span>
+        <span class="text-slate-700">Ganti Meja</span>
       </div>
-      <UIcon name="i-lucide-chevron-right" class="size-4 text-gray-400" />
+      <UIcon name="i-lucide-chevron-right" class="size-4 text-slate-300 flex-shrink-0" />
     </button>
 
-    <!-- Ganti Meja / Keluar Sesi (danger) -->
+    <!-- Table only: Keluar Sesi -->
     <button
-      v-if="session.hasSession.value"
-      class="action-btn danger"
-      aria-label="Keluar dari sesi ini"
+      v-if="isTable"
+      class="w-full bg-white border border-rose-100 rounded-xl px-3.5 py-3 text-[13px] font-semibold text-rose-500 cursor-pointer flex items-center justify-between gap-3 hover:bg-rose-50 hover:border-rose-200 transition-all duration-150"
+      aria-label="Keluar dari sesi meja ini"
       @click="$emit('exit-session')"
     >
-      <div class="action-btn-left">
-        <span class="action-icon danger-icon">
-          <UIcon name="i-lucide-log-out" class="size-4 text-red-500" />
+      <div class="flex items-center gap-3">
+        <span class="size-8 rounded-lg bg-rose-50 flex items-center justify-center flex-shrink-0">
+          <UIcon name="i-lucide-log-out" class="size-4 text-rose-400" />
         </span>
-        <span>Ganti Meja / Keluar Sesi</span>
+        <span>Keluar Sesi</span>
       </div>
-      <UIcon name="i-lucide-chevron-right" class="size-4 text-red-300" />
+      <UIcon name="i-lucide-chevron-right" class="size-4 text-rose-200 flex-shrink-0" />
     </button>
+
+    <!-- Open Bill: info notice (cannot exit from here) -->
+    <div
+      v-if="isOpenBill"
+      class="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-3.5 py-3"
+    >
+      <span class="size-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+        <UIcon name="i-lucide-info" class="size-4 text-blue-500" />
+      </span>
+      <p class="text-[12px] text-blue-600 leading-relaxed font-medium">
+        Sesi Open Bill hanya dapat diakhiri saat pembayaran selesai atau oleh kasir &amp; admin.
+      </p>
+    </div>
   </div>
 </template>
-
-<style scoped>
-.quick-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.section-title {
-  margin: 0 0 4px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #8a7f6e;
-}
-
-.action-btn {
-  background: white;
-  border: 1px solid rgba(224, 217, 206, 0.6);
-  border-radius: 12px;
-  padding: 13px 14px;
-  font-size: 13.5px;
-  font-weight: 600;
-  color: #1a1714;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: background 0.15s, border-color 0.15s;
-  width: 100%;
-  box-sizing: border-box;
-  text-align: left;
-}
-
-.action-btn:hover {
-  background: #fdfdfb;
-  border-color: #c07b2a;
-}
-
-.action-btn-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.action-icon {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  background: #faf8f3;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.danger-icon {
-  background: #fff1f0;
-}
-
-.action-btn.danger {
-  color: #e53e3e;
-  border-color: rgba(229, 62, 62, 0.2);
-}
-
-.action-btn.danger:hover {
-  background: #fff5f5;
-  border-color: #fc8181;
-}
-</style>

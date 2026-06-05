@@ -26,25 +26,25 @@ const modeIcon = computed(() => {
 </script>
 
 <template>
-  <div v-if="session.hasSession.value" class="rounded-2xl border border-amber-200/50 bg-gradient-to-r from-amber-50/40 via-white to-amber-50/20 p-4 shadow-sm flex items-center justify-between gap-4 animate-fade-in">
+  <div v-if="session.hasSession.value" class="rounded-2xl border border-orange-100 bg-orange-50/50 p-3.5 shadow-sm flex items-center justify-between gap-4 animate-fade-in">
     <div class="flex items-center gap-3 min-w-0">
       <!-- Icon Container -->
-      <div class="size-9 rounded-xl bg-amber-50 border border-amber-100/60 flex items-center justify-center text-amber-700 shrink-0">
+      <div class="size-9 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600 shrink-0">
         <UIcon :name="modeIcon" class="size-4.5" />
       </div>
       <!-- Info Context -->
       <div class="min-w-0">
-        <p class="text-[10px] font-extrabold uppercase tracking-widest text-amber-700 leading-none mb-1">
+        <p class="text-[10px] font-extrabold uppercase tracking-widest text-orange-600 leading-none mb-1">
           <template v-if="session.sessionMode.value === 'table'">Meja Aktif</template>
           <template v-else>Sesi Aktif • {{ modeLabel }}</template>
         </p>
-        <p class="text-xs sm:text-sm font-bold text-stone-900 leading-normal truncate">
+        <p class="text-xs sm:text-sm font-bold text-gray-900 leading-normal truncate">
           <span v-if="session.sessionMode.value === 'table'">Anda sedang memesan untuk <strong>Meja {{ tableLabel }}</strong></span>
           <span v-else>Anda sedang menambahkan pesanan ke <strong>Open Bill {{ tableLabel }}</strong></span>
         </p>
       </div>
     </div>
-    
+
     <UBadge
       v-if="session.sessionMode.value === 'open_bill'"
       label="Sesi Aktif"

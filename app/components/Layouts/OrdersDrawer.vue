@@ -76,7 +76,7 @@ const handleRemoveAll = () => {
         <div class="drawer-header">
           <div class="drawer-header-left">
             <div class="drawer-header-icon">
-              <UIcon name="i-lucide-clipboard-list" class="size-4 text-amber-700" />
+              <UIcon name="i-lucide-clipboard-list" class="size-4 text-orange-600" />
             </div>
             <h2 class="drawer-title">Pesanan Saya</h2>
             <!-- Badge hanya untuk order aktif/pending -->
@@ -157,9 +157,9 @@ const handleRemoveAll = () => {
   position: fixed;
   inset: 0;
   z-index: 100;
-  background: rgba(13, 11, 9, 0.4);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .drawer-panel {
@@ -170,8 +170,8 @@ const handleRemoveAll = () => {
   z-index: 101;
   width: 88%;
   max-width: 340px;
-  background: #FAF8F3;
-  box-shadow: -4px 0 32px rgba(0, 0, 0, 0.15);
+  background: #ffffff;
+  box-shadow: -4px 0 32px rgba(0, 0, 0, 0.12);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -196,7 +196,7 @@ const handleRemoveAll = () => {
   width: 32px;
   height: 32px;
   border-radius: 9px;
-  background: #fef3c7;
+  background: #fff7ed;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -218,7 +218,7 @@ const handleRemoveAll = () => {
   height: 18px;
   padding: 0 5px;
   border-radius: 9px;
-  background: #c07b2a;
+  background: #ea580c;
   color: white;
   font-size: 10px;
   font-weight: 700;
@@ -286,8 +286,8 @@ const handleRemoveAll = () => {
 }
 
 .refresh-btn:hover:not(:disabled) {
-  color: #c07b2a;
-  background: rgba(192, 123, 42, 0.08);
+  color: #ea580c;
+  background: rgba(234, 88, 12, 0.08);
 }
 
 .refresh-btn:disabled {

@@ -30,7 +30,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <section class="mx-auto w-full max-w-4xl px-5 py-5 pb-24 lg:px-6 lg:pb-8">
+  <section class="mx-auto w-full max-w-4xl px-4 py-5 pb-32 lg:px-6 lg:pb-8">
     <div class="mb-5 flex flex-col gap-4">
       <!-- Active session banner context -->
       <OrdersSessionBanner :table-label="tableLabel" :is-open-bill="isOpenBill" />
@@ -48,12 +48,12 @@ const emit = defineEmits<{
     </div>
 
     <!-- Skeletons Loader -->
-    <div v-if="loading" class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-      <div v-for="n in 8" :key="n" class="overflow-hidden rounded-2xl border border-stone-200 bg-white">
+    <div v-if="loading" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+      <div v-for="n in 8" :key="n" class="overflow-hidden rounded-2xl bg-white shadow-sm">
         <USkeleton class="aspect-[4/3] w-full" />
-        <div class="space-y-2 p-4">
-          <USkeleton class="h-4 w-3/4" />
-          <USkeleton class="h-3.5 w-1/2" />
+        <div class="space-y-2 p-3">
+          <USkeleton class="h-4 w-3/4 rounded-lg" />
+          <USkeleton class="h-3.5 w-1/2 rounded-lg" />
         </div>
       </div>
     </div>
@@ -67,7 +67,7 @@ const emit = defineEmits<{
     />
 
     <!-- Active Menu Cards Grid -->
-    <div v-else class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 animate-fade-in-up">
+    <div v-else class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 animate-fade-in-up">
       <OrdersProductCard
         v-for="product in products"
         :key="product.id"

@@ -3,9 +3,8 @@
  * OrgHeader — Header utama halaman order
  *
  * Kiri: hamburger → buka SessionDrawer (drawer kiri "Menu Sesi")
- * Tengah: nama restoran
- * Kanan: icon orders → buka OrdersDrawer (drawer kanan "Pesanan Saya")
- *        Badge hanya muncul jika ada order aktif/pending
+ * Tengah: nama restoran (OrgIdentityMenu dropdown)
+ * Kanan: badge meja — menampilkan nomor meja aktif atau status "Belum ada meja"
  */
 
 import { useRoute } from '#imports'
@@ -16,174 +15,74 @@ defineEmits<{
 }>()
 
 const route = useRoute()
-
 const orgSlug = computed(() => String(route.params.orgSlug || ''))
 
-// History untuk badge count (hanya order aktif/pending)
-const history = useOrderHistory(orgSlug.value)
-const activeOrderCount = history.activeCount
+const session = useCustomerSession()
+
+// Label meja / bill yang sedang aktif
+const tableBadgeLabel = computed(() => {
+  if (session.sessionMode.value === 'table' && session.sessionLabel.value) {
+    return `Meja ${session.sessionLabel.value}`
+  }
+  if (session.sessionMode.value === 'open_bill' && session.sessionLabel.value) {
+    return `Bill ${session.sessionLabel.value}`
+  }
+  return null
+})
+
+const hasActiveSession = computed(() => session.hasSession.value)
 </script>
 
 <template>
-  <header class="premium-header">
-    <div class="header-inner">
+  <header class="sticky top-0 left-0 right-0 z-40 bg-white/97 backdrop-blur-md border-b border-gray-100 h-14 lg:h-16 flex items-center">
+    <div class="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-between gap-3">
+
       <!-- Left: Hamburger → Session Drawer -->
       <button
-        class="icon-btn hamburger-btn"
+        class="size-10 rounded-full flex items-center justify-center text-gray-700 hover:bg-gray-100 active:scale-90 transition-all duration-150 cursor-pointer flex-shrink-0"
         aria-label="Buka menu sesi"
         @click="$emit('openDrawer')"
       >
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="3" y1="8" x2="21" y2="8" />
           <line x1="3" y1="16" x2="21" y2="16" />
         </svg>
       </button>
 
       <!-- Center: OrgIdentityMenu Dropdown -->
-      <div class="header-location">
+      <div class="flex-1 flex items-center justify-center min-w-0">
         <LayoutsOrgIdentityMenu @open-orders="$emit('openOrders')" />
       </div>
 
-      <!-- Right: Orders Icon → Orders Drawer -->
-      <div class="header-actions">
+      <!-- Right: Table Badge -->
+      <div class="flex-shrink-0">
+        <!-- Active session: show meja/bill badge -->
         <button
-          class="icon-btn action-btn"
-          aria-label="Lihat pesanan saya"
-          @click="$emit('openOrders')"
+          v-if="hasActiveSession && tableBadgeLabel"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-orange-200 bg-orange-50 text-orange-700 text-xs font-bold hover:bg-orange-100 active:scale-95 transition-all duration-150 cursor-pointer max-w-[120px]"
+          aria-label="Info sesi aktif"
+          @click="$emit('openDrawer')"
         >
-          <!-- Shopping bag icon -->
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <path d="M16 10a4 4 0 0 1-8 0" />
+          <!-- Table icon -->
+          <svg class="size-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18M5 10V6a1 1 0 011-1h12a1 1 0 011 1v4" />
           </svg>
-          <!-- Badge: jumlah order aktif/pending -->
-          <span v-if="activeOrderCount > 0" class="order-badge">
-            {{ activeOrderCount > 9 ? '9+' : activeOrderCount }}
-          </span>
+          <span class="truncate">{{ tableBadgeLabel }}</span>
         </button>
+
+        <!-- No session: ghost placeholder badge -->
+        <div
+          v-else
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-dashed border-gray-200 bg-transparent text-gray-400 text-xs font-medium select-none"
+          aria-label="Belum ada meja"
+        >
+          <svg class="size-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M3 14h18M5 10V6a1 1 0 011-1h12a1 1 0 011 1v4" />
+          </svg>
+          <span>Belum ada meja</span>
+        </div>
       </div>
+
     </div>
   </header>
 </template>
-
-<style scoped>
-.premium-header {
-  position: sticky;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 40;
-  background: rgba(255, 255, 255, 0.97);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid #F0F0F0;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
-}
-
-@media (min-width: 1024px) {
-  .premium-header {
-    height: 64px;
-  }
-}
-
-.header-inner {
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-@media (min-width: 768px) {
-  .header-inner {
-    padding: 0 24px;
-  }
-}
-
-@media (min-width: 1024px) {
-  .header-inner {
-    padding: 0 40px;
-  }
-}
-
-.icon-btn {
-  background: transparent;
-  border: none;
-  color: #111111;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  padding: 0;
-  position: relative;
-}
-
-.icon-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-}
-
-.icon-btn:active {
-  transform: scale(0.92);
-}
-
-.header-location {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  color: #111111;
-}
-
-.pin-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.location-name {
-  font-size: 16px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #111111;
-}
-
-@media (min-width: 1024px) {
-  .location-name {
-    font-size: 17px;
-  }
-}
-
-.header-actions {
-  display: flex;
-  align-items: center;
-}
-
-/* Badge — hanya untuk order aktif/pending */
-.order-badge {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: 8px;
-  background: #c07b2a;
-  color: white;
-  font-size: 9px;
-  font-weight: 800;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1.5px solid white;
-  line-height: 1;
-}
-</style>

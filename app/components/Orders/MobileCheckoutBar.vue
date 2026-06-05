@@ -1,8 +1,8 @@
 <script setup lang="ts">
 /**
  * MobileCheckoutBar.vue
- * Sticky bottom checkout bar displayed on mobile when there are active items in the cart.
- * Designed to provide immediate feedback and primary checkout action.
+ * Sticky floating bottom checkout bar — dark background, floating with margin,
+ * large rounded corners for premium floating effect.
  */
 
 const props = defineProps<{
@@ -26,47 +26,50 @@ const formatPrice = (v: number) =>
 
 <template>
   <Transition
-    enter-active-class="transition-transform duration-300 ease-out"
-    enter-from-class="translate-y-full"
-    leave-active-class="transition-transform duration-200 ease-in"
-    leave-to-class="translate-y-full"
+    enter-active-class="transition-all duration-300 ease-out"
+    enter-from-class="translate-y-full opacity-0"
+    leave-active-class="transition-all duration-200 ease-in"
+    leave-to-class="translate-y-full opacity-0"
   >
     <div
       v-if="totalQty > 0"
-      class="lg:hidden fixed bottom-0 inset-x-0 bg-white border-t border-stone-200 shadow-[0_-8px_30px_rgb(0,0,0,0.06)] px-5 pt-3.5 pb-[max(16px,env(safe-area-inset-bottom))] z-40"
+      class="lg:hidden fixed bottom-4 inset-x-4 z-40"
       role="complementary"
       aria-label="Keranjang pesanan"
     >
-      <!-- Alert Errors -->
+      <!-- Error Alert -->
       <UAlert
         v-if="error"
         icon="i-lucide-alert-circle"
         color="error"
         variant="soft"
         :description="error"
-        class="mb-3 rounded-xl border border-rose-200/50"
+        class="mb-2 rounded-2xl"
       />
 
-      <!-- Premium Solid Primary Checkout Button -->
+      <!-- Floating Dark Bar -->
       <button
         type="button"
         :disabled="submitting"
-        class="w-full min-h-[44px] px-5 py-3 rounded-xl bg-amber-700 text-white hover:bg-amber-800 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none shadow-md font-bold flex items-center justify-between gap-3 transition-all duration-150 cursor-pointer text-sm"
+        class="w-full min-h-[56px] px-5 py-3.5 rounded-2xl bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none shadow-2xl shadow-gray-900/30 font-bold flex items-center justify-between gap-3 transition-all duration-200 cursor-pointer"
         @click="emit('submit')"
       >
-        <div class="flex items-center gap-2.5">
-          <!-- Total quantity badge inside button -->
-          <span class="size-6 rounded-lg bg-white/20 text-white text-xs font-black flex items-center justify-center shadow-inner">
+        <!-- Left: qty badge + label -->
+        <div class="flex items-center gap-3">
+          <span class="size-7 rounded-xl bg-orange-600 text-white text-xs font-black flex items-center justify-center flex-shrink-0">
             {{ totalQty }}
           </span>
-          <span class="text-left font-black tracking-wide">
-            {{ submitting ? 'Mengirim...' : 'Pesan Sekarang' }}
+          <span class="text-sm font-bold tracking-wide">
+            {{ submitting ? 'Mengirim...' : 'Masukkan Keranjang!' }}
           </span>
         </div>
-        
-        <div class="flex items-center gap-1">
-          <span class="font-black text-amber-100">{{ formatPrice(totalPrice) }}</span>
-          <UIcon name="i-lucide-chevron-right" class="size-4 text-amber-100" />
+
+        <!-- Right: price + icon -->
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-extrabold text-orange-400">{{ formatPrice(totalPrice) }}</span>
+          <div class="size-7 rounded-xl bg-white/10 flex items-center justify-center">
+            <UIcon name="i-lucide-shopping-bag" class="size-4" />
+          </div>
         </div>
       </button>
     </div>

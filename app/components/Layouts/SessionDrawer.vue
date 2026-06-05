@@ -3,14 +3,10 @@
  * SessionDrawer — Drawer kiri "Menu Sesi"
  *
  * Berisi:
- * - SessionInfoCard: info org & sesi aktif (table/open_bill)
+ * - Header orange dengan org info
+ * - Open Bill Banner (jika mode open_bill)
+ * - SessionInfoCard: detail sesi aktif
  * - QuickActionsCard: aksi cepat
- * - ConfirmExitSessionModal: konfirmasi keluar sesi
- *
- * Emits:
- * - close: tutup drawer
- * - open-cart: buka cart (mobile)
- * - open-scanner: buka QR scanner (dari quick actions)
  */
 
 import { useRoute, useRouter } from '#imports'
@@ -28,19 +24,12 @@ const emit = defineEmits<{
 const route = useRoute()
 const router = useRouter()
 const session = useCustomerSession()
-const { hasSession, sessionMode, clearSession } = session
-
-// Ambil state tabel/bill dari session store
-const store = useCustomerSessionStore()
-
-const tableInfo = computed(() => {
-  if (sessionMode.value === 'table' || sessionMode.value === 'tracking_order') {
-    return store.table
-  }
-  return null
-})
+const { sessionMode, clearSession } = session
 
 const showExitConfirm = ref(false)
+
+const isOpenBill = computed(() => sessionMode.value === 'open_bill')
+const isTable = computed(() => sessionMode.value === 'table')
 
 const handleExitSession = () => {
   showExitConfirm.value = true
@@ -66,6 +55,13 @@ const handleOpenCart = () => {
   emit('close')
   emit('open-cart')
 }
+
+const formatPrice = (v: number) =>
+  new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    maximumFractionDigits: 0
+  }).format(v)
 </script>
 
 <template>
@@ -74,7 +70,7 @@ const handleOpenCart = () => {
     <Transition name="drawer-fade">
       <div
         v-if="isOpen"
-        class="drawer-overlay"
+        class="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm"
         aria-label="Tutup menu sesi"
         @click="$emit('close')"
       />
@@ -84,33 +80,93 @@ const handleOpenCart = () => {
     <Transition name="drawer-slide-left">
       <div
         v-if="isOpen"
-        class="drawer-panel"
+        class="fixed top-0 left-0 bottom-0 z-[101] w-[85%] max-w-[320px] bg-white flex flex-col overflow-hidden shadow-2xl"
         role="dialog"
         aria-modal="true"
         aria-label="Menu Sesi"
         @click.stop
       >
-        <!-- Header -->
-        <div class="drawer-header">
-          <div class="drawer-header-left">
-            <div class="drawer-header-icon">
-              <UIcon name="i-lucide-layout-dashboard" class="size-4 text-amber-700" />
+        <!-- ─── Orange Header Block ─────────────────────── -->
+        <div class="bg-orange-600 px-5 pt-5 pb-5 flex-shrink-0 relative overflow-hidden">
+          <!-- Decorative circles -->
+          <div class="absolute -top-6 -right-6 size-20 rounded-full bg-white/10 pointer-events-none" />
+          <div class="absolute -bottom-8 -right-2 size-28 rounded-full bg-white/5 pointer-events-none" />
+
+          <!-- Top row: title + close -->
+          <div class="relative flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <div class="size-7 rounded-lg bg-white/20 flex items-center justify-center">
+                <UIcon name="i-lucide-layout-dashboard" class="size-3.5 !text-white" />
+              </div>
+              <h2 class="text-[15px] font-bold !text-white" style="color: white;">Menu Sesi</h2>
             </div>
-            <h2 class="drawer-title">Menu Sesi</h2>
+            <button
+              class="size-8 rounded-full bg-white/15 flex items-center justify-center hover:bg-white/25 transition-colors cursor-pointer"
+              aria-label="Tutup drawer"
+              @click="$emit('close')"
+            >
+              <UIcon name="i-lucide-x" class="size-4 !text-white" />
+            </button>
           </div>
-          <button
-            class="close-btn"
-            aria-label="Tutup drawer"
-            @click="$emit('close')"
-          >
-            <UIcon name="i-lucide-x" class="size-5" />
-          </button>
+
+          <!-- Org + session info row -->
+          <div class="relative flex items-center gap-3">
+            <div class="size-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+              <UIcon name="i-lucide-store" class="size-5 !text-white" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-bold leading-tight truncate" style="color: white;">
+                {{ session.orgName.value || 'Restoran' }}
+              </p>
+              <p class="text-[12px] mt-0.5" style="color: rgba(255,255,255,0.65);">
+                <span v-if="isTable">🪑 Meja {{ session.sessionLabel.value }}</span>
+                <span v-else-if="isOpenBill">🧾 Open Bill {{ session.sessionLabel.value }}</span>
+                <span v-else>Belum ada sesi aktif</span>
+              </p>
+            </div>
+            <!-- Session type pill -->
+            <div
+              v-if="session.hasSession.value"
+              class="flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold"
+              :class="isOpenBill ? 'bg-blue-500 text-white' : 'bg-white/20 text-white'"
+            >
+              {{ isOpenBill ? 'Open Bill' : 'Meja' }}
+            </div>
+          </div>
         </div>
 
-        <!-- Body -->
-        <div class="drawer-body">
-          <!-- Session Info Card -->
-          <SessionInfoCard />
+        <!-- ─── Open Bill Active Banner ─────────────────── -->
+        <div
+          v-if="isOpenBill"
+          class="flex-shrink-0 bg-blue-600 px-4 py-3 flex items-center gap-3"
+        >
+          <div class="size-8 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+            <UIcon name="i-lucide-receipt" class="size-4 !text-white" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-[11px] font-extrabold uppercase tracking-widest" style="color: rgba(255,255,255,0.75);">Open Bill Session</p>
+            <p class="text-[13px] font-bold leading-tight" style="color: white;">
+              Tambah pesanan ke
+              <span v-if="session.sessionLabel.value"> — {{ session.sessionLabel.value }}</span>
+            </p>
+          </div>
+          <!-- Total if available -->
+          <div
+            v-if="session.openBill.value?.total_amount"
+            class="flex-shrink-0 text-right"
+          >
+            <p class="text-[10px] font-bold" style="color: rgba(255,255,255,0.65);">Total</p>
+            <p class="text-[13px] font-extrabold" style="color: white;">
+              {{ formatPrice(session.openBill.value.total_amount) }}
+            </p>
+          </div>
+        </div>
+
+        <!-- ─── Body ──────────────────────────────────────── -->
+        <div class="flex-1 p-4 overflow-y-auto flex flex-col gap-4">
+
+          <!-- Session Info Card (hanya tampil jika ada sesi) -->
+          <SessionInfoCard v-if="session.hasSession.value" />
 
           <!-- Quick Actions -->
           <SessionQuickActionsCard
@@ -120,14 +176,14 @@ const handleOpenCart = () => {
           />
         </div>
 
-        <!-- Footer -->
-        <div class="drawer-footer">
-          <p>© {{ new Date().getFullYear() }} Santap App</p>
+        <!-- ─── Footer ─────────────────────────────────────── -->
+        <div class="px-4 py-3 border-t border-gray-100 flex-shrink-0">
+          <p class="text-[11px] text-center text-gray-400">© {{ new Date().getFullYear() }} Santap App</p>
         </div>
       </div>
     </Transition>
 
-    <!-- Confirm Exit Modal (di luar drawer agar tidak ter-clip) -->
+    <!-- Confirm Exit Modal -->
     <SessionConfirmExitSessionModal
       :open="showExitConfirm"
       :has-cart-items="session.hasCart.value"
@@ -139,101 +195,6 @@ const handleOpenCart = () => {
 </template>
 
 <style scoped>
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  background: rgba(13, 11, 9, 0.4);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-}
-
-.drawer-panel {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  z-index: 101;
-  width: 85%;
-  max-width: 320px;
-  background: #FAF8F3;
-  box-shadow: 4px 0 32px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.drawer-header {
-  padding: 18px 16px 14px;
-  border-bottom: 1px solid rgba(224, 217, 206, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-}
-
-.drawer-header-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.drawer-header-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 9px;
-  background: #fef3c7;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.drawer-title {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 700;
-  color: #1a1714;
-}
-
-.close-btn {
-  background: transparent;
-  border: none;
-  color: #8a7f6e;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s;
-}
-
-.close-btn:hover {
-  background: rgba(0, 0, 0, 0.06);
-}
-
-.drawer-body {
-  flex: 1;
-  padding: 16px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.drawer-footer {
-  padding: 14px 16px;
-  border-top: 1px solid rgba(224, 217, 206, 0.5);
-  text-align: center;
-  flex-shrink: 0;
-}
-
-.drawer-footer p {
-  margin: 0;
-  font-size: 11px;
-  color: #a09080;
-}
-
 /* ── Transitions ─────────────────────────────────────────── */
 .drawer-fade-enter-active,
 .drawer-fade-leave-active {

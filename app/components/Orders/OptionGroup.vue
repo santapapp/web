@@ -37,14 +37,14 @@ const isSelected = (variantId: number) => props.selectedIds.includes(variantId)
   <section class="py-4">
     <!-- Group header -->
     <div class="flex items-center justify-between gap-2 mb-2.5 px-1">
-      <h3 class="text-xs font-extrabold uppercase tracking-wide text-stone-800">
+      <h3 class="text-xs font-extrabold uppercase tracking-wide text-gray-800">
         {{ group.name }}
-        <span v-if="group.is_required" class="text-amber-600 align-super text-sm">*</span>
+        <span v-if="group.is_required" class="text-orange-500 align-super text-sm">*</span>
       </h3>
 
       <span
         v-if="group.max_select > 1"
-        class="text-[10px] font-bold uppercase tracking-wide text-stone-400"
+        class="text-[10px] font-bold uppercase tracking-wide text-gray-400"
       >
         Maks {{ group.max_select }}
       </span>
@@ -55,10 +55,10 @@ const isSelected = (variantId: number) => props.selectedIds.includes(variantId)
       <li v-for="variant in group.variants" :key="variant.id">
         <button
           type="button"
-          class="w-full flex items-center justify-between gap-3 px-1 py-2 rounded-lg text-left transition-colors duration-150"
+          class="w-full flex items-center justify-between gap-3 px-1 py-2.5 rounded-xl text-left transition-colors duration-150"
           :class="[
             variant.is_available
-              ? 'hover:bg-amber-50/60 cursor-pointer'
+              ? 'hover:bg-orange-50/60 cursor-pointer'
               : 'opacity-40 cursor-not-allowed'
           ]"
           :disabled="!variant.is_available"
@@ -67,18 +67,18 @@ const isSelected = (variantId: number) => props.selectedIds.includes(variantId)
           <!-- Left: bullet + name + extra price -->
           <span class="flex items-baseline gap-2 min-w-0">
             <span
-              class="text-stone-300 leading-none"
-              :class="isSelected(variant.id) ? 'text-amber-500' : ''"
+              class="leading-none"
+              :class="isSelected(variant.id) ? 'text-orange-500' : 'text-gray-300'"
             >•</span>
             <span
               class="text-sm truncate"
-              :class="isSelected(variant.id) ? 'font-semibold text-stone-900' : 'font-medium text-stone-600'"
+              :class="isSelected(variant.id) ? 'font-semibold text-gray-900' : 'font-medium text-gray-600'"
             >
               {{ variant.name }}
             </span>
             <span
               v-if="variant.price > 0"
-              class="text-xs font-bold text-amber-700 whitespace-nowrap"
+              class="text-xs font-bold text-orange-600 whitespace-nowrap"
             >
               + {{ formatPrice(variant.price) }}
             </span>
@@ -90,13 +90,13 @@ const isSelected = (variantId: number) => props.selectedIds.includes(variantId)
             :class="[
               isRadio ? 'rounded-full' : 'rounded-md',
               isSelected(variant.id)
-                ? 'border-amber-600'
-                : 'border-stone-300'
+                ? 'border-orange-500'
+                : 'border-gray-300'
             ]"
           >
             <span
               v-if="isSelected(variant.id)"
-              class="bg-amber-600"
+              class="bg-orange-500"
               :class="isRadio ? 'size-2.5 rounded-full' : 'size-3 rounded-sm'"
             />
           </span>

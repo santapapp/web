@@ -105,7 +105,7 @@ const shouldShowOrdersBtn = computed(() => {
     >
       <span class="pin-icon flex items-center justify-center flex-shrink-0">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="#C07B2A" stroke="#C07B2A" stroke-width="1" />
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="#EA580C" stroke="#EA580C" stroke-width="1" />
           <circle cx="12" cy="10" r="3" fill="#ffffff" />
         </svg>
       </span>
@@ -230,8 +230,8 @@ const shouldShowOrdersBtn = computed(() => {
 
 
 .trigger-btn {
-  background: rgba(192, 123, 42, 0.05);
-  border: 1px solid rgba(192, 123, 42, 0.15);
+  background: rgba(234, 88, 12, 0.05);
+  border: 1px solid rgba(234, 88, 12, 0.15);
   border-radius: 9999px;
   padding: 6px 14px;
   display: flex;
@@ -262,8 +262,8 @@ const shouldShowOrdersBtn = computed(() => {
 }
 
 .trigger-btn:hover {
-  background: rgba(192, 123, 42, 0.1);
-  border-color: rgba(192, 123, 42, 0.3);
+  background: rgba(234, 88, 12, 0.1);
+  border-color: rgba(234, 88, 12, 0.3);
   transform: translateY(-0.5px);
 }
 
@@ -495,8 +495,8 @@ const shouldShowOrdersBtn = computed(() => {
 }
 
 .action-btn:hover {
-  background: #faf8f3;
-  border-color: #c07b2a;
+  background: #fff7ed;
+  border-color: #ea580c;
   color: #1a1714;
 }
 
@@ -508,18 +508,18 @@ const shouldShowOrdersBtn = computed(() => {
 }
 
 .action-btn:hover .action-icon {
-  color: #c07b2a;
+  color: #ea580c;
 }
 
 .action-btn.primary-action {
-  background: #c07b2a;
-  border-color: #c07b2a;
+  background: #ea580c;
+  border-color: #ea580c;
   color: #ffffff;
 }
 
 .action-btn.primary-action:hover {
-  background: #ab6a20;
-  border-color: #ab6a20;
+  background: #c2410c;
+  border-color: #c2410c;
 }
 
 .action-btn.primary-action .action-icon {

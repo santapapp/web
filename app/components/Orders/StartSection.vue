@@ -42,29 +42,28 @@ const submitManualCode = () => {
 </script>
 
 <template>
-  <div class="flex-1 flex items-center justify-center bg-[#FAF7F2] px-5 py-8 lg:py-16 min-h-[calc(100dvh-56px)] lg:min-h-[calc(100dvh-64px)]">
+  <div class="flex-1 flex items-center justify-center bg-gray-50 px-4 py-8 lg:py-16 min-h-[calc(100dvh-56px)] lg:min-h-[calc(100dvh-64px)]">
     <div class="w-full max-w-5xl mx-auto lg:grid lg:grid-cols-12 lg:gap-12 lg:items-center">
-      
-      <!-- Left Column: Intro (desktop: visible, mobile: short header) -->
+
+      <!-- Left Column: Intro -->
       <div class="lg:col-span-6 flex flex-col gap-5 pb-8 lg:pb-0">
-        <!-- Accent Icon -->
-        <div class="size-12 rounded-2xl bg-amber-100 border border-amber-200/50 flex items-center justify-center text-amber-800 shadow-sm self-start">
+        <div class="size-12 rounded-2xl bg-orange-100 border border-orange-200/50 flex items-center justify-center text-orange-600 shadow-sm self-start">
           <UIcon name="i-lucide-qr-code" class="size-6" />
         </div>
-        
+
         <div>
-          <h1 class="text-3xl font-serif font-black text-stone-900 tracking-tight leading-tight mb-3">
+          <h1 class="text-3xl font-bold text-gray-900 tracking-tight leading-tight mb-3">
             Mulai Pesanan
           </h1>
-          <p class="text-stone-600 font-semibold text-sm sm:text-base leading-relaxed">
+          <p class="text-gray-500 font-medium text-sm sm:text-base leading-relaxed">
             Scan QR meja atau masukkan kode dari kasir untuk mulai memesan.
           </p>
         </div>
 
-        <!-- Elegant Steps List -->
-        <ul class="space-y-3.5 mt-3">
-          <li v-for="step in steps" :key="step.n" class="flex items-start gap-3.5 text-stone-650 text-sm font-semibold">
-            <span class="size-6 rounded-full bg-amber-700 text-white text-xs font-black flex items-center justify-center shrink-0 shadow-sm">
+        <!-- Steps List -->
+        <ul class="space-y-3 mt-2">
+          <li v-for="step in steps" :key="step.n" class="flex items-start gap-3.5 text-slate-600 text-sm font-medium">
+            <span class="size-6 rounded-full bg-orange-600 text-white text-xs font-black flex items-center justify-center shrink-0 shadow-sm">
               {{ step.n }}
             </span>
             <span class="mt-0.5 leading-normal">{{ step.text }}</span>
@@ -73,9 +72,9 @@ const submitManualCode = () => {
       </div>
 
       <!-- Right Column: Action Cards -->
-      <div class="lg:col-span-6 flex flex-col gap-5">
-        
-        <!-- Error Alerts -->
+      <div class="lg:col-span-6 flex flex-col gap-4">
+
+        <!-- Error Alert -->
         <UAlert
           v-if="sessionError && sessionError !== 'no_session'"
           icon="i-lucide-alert-circle"
@@ -85,87 +84,118 @@ const submitManualCode = () => {
           class="rounded-xl border border-rose-200/60 shadow-sm"
         />
 
-        <!-- Action Card Wrapper -->
-        <div class="rounded-2xl border border-stone-200/65 bg-white p-5 lg:p-6 shadow-md flex flex-col gap-6 relative overflow-hidden group">
-          <!-- Background decoration -->
-          <div class="absolute -right-12 -top-12 size-28 bg-amber-500/5 rounded-full blur-xl pointer-events-none" />
-
-          <!-- Option 1: Scan QR Meja -->
-          <div class="flex flex-col gap-2.5">
-            <div class="flex items-center gap-2 text-stone-900">
-              <UIcon name="i-lucide-scan-line" class="size-4.5 text-amber-700 shrink-0" />
-              <h2 class="text-sm font-extrabold tracking-wide uppercase text-stone-800">Scan QR Meja</h2>
-            </div>
-            <p class="text-xs text-stone-500 font-medium">Arahkan kamera ke QR code di meja Anda.</p>
-            
-            <button
-              id="btn-open-qr-scanner"
-              type="button"
-              :disabled="loading"
-              class="w-full min-h-[44px] px-6 py-2.5 rounded-xl bg-amber-700 text-white hover:bg-amber-800 active:scale-[0.98] focus:ring-2 focus:ring-amber-500 disabled:opacity-50 disabled:pointer-events-none shadow-sm font-bold flex items-center justify-center gap-2 transition-all duration-150 cursor-pointer text-sm"
-              @click="emit('open-scanner')"
-            >
-              <UIcon name="i-lucide-qr-code" class="size-4.5 shrink-0" />
-              <span>Scan QR Meja</span>
-            </button>
-          </div>
-
-          <!-- Divider -->
-          <div class="flex items-center gap-3">
-            <div class="flex-1 h-px bg-stone-200" />
-            <span class="text-xs font-bold uppercase tracking-wider text-stone-400">atau</span>
-            <div class="flex-1 h-px bg-stone-200" />
-          </div>
-
-          <!-- Option 2: Enter Manual Code -->
-          <div class="flex flex-col gap-3">
-            <div class="flex items-center gap-2 text-stone-900">
-              <UIcon name="i-lucide-keyboard" class="size-4.5 text-amber-700 shrink-0" />
-              <h2 class="text-sm font-extrabold tracking-wide uppercase text-stone-800">Masukkan Kode Manual</h2>
-            </div>
-            <p class="text-xs text-stone-500 font-medium">Kode bisa dilihat di QR meja atau struk dari kasir.</p>
-            
-            <div class="flex flex-col gap-2">
-              <UInput
-                id="manual-table-code"
-                v-model="code"
-                placeholder="Kode meja atau token"
-                size="lg"
-                :disabled="loading"
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="off"
-                spellcheck="false"
-                class="w-full"
-                :ui="{ 
-                  base: 'rounded-xl border-stone-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 font-medium text-stone-850'
-                }"
-                @keydown.enter="submitManualCode"
-              />
-
-              <p v-if="inputError" class="flex items-center gap-1.5 text-xs text-rose-600 font-semibold mt-1">
-                <UIcon name="i-lucide-alert-circle" class="size-3.5 shrink-0" />
-                <span>{{ inputError }}</span>
-              </p>
-
-              <!-- Solid primary button for manual submit -->
-              <button
-                id="btn-use-manual-code"
-                type="button"
-                :disabled="loading"
-                class="w-full min-h-[44px] px-6 py-2.5 rounded-xl bg-amber-700 text-white hover:bg-amber-800 active:scale-[0.98] focus:ring-2 focus:ring-amber-500 disabled:opacity-50 disabled:pointer-events-none shadow-sm font-bold flex items-center justify-center gap-2 transition-all duration-150 cursor-pointer text-sm mt-1"
-                @click="submitManualCode"
-              >
-                <UIcon v-if="loading" name="i-lucide-loader-2" class="size-4.5 animate-spin shrink-0" />
-                <UIcon v-else name="i-lucide-arrow-right" class="size-4.5 shrink-0" />
-                <span>{{ loading ? 'Memvalidasi...' : 'Gunakan Kode' }}</span>
-              </button>
+        <!-- ══════════════════════════════════════
+             QR SCANNER CARD — Flex premium design
+             ══════════════════════════════════════ -->
+        <button
+          id="btn-open-qr-scanner"
+          type="button"
+          :disabled="loading"
+          class="qr-scan-btn group relative flex items-center gap-4 w-full bg-gray-900 text-white rounded-2xl overflow-hidden cursor-pointer disabled:opacity-50 disabled:pointer-events-none active:scale-[0.98] transition-all duration-200"
+          @click="emit('open-scanner')"
+        >
+          <!-- Animated decorative ornaments -->
+          <div class="absolute inset-0 pointer-events-none overflow-hidden">
+            <!-- Diagonal top-right block -->
+            <div class="absolute -top-6 -right-6 size-24 bg-orange-500/20 rotate-12 rounded-2xl" />
+            <!-- Animated floating circle -->
+            <div class="absolute top-3 right-14 size-5 rounded-full bg-orange-400/30 ornament-float" />
+            <!-- Small square bottom-right -->
+            <div class="absolute bottom-3 right-6 size-3 rounded-sm bg-white/10 ornament-pulse rotate-45" />
+            <!-- Diagonal bottom-left block -->
+            <div class="absolute -bottom-4 -left-4 size-16 bg-orange-600/20 -rotate-6 rounded-xl" />
+            <!-- Dot cluster -->
+            <div class="absolute top-2 right-3 flex gap-1">
+              <div class="size-1.5 rounded-full bg-orange-400/50" />
+              <div class="size-1.5 rounded-full bg-orange-400/30" />
+              <div class="size-1 rounded-full bg-orange-400/20 mt-0.5" />
             </div>
           </div>
 
+          <!-- Left: QR Icon block -->
+          <div class="relative flex-shrink-0 flex items-center justify-center size-[80px] bg-white/10 group-hover:bg-white/15 transition-colors duration-200">
+            <!-- QR code pattern -->
+            <div class="grid-qr-icon">
+              <UIcon name="i-lucide-qr-code" class="size-9 text-orange-400 group-hover:text-orange-300 transition-colors" />
+            </div>
+          </div>
+
+          <!-- Right: Text content -->
+          <div class="flex-1 py-5 pr-4 text-left">
+            <p class="text-[10px] font-bold uppercase tracking-widest text-orange-400 mb-1">Cara cepat</p>
+            <p class="text-[16px] font-extrabold text-white leading-tight mb-1">Scan QR Meja</p>
+            <p class="text-[12px] text-gray-400 font-medium">Arahkan kamera ke QR di meja Anda</p>
+          </div>
+
+          <!-- Right: Arrow indicator -->
+          <div class="flex-shrink-0 pr-5">
+            <div class="size-8 rounded-full bg-orange-600 flex items-center justify-center group-hover:bg-orange-500 transition-colors duration-200">
+              <UIcon name="i-lucide-scan-line" class="size-4" />
+            </div>
+          </div>
+        </button>
+
+        <!-- ══════════════════════════════════════
+             DIVIDER
+             ══════════════════════════════════════ -->
+        <div class="flex items-center gap-3">
+          <div class="flex-1 h-px bg-gray-200" />
+          <span class="text-xs font-bold uppercase tracking-wider text-gray-400">atau</span>
+          <div class="flex-1 h-px bg-gray-200" />
         </div>
 
-        <!-- Recent order history (returning customers) -->
+        <!-- ══════════════════════════════════════
+             MANUAL CODE CARD
+             ══════════════════════════════════════ -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex flex-col gap-3">
+          <div class="flex items-center gap-2">
+            <div class="size-8 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+              <UIcon name="i-lucide-keyboard" class="size-4 text-slate-500" />
+            </div>
+            <div>
+              <p class="text-[13px] font-extrabold text-gray-800 leading-tight">Masukkan Kode Manual</p>
+              <p class="text-[11px] text-gray-400 font-medium">Dari struk kasir atau QR code di meja</p>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <UInput
+              id="manual-table-code"
+              v-model="code"
+              placeholder="Kode meja atau token"
+              size="lg"
+              :disabled="loading"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              class="w-full"
+              :ui="{
+                base: 'rounded-xl border-gray-200 focus:border-orange-400 focus:ring-1 focus:ring-orange-400 font-medium text-gray-800'
+              }"
+              @keydown.enter="submitManualCode"
+            />
+
+            <p v-if="inputError" class="flex items-center gap-1.5 text-xs text-rose-600 font-semibold mt-0.5">
+              <UIcon name="i-lucide-alert-circle" class="size-3.5 shrink-0" />
+              <span>{{ inputError }}</span>
+            </p>
+
+            <button
+              id="btn-use-manual-code"
+              type="button"
+              :disabled="loading"
+              class="w-full min-h-[44px] px-6 py-2.5 rounded-xl bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none font-bold flex items-center justify-center gap-2 transition-all duration-150 cursor-pointer text-sm"
+              @click="submitManualCode"
+            >
+              <UIcon v-if="loading" name="i-lucide-loader-2" class="size-4.5 animate-spin shrink-0" />
+              <UIcon v-else name="i-lucide-arrow-right" class="size-4.5 shrink-0" />
+              <span>{{ loading ? 'Memvalidasi...' : 'Gunakan Kode' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Recent order history -->
         <OrdersRecentHistory
           v-if="orgSlug && historyItems && historyItems.length"
           :items="historyItems"
@@ -174,7 +204,38 @@ const submitManualCode = () => {
         />
 
       </div>
-
     </div>
   </div>
 </template>
+
+<style scoped>
+/* QR scan button */
+.qr-scan-btn {
+  min-height: 88px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.qr-scan-btn:hover {
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+
+/* Floating circle ornament */
+.ornament-float {
+  animation: ornamentFloat 3s ease-in-out infinite;
+}
+
+@keyframes ornamentFloat {
+  0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+  50% { transform: translateY(-5px) scale(1.15); opacity: 1; }
+}
+
+/* Pulse square ornament */
+.ornament-pulse {
+  animation: ornamentPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes ornamentPulse {
+  0%, 100% { opacity: 0.3; transform: rotate(45deg) scale(1); }
+  50% { opacity: 0.7; transform: rotate(45deg) scale(1.2); }
+}
+</style>
