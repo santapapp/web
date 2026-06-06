@@ -560,3 +560,20 @@ p {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── USlideover Tailwind Fallback ── */
+.inset-y-0 {
+  top: 0px !important;
+  bottom: 0px !important;
+  z-index: 50 !important; /* Di atas header (z-40) */
+}
+
+.bg-default {
+  background-color: var(--color-bg-surface, #ffffff) !important;
+}
+
+.bg-elevated\/75 {
+  background-color: rgba(13, 11, 9, 0.45) !important;
+  z-index: 45 !important; /* Di atas header (z-40) tetapi di bawah panel (z-50) */
+}
+

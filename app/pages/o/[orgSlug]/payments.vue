@@ -256,21 +256,21 @@ onMounted(async () => {
     }
   }
 })
-
-onUnmounted(() => {
-  stopPolling()
-})
 </script>
 
 <template>
-  <section class="payments-page">
+  <div class="min-h-dvh bg-gray-50 flex flex-col">
     <!-- Session Error -->
-    <div v-if="sessionError" class="state-container">
-      <div class="state-card error">
-        <div class="state-icon">🔒</div>
-        <h2>Sesi tidak valid</h2>
-        <p>{{ sessionError }}</p>
-        <NuxtLink :to="`/o/${orgSlug}/orders`" class="btn-back">
+    <div v-if="sessionError" class="min-h-[80dvh] flex items-center justify-center p-6 bg-gradient-to-br from-orange-50/20 via-white to-orange-50/20">
+      <div class="bg-white/90 backdrop-blur-md border border-rose-100 rounded-3xl p-8 max-w-sm w-full text-center space-y-6 shadow-xl shadow-stone-100/80 animate-in fade-in zoom-in-95 duration-200">
+        <div class="size-16 rounded-2xl bg-rose-50 border border-rose-100/50 flex items-center justify-center text-rose-600 mx-auto shadow-inner">
+          <UIcon name="i-lucide-lock" class="size-7" />
+        </div>
+        <div class="space-y-2">
+          <h2 class="text-xl font-black text-stone-900 leading-none">Sesi Tidak Valid</h2>
+          <p class="text-sm text-stone-500 leading-relaxed">{{ sessionError }}</p>
+        </div>
+        <NuxtLink :to="`/o/${orgSlug}/orders`" class="w-full h-12 rounded-2xl bg-orange-600 text-white font-extrabold hover:bg-orange-700 active:scale-[0.98] transition-all duration-200 flex items-center justify-center shadow-lg shadow-orange-600/25 cursor-pointer">
           ← Kembali ke Menu
         </NuxtLink>
       </div>
@@ -278,190 +278,266 @@ onUnmounted(() => {
 
     <template v-else>
       <!-- Header -->
-      <header class="payments-header">
-        <div class="header-content">
-          <NuxtLink :to="`/o/${orgSlug}/orders`" class="btn-back-header">
-            ← Kembali ke Menu
-          </NuxtLink>
-          <h1>Pembayaran</h1>
-          <div />
+      <header class="sticky top-0 z-20 flex-shrink-0 flex items-center justify-between gap-2 px-4 py-3 bg-white/85 backdrop-blur-md border-b border-stone-100/80">
+        <button
+          type="button"
+          class="size-10 rounded-xl flex items-center justify-center text-stone-600 hover:bg-stone-50 border border-stone-100 active:scale-95 transition-all duration-150 cursor-pointer shadow-xs"
+          @click="router.push(`/o/${orgSlug}/orders`)"
+        >
+          <UIcon name="i-lucide-arrow-left" class="size-5" />
+        </button>
+        <div class="flex flex-col items-center text-center">
+          <h2 class="text-base font-black text-stone-900 leading-none">Detail Pembayaran</h2>
         </div>
+        <span class="size-10 flex-shrink-0" aria-hidden="true" />
       </header>
 
-      <div class="payments-layout">
+      <!-- Main Layout -->
+      <div class="w-full max-w-lg mx-auto px-4 py-6 space-y-6">
 
         <!-- ── Payment Sukses ── -->
-        <div v-if="isPaid" class="success-card">
-          <div class="success-icon">✅</div>
-          <h2>Pembayaran Berhasil!</h2>
-          <p>Terima kasih. Pesanan Anda sedang diproses.</p>
-          <div v-if="payment" class="payment-detail-row">
-            <span>{{ payment.payment_reference }}</span>
-            <strong>{{ formatCurrency(openBill?.total_amount ?? 0) }}</strong>
+        <div v-if="isPaid" class="bg-white rounded-3xl border border-stone-100 p-8 text-center space-y-6 shadow-xl shadow-stone-100/80 animate-in fade-in zoom-in-95 duration-200">
+          <div class="relative size-20 mx-auto mb-2">
+            <!-- Pulsing concentric circles for premium feeling -->
+            <div class="absolute inset-0 rounded-3xl bg-emerald-100/50 animate-ping opacity-75" />
+            <div class="relative size-20 rounded-3xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+              <UIcon name="i-lucide-check-circle-2" class="size-10 animate-bounce" />
+            </div>
           </div>
-          <NuxtLink :to="`/o/${orgSlug}/orders`" class="btn-primary-full">
+          <div class="space-y-2">
+            <h2 class="text-2xl font-black text-stone-900">Pembayaran Berhasil!</h2>
+            <p class="text-sm text-stone-500 leading-relaxed">Terima kasih. Pesanan Anda sedang diproses oleh kasir & dapur kami.</p>
+          </div>
+          <div v-if="payment" class="bg-stone-50/50 border border-stone-100 rounded-2xl p-4 text-sm font-semibold space-y-2">
+            <div class="flex items-center justify-between text-xs text-stone-400 font-bold uppercase tracking-wider">
+              <span>Referensi Pembayaran</span>
+              <span>Total</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-stone-700 font-mono font-bold tracking-tight">{{ payment.payment_reference }}</span>
+              <strong class="text-emerald-600 text-base font-black">{{ formatCurrency(openBill?.total_amount ?? 0) }}</strong>
+            </div>
+          </div>
+          <button @click="router.push(`/o/${orgSlug}/orders`)" class="w-full h-13 rounded-2xl bg-orange-600 text-white font-extrabold hover:bg-orange-700 active:scale-[0.98] transition-all duration-200 flex items-center justify-center shadow-lg shadow-orange-600/25 cursor-pointer">
             Pesan Lagi
-          </NuxtLink>
+          </button>
         </div>
 
-        <!-- ── Payment Expired (timeout 5 menit) ── -->
-        <div v-else-if="isExpired" class="expired-card">
-          <div class="state-icon">⏰</div>
-          <h2>Waktu pembayaran habis</h2>
-          <p>Pesanan belum dibuat karena pembayaran belum selesai. Silakan coba bayar ulang atau buat ulang pesanan.</p>
-          <NuxtLink :to="`/o/${orgSlug}/orders`" class="btn-primary-full">
+        <!-- ── Payment Expired (timeout) ── -->
+        <div v-else-if="isExpired" class="bg-white rounded-3xl border border-stone-100 p-8 text-center space-y-6 shadow-xl shadow-stone-100/80 animate-in fade-in zoom-in-95 duration-200">
+          <div class="relative size-20 mx-auto mb-2">
+            <div class="absolute inset-0 rounded-3xl bg-amber-100/50 animate-pulse" />
+            <div class="relative size-20 rounded-3xl bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center mx-auto shadow-sm">
+              <UIcon name="i-lucide-timer" class="size-10" />
+            </div>
+          </div>
+          <div class="space-y-2">
+            <h2 class="text-xl font-black text-stone-900">Waktu Pembayaran Habis</h2>
+            <p class="text-sm text-stone-500 leading-relaxed">Pesanan belum diproses karena pembayaran tidak diselesaikan tepat waktu. Silakan coba bayar kembali atau buat pesanan baru.</p>
+          </div>
+          <button @click="router.push(`/o/${orgSlug}/orders`)" class="w-full h-13 rounded-2xl bg-orange-600 text-white font-extrabold hover:bg-orange-700 active:scale-[0.98] transition-all duration-200 flex items-center justify-center shadow-lg shadow-orange-600/25 cursor-pointer">
             Kembali ke Menu
-          </NuxtLink>
+          </button>
         </div>
 
         <!-- ── Payment Dibatalkan ── -->
-        <div v-else-if="isFailed" class="failed-card">
-          <div class="state-icon">❌</div>
-          <h2>Pembayaran Dibatalkan</h2>
-          <p>Transaksi dibatalkan. Silakan coba lagi jika ingin melanjutkan pembayaran.</p>
-          <button class="btn-primary-full" @click="handleInitiatePayment">
+        <div v-else-if="isFailed" class="bg-white rounded-3xl border border-stone-100 p-8 text-center space-y-6 shadow-xl shadow-stone-100/80 animate-in fade-in zoom-in-95 duration-200">
+          <div class="relative size-20 mx-auto mb-2">
+            <div class="relative size-20 rounded-3xl bg-rose-50 border border-rose-100 text-rose-600 flex items-center justify-center mx-auto shadow-sm animate-shake">
+              <UIcon name="i-lucide-x-circle" class="size-10" />
+            </div>
+          </div>
+          <div class="space-y-2">
+            <h2 class="text-xl font-black text-stone-900">Pembayaran Dibatalkan</h2>
+            <p class="text-sm text-stone-500 leading-relaxed">Transaksi pembayaran QRIS dibatalkan. Silakan coba lagi jika ingin melanjutkan pembayaran.</p>
+          </div>
+          <button @click="handleInitiatePayment" class="w-full h-13 rounded-2xl bg-orange-600 text-white font-extrabold hover:bg-orange-700 active:scale-[0.98] transition-all duration-200 flex items-center justify-center shadow-lg shadow-orange-600/25 cursor-pointer">
             Coba Lagi
           </button>
         </div>
 
         <!-- ── Main Content ── -->
-        <div v-else class="payments-main">
+        <div v-else class="space-y-6">
 
-          <!-- Open Bill Summary -->
-          <div v-if="billPending" class="bill-skeleton" />
+          <!-- Open Bill Summary Card -->
+          <div v-if="billPending" class="h-44 bg-stone-100 rounded-3xl animate-pulse" />
 
-          <div v-else-if="openBill" class="bill-card">
-            <div class="bill-header">
-              <span class="bill-number">{{ openBill.order_number }}</span>
-              <span class="bill-status" :class="openBill.bill_status">{{ openBill.bill_status }}</span>
-            </div>
-
-            <div class="bill-table-info">
-              <p>🪑 {{ openBill.dining_table?.name }}{{ openBill.dining_table?.code ? ` (${openBill.dining_table.code})` : '' }}</p>
-            </div>
-
-            <div class="bill-amounts">
-              <div class="amount-row">
-                <span>Subtotal</span>
-                <span>{{ formatCurrency(openBill.subtotal_amount) }}</span>
+          <div v-else-if="openBill" class="bg-white rounded-3xl border border-stone-100 shadow-md shadow-stone-100/50 p-6 space-y-4 relative overflow-hidden">
+            <!-- Decorative receipt cut-out top accent -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-600" />
+            
+            <div class="flex items-center justify-between border-b border-stone-100 pb-3.5">
+              <div class="flex flex-col">
+                <span class="text-[10px] font-bold text-stone-400 uppercase tracking-wider">No. Tagihan</span>
+                <span class="text-sm font-black text-stone-800 font-mono tracking-tight">{{ openBill.order_number }}</span>
               </div>
-              <div v-if="openBill.discount_amount > 0" class="amount-row discount">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-lg shadow-xs" :class="{
+                'bg-emerald-50 text-emerald-700 border border-emerald-100/60': openBill.bill_status === 'open',
+                'bg-rose-50 text-rose-700 border border-rose-100/60': openBill.bill_status === 'closed' || openBill.bill_status === 'cancelled'
+              }">
+                {{ openBill.bill_status === 'open' ? 'Aktif' : openBill.bill_status === 'closed' ? 'Selesai' : openBill.bill_status === 'cancelled' ? 'Dibatalkan' : '-' }}
+              </span>
+            </div>
+
+            <div class="flex items-center gap-2 text-xs font-bold text-stone-500 bg-stone-50 border border-stone-100/70 rounded-xl px-3 py-2 w-fit">
+              <UIcon name="i-lucide-armchair" class="size-4 text-orange-500 shrink-0" />
+              <span>Meja {{ openBill.dining_table?.name || openBill.dining_table?.code || '-' }}</span>
+            </div>
+
+            <div class="space-y-3 pt-2">
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-stone-500">Subtotal</span>
+                <span class="font-bold text-stone-700">{{ formatCurrency(openBill.subtotal_amount) }}</span>
+              </div>
+              <div v-if="openBill.discount_amount > 0" class="flex items-center justify-between text-sm text-emerald-600">
                 <span>Diskon</span>
-                <span>-{{ formatCurrency(openBill.discount_amount) }}</span>
+                <span class="font-bold">-{{ formatCurrency(openBill.discount_amount) }}</span>
               </div>
-              <div v-if="openBill.service_charge_amount > 0" class="amount-row">
-                <span>Biaya Layanan</span>
-                <span>{{ formatCurrency(openBill.service_charge_amount) }}</span>
+              <div v-if="openBill.service_charge_amount > 0" class="flex items-center justify-between text-sm">
+                <span class="text-stone-500">Biaya Layanan</span>
+                <span class="font-bold text-stone-700">{{ formatCurrency(openBill.service_charge_amount) }}</span>
               </div>
-              <div v-if="openBill.tax_amount > 0" class="amount-row">
-                <span>Pajak</span>
-                <span>{{ formatCurrency(openBill.tax_amount) }}</span>
+              <div v-if="openBill.tax_amount > 0" class="flex items-center justify-between text-sm">
+                <span class="text-stone-500">Pajak</span>
+                <span class="font-bold text-stone-700">{{ formatCurrency(openBill.tax_amount) }}</span>
               </div>
-              <div class="amount-row total">
-                <strong>Total</strong>
-                <strong>{{ formatCurrency(openBill.total_amount) }}</strong>
+              <div class="border-t border-dashed border-stone-200 pt-4 flex items-center justify-between">
+                <span class="text-sm font-extrabold text-stone-900">Total Bayar</span>
+                <span class="text-xl font-black text-orange-600">{{ formatCurrency(openBill.total_amount) }}</span>
               </div>
             </div>
           </div>
 
-          <!-- No Bill -->
-          <div v-else class="state-card">
-            <div class="state-icon">📋</div>
-            <h2>Tidak ada tagihan aktif</h2>
-            <p>Silakan buat pesanan terlebih dahulu.</p>
-            <NuxtLink :to="`/o/${orgSlug}/orders`" class="btn-primary-full">
+          <!-- No Bill Card -->
+          <div v-else class="bg-white rounded-3xl border border-stone-100 p-8 text-center space-y-5 shadow-xl shadow-stone-100/80 animate-in fade-in zoom-in-95 duration-200">
+            <div class="size-16 rounded-2xl bg-stone-50 border border-stone-100/60 text-stone-400 flex items-center justify-center mx-auto shadow-inner">
+              <UIcon name="i-lucide-receipt" class="size-8 text-stone-300" />
+            </div>
+            <div class="space-y-2">
+              <h2 class="text-lg font-black text-stone-900 leading-none">Tidak Ada Tagihan Aktif</h2>
+              <p class="text-sm text-stone-500 leading-relaxed">Silakan lakukan pesanan terlebih dahulu dari menu.</p>
+            </div>
+            <button @click="router.push(`/o/${orgSlug}/orders`)" class="w-full h-13 rounded-2xl bg-orange-600 text-white font-extrabold hover:bg-orange-700 active:scale-[0.98] transition-all duration-200 flex items-center justify-center shadow-lg shadow-orange-600/25 cursor-pointer">
               Lihat Menu
-            </NuxtLink>
+            </button>
           </div>
 
-          <!-- QRIS Payment Section -->
-          <div v-if="openBill && openBill.total_amount > 0" class="qris-section">
+          <!-- QRIS Payment Box -->
+          <div v-if="openBill && openBill.total_amount > 0" class="bg-white rounded-3xl border border-stone-100 shadow-md shadow-stone-100/50 p-6 space-y-6">
 
-              <!-- QR Code Display -->
-              <div v-if="qrDataUrl && !isPaid && !isFailed && !isExpired" class="qr-container">
-                <div class="qr-header">
-                  <h3>Scan QRIS untuk Membayar</h3>
-                  <div v-if="isPolling" class="polling-indicator">
-                    <span class="poll-dot" />
-                    Menunggu pembayaran...
-                  </div>
+            <!-- QR Code Display -->
+            <div v-if="qrDataUrl && !isPaid && !isFailed && !isExpired" class="text-center space-y-5">
+              <div class="flex items-center justify-between border-b border-stone-100 pb-3.5">
+                <h3 class="text-sm font-extrabold text-stone-900 flex items-center gap-1.5">
+                  <UIcon name="i-lucide-qr-code" class="size-4.5 text-orange-500" />
+                  Pembayaran QRIS
+                </h3>
+                <div v-if="isPolling" class="flex items-center gap-1.5 text-[11px] text-emerald-600 font-bold bg-emerald-50 border border-emerald-100/60 px-2 py-0.5 rounded-lg">
+                  <span class="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Menunggu Pembayaran</span>
                 </div>
-
-                <div class="qr-image-wrapper">
-                  <img :src="qrDataUrl" alt="QRIS QR Code" class="qr-image" />
-                  <div v-if="isPolling" class="qr-overlay-pulse" />
-                </div>
-
-                <!-- Countdown timer -->
-                <div v-if="countdown > 0" class="qr-countdown" :class="{ 'countdown-urgent': countdown < 60 }">
-                  <span class="countdown-icon">⏱</span>
-                  <span>Berlaku {{ formatCountdown(countdown) }}</span>
-                </div>
-
-                <p class="qr-hint">
-                  Buka aplikasi bank atau dompet digital Anda, pilih "Scan QR", lalu arahkan ke kode di atas.
-                </p>
-
-                <!-- Opsi Kasir -->
-                <div v-if="isTableOrderPage" class="mt-4 text-center">
-                  <p class="text-sm font-medium text-gray-500" style="color: #6b7280;">
-                    Atau silakan lakukan pembayaran langsung di kasir.
-                  </p>
-                </div>
-
-                <!-- Batalkan hanya untuk open bill (endpoint qris-cancel butuh X-Public-Token).
-                     Table order dibatalkan otomatis oleh backend saat timeout. -->
-                <button
-                  v-if="!isTableOrderPage"
-                  class="btn-cancel"
-                  :disabled="cancelPending"
-                  @click="handleCancelPayment"
-                >
-                  {{ cancelPending ? 'Membatalkan...' : 'Batalkan Pembayaran' }}
-                </button>
               </div>
 
-            <!-- Initiate Payment Button — khusus open bill (table order sudah punya QR dari create order) -->
-            <div v-else-if="!isTableOrderPage && !qrDataUrl && !isPaid && !isFailed && !isExpired" class="initiate-section">
-              <div class="qris-logo">
-                <span class="qris-text">QRIS</span>
+              <!-- QR Image Wrapper with scan-border and glow -->
+              <div class="relative inline-block p-4 bg-white border border-stone-100 rounded-3xl shadow-sm mx-auto overflow-hidden">
+                <!-- Glowing corner scan brackets -->
+                <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-orange-500 rounded-tl-sm"></div>
+                <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-orange-500 rounded-tr-sm"></div>
+                <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-orange-500 rounded-bl-sm"></div>
+                <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-orange-500 rounded-br-sm"></div>
+                
+                <img :src="qrDataUrl" alt="QRIS QR Code" class="size-64 sm:size-72 object-contain block relative z-10" />
+                
+                <!-- Animated scanner line -->
+                <div class="absolute left-4 right-4 h-[2px] bg-gradient-to-r from-transparent via-orange-500 to-transparent top-4 animate-scanner z-20 pointer-events-none" />
+                <div v-if="isPolling" class="absolute inset-0 border border-emerald-500/20 rounded-3xl pointer-events-none" />
               </div>
 
-              <p class="initiate-desc">
-                Bayar langsung dengan scan QR — semua aplikasi bank dan dompet digital didukung.
+              <!-- Countdown timer -->
+              <div v-if="countdown > 0" class="flex items-center justify-center gap-1.5 text-sm font-black tracking-wide bg-stone-50 border border-stone-100 py-2.5 rounded-2xl w-fit mx-auto px-4" :class="countdown < 60 ? 'text-red-600 animate-pulse border-red-100 bg-red-50/20' : 'text-orange-600'">
+                <UIcon name="i-lucide-timer" class="size-4.5 shrink-0" />
+                <span>Batas Waktu: {{ formatCountdown(countdown) }}</span>
+              </div>
+
+              <p class="text-[12px] text-stone-400 font-semibold leading-relaxed max-w-xs mx-auto">
+                Pindai QRIS di atas menggunakan aplikasi mobile banking atau e-wallet (GoPay, OVO, Dana, dll) untuk menyelesaikan pembayaran.
               </p>
 
-              <p v-if="initError" class="init-error">{{ initError }}</p>
+              <!-- Opsi Kasir -->
+              <div v-if="isTableOrderPage" class="bg-orange-50/50 border border-orange-100/50 rounded-2xl p-4 text-center">
+                <p class="text-xs font-semibold text-orange-800 leading-relaxed flex items-center justify-center gap-1.5">
+                  <UIcon name="i-lucide-store" class="size-4 shrink-0 text-orange-600" />
+                  <span>Atau silakan lakukan pembayaran tunai/kartu langsung di kasir restoran.</span>
+                </p>
+              </div>
+
+              <!-- Batalkan Pembayaran Button -->
+              <button
+                v-if="!isTableOrderPage"
+                class="w-full h-12 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 hover:text-rose-600 hover:border-rose-200 text-slate-600 font-extrabold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
+                :disabled="cancelPending"
+                @click="handleCancelPayment"
+              >
+                <UIcon v-if="cancelPending" name="i-lucide-loader-2" class="size-4 animate-spin shrink-0" />
+                <UIcon v-else name="i-lucide-x-circle" class="size-4 shrink-0" />
+                <span>{{ cancelPending ? 'Membatalkan...' : 'Batalkan Pembayaran' }}</span>
+              </button>
+            </div>
+
+            <!-- Initiate Payment Button — khusus open bill -->
+            <div v-else-if="!isTableOrderPage && !qrDataUrl && !isPaid && !isFailed && !isExpired" class="text-center space-y-6 py-4">
+              <!-- QRIS Logo Styled -->
+              <div class="relative size-20 mx-auto">
+                <div class="absolute inset-0 bg-gradient-to-tr from-orange-400 via-pink-500 to-purple-600 rounded-3xl blur-md opacity-45 animate-pulse" />
+                <div class="relative size-20 rounded-3xl bg-gradient-to-tr from-orange-500 via-pink-500 to-purple-600 text-white flex items-center justify-center font-black text-2xl shadow-lg">
+                  QRIS
+                </div>
+              </div>
+
+              <div class="space-y-2">
+                <h3 class="text-lg font-black text-stone-900">Pembayaran Online QRIS</h3>
+                <p class="text-sm text-stone-500 leading-relaxed max-w-xs mx-auto">
+                  Bayar pesanan Anda secara instan menggunakan QRIS. Mendukung semua aplikasi e-wallet dan mobile banking.
+                </p>
+              </div>
+
+              <p v-if="initError" class="text-xs text-red-600 font-bold px-4 py-2.5 bg-red-50 border border-red-100 rounded-xl max-w-xs mx-auto animate-shake">{{ initError }}</p>
 
               <button
-                class="btn-pay-qris"
+                class="w-full h-13 rounded-2xl bg-orange-600 text-white font-extrabold hover:bg-orange-700 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-orange-600/25 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 :disabled="initiatePending || !openBill"
                 @click="handleInitiatePayment"
               >
-                <span v-if="initiatePending">Membuat QR...</span>
-                <span v-else>💳 Bayar {{ formatCurrency(openBill?.total_amount ?? 0) }}</span>
+                <UIcon v-if="initiatePending" name="i-lucide-loader-2" class="size-5 animate-spin" />
+                <UIcon v-else name="i-lucide-credit-card" class="size-5" />
+                <span>{{ initiatePending ? 'Membuat QRIS...' : `Bayar ${formatCurrency(openBill?.total_amount ?? 0)}` }}</span>
               </button>
             </div>
 
             <!-- Pesan bayar di kasir — khusus table order yang tidak punya data QR -->
-            <div v-else-if="isTableOrderPage && !qrDataUrl && !isPaid && !isFailed && !isExpired" class="initiate-section">
-              <div class="qris-logo" style="background: linear-gradient(135deg, #8a7f6e, #6b6055);">
-                <span class="text-white text-3xl font-black">🏪</span>
+            <div v-else-if="isTableOrderPage && !qrDataUrl && !isPaid && !isFailed && !isExpired" class="text-center space-y-6 py-4">
+              <div class="relative size-20 mx-auto">
+                <div class="absolute inset-0 bg-stone-200 rounded-3xl blur-md opacity-45" />
+                <div class="relative size-20 rounded-3xl bg-stone-50 border border-stone-200 text-stone-600 flex items-center justify-center font-black text-3xl shadow-sm">
+                  🏪
+                </div>
               </div>
-              <h3 style="font-size: 18px; font-weight: 700; color: #1a1714; margin-bottom: 12px;">Pembayaran di Kasir</h3>
-              <p class="initiate-desc">
-                Pesanan Anda telah tercatat. Silakan lakukan pembayaran langsung di kasir atau tunggu staf kami datang ke meja Anda.
-              </p>
+              <div class="space-y-2">
+                <h3 class="text-lg font-black text-stone-900">Pembayaran di Kasir</h3>
+                <p class="text-sm text-stone-500 leading-relaxed max-w-xs mx-auto">
+                  Pesanan Anda telah tercatat di kasir. Silakan lakukan pembayaran langsung di kasir restoran atau tunggu staf kami melayani Anda di meja.
+                </p>
+              </div>
 
               <!-- Countdown timer -->
-              <div v-if="countdown > 0" class="qr-countdown mt-4 mx-auto" :class="{ 'countdown-urgent': countdown < 60 }" style="margin-bottom: 0; width: max-content;">
-                <span class="countdown-icon">⏱</span>
-                <span>Batas Waktu {{ formatCountdown(countdown) }}</span>
+              <div v-if="countdown > 0" class="flex items-center justify-center gap-1.5 text-sm font-black text-orange-600 bg-orange-50 border border-orange-100/50 py-2.5 rounded-2xl w-fit mx-auto px-4">
+                <UIcon name="i-lucide-timer" class="size-4.5 shrink-0" />
+                <span>Batas Waktu: {{ formatCountdown(countdown) }}</span>
               </div>
 
-              <div class="polling-indicator mt-6" style="justify-content: center;">
-                <span class="poll-dot" />
-                Menunggu konfirmasi pembayaran...
+              <div class="flex items-center justify-center gap-2 text-xs text-emerald-600 font-bold pt-2">
+                <span class="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Menunggu konfirmasi kasir...</span>
               </div>
             </div>
           </div>
@@ -469,484 +545,30 @@ onUnmounted(() => {
         </div>
       </div>
     </template>
-  </section>
+  </div>
 </template>
 
 <style scoped>
-/* ── Layout ──────────────────────────────────────────── */
-.payments-page {
-  min-height: 100dvh;
-  background: transparent;
-}
-
-.payments-header {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid #ece9e2;
-  padding: 12px 24px;
-  position: sticky;
-  top: 56px;
-  z-index: 8;
-}
-
-@media (min-width: 1024px) {
-  .payments-header {
-    top: 64px;
+@keyframes scanner {
+  0%, 100% {
+    top: 16px;
+  }
+  50% {
+    top: calc(100% - 18px);
   }
 }
 
-.header-content {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  max-width: 600px;
-  margin: 0 auto;
+.animate-scanner {
+  animation: scanner 2.5s ease-in-out infinite;
 }
 
-.header-content h1 {
-  font-size: 18px;
-  font-weight: 700;
-  margin: 0;
-  text-align: center;
-  color: #1a1714;
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
 }
 
-.btn-back-header {
-  color: #8a7f6e;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  transition: color 0.15s;
-}
-
-.btn-back-header:hover {
-  color: #c07b2a;
-}
-
-.payments-layout {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 24px 24px 48px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* ── Bill Card ───────────────────────────────────────── */
-.bill-skeleton {
-  height: 200px;
-  background: linear-gradient(90deg, #f0ece5 25%, #e8e3da 50%, #f0ece5 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: 20px;
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.bill-card {
-  background: white;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-}
-
-.bill-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.bill-number {
-  font-family: monospace;
-  font-size: 13px;
-  color: #8a7f6e;
-}
-
-.bill-status {
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 3px 10px;
-  border-radius: 50px;
-}
-
-.bill-status.open {
-  background: #e8f5e9;
-  color: #388e3c;
-}
-
-.bill-status.locked {
-  background: #fff3e0;
-  color: #f57c00;
-}
-
-.bill-table-info {
-  font-size: 14px;
-  color: #6b6055;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f0ece5;
-}
-
-.bill-table-info p {
-  margin: 0;
-}
-
-.bill-amounts {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.amount-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  color: #6b6055;
-}
-
-.amount-row.discount {
-  color: #388e3c;
-}
-
-.amount-row.total {
-  padding-top: 10px;
-  border-top: 2px solid #f0ece5;
-  font-size: 18px;
-  color: #1a1714;
-}
-
-/* ── QRIS Section ────────────────────────────────────── */
-.qris-section {
-  background: white;
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-}
-
-.initiate-section {
-  text-align: center;
-}
-
-.qris-logo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #e91e63, #9c27b0);
-  border-radius: 20px;
-  margin: 0 auto 16px;
-}
-
-.qris-text {
-  color: white;
-  font-weight: 900;
-  font-size: 18px;
-  letter-spacing: 0.05em;
-}
-
-.initiate-desc {
-  font-size: 15px;
-  color: #6b6055;
-  line-height: 1.5;
-  margin: 0 0 20px;
-}
-
-.init-error {
-  color: #c0392b;
-  font-size: 14px;
-  margin: 0 0 16px;
-  text-align: center;
-}
-
-.btn-pay-qris {
-  width: 100%;
-  background: linear-gradient(135deg, #f09c33, #c07b2a);
-  color: white;
-  border: none;
-  border-radius: 14px;
-  padding: 16px;
-  font-size: 17px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: opacity 0.2s, transform 0.1s;
-  box-shadow: 0 4px 16px rgba(240, 156, 51, 0.35);
-}
-
-.btn-pay-qris:hover:not(:disabled) {
-  opacity: 0.92;
-}
-
-.btn-pay-qris:active:not(:disabled) {
-  transform: scale(0.99);
-}
-
-.btn-pay-qris:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* ── QR Display ──────────────────────────────────────── */
-.qr-container {
-  text-align: center;
-}
-
-.qr-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-
-.qr-header h3 {
-  font-size: 16px;
-  font-weight: 700;
-  margin: 0;
-}
-
-.polling-indicator {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: #388e3c;
-  font-weight: 500;
-}
-
-.poll-dot {
-  width: 8px;
-  height: 8px;
-  background: #388e3c;
-  border-radius: 50%;
-  animation: pulse 1.2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.8); }
-}
-
-.qr-image-wrapper {
-  position: relative;
-  display: inline-block;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
-  margin-bottom: 16px;
-}
-
-.qr-image {
-  display: block;
-  width: 280px;
-  height: 280px;
-  max-width: 100%;
-}
-
-.qr-overlay-pulse {
-  position: absolute;
-  inset: 0;
-  border: 3px solid #388e3c;
-  border-radius: 16px;
-  animation: borderPulse 2s infinite;
-}
-
-@keyframes borderPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
-}
-
-.qr-countdown {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  font-size: 14px;
-  color: #e67e22;
-  font-weight: 700;
-  margin-bottom: 12px;
-  letter-spacing: 0.02em;
-}
-
-.countdown-icon {
-  font-size: 16px;
-}
-
-.countdown-urgent {
-  color: #c0392b;
-  animation: urgentPulse 1s infinite;
-}
-
-@keyframes urgentPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-.qr-hint {
-  font-size: 13px;
-  color: #8a7f6e;
-  line-height: 1.5;
-  margin: 0 0 20px;
-}
-
-.btn-cancel {
-  background: transparent;
-  border: 1.5px solid #e0d9ce;
-  color: #6b6055;
-  border-radius: 10px;
-  padding: 10px 20px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
-}
-
-.btn-cancel:hover:not(:disabled) {
-  border-color: #c0392b;
-  color: #c0392b;
-}
-
-.btn-cancel:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* ── Success / Failed / Expired Cards ───────────────── */
-.success-card, .failed-card, .expired-card {
-  text-align: center;
-  background: white;
-  border-radius: 20px;
-  padding: 40px 24px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-}
-
-.expired-card {
-  border: 1px solid #fde8cc;
-  background: linear-gradient(135deg, #fffbf5, #fff8f0);
-}
-
-.success-icon {
-  font-size: 56px;
-  margin-bottom: 16px;
-}
-
-.success-card h2 {
-  font-size: 22px;
-  font-weight: 800;
-  color: #27ae60;
-  margin: 0 0 8px;
-}
-
-.failed-card h2 {
-  font-size: 22px;
-  font-weight: 800;
-  color: #c0392b;
-  margin: 0 0 8px;
-}
-
-.success-card p, .failed-card p {
-  color: #6b6055;
-  font-size: 15px;
-  margin: 0 0 20px;
-}
-
-.payment-detail-row {
-  display: flex;
-  justify-content: space-between;
-  background: #f8faf8;
-  border-radius: 10px;
-  padding: 12px 16px;
-  margin-bottom: 20px;
-  font-size: 14px;
-}
-
-.payment-detail-row strong {
-  font-weight: 800;
-  color: #27ae60;
-}
-
-/* ── State & Error ───────────────────────────────────── */
-.state-container {
-  min-height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--space-6);
-}
-
-.state-card {
-  text-align: center;
-  background: var(--bg-card);
-  border-radius: var(--radius-xl);
-  padding: var(--space-10) var(--space-8);
-  max-width: 380px;
-  box-shadow: var(--shadow-md);
-}
-
-.state-card.error {
-  background: var(--color-danger-soft);
-  border: 1px solid var(--color-danger-border);
-}
-
-.state-card h2 {
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 var(--space-2);
-  color: var(--color-black);
-}
-
-.state-card.error h2 {
-  color: var(--color-danger);
-}
-
-.state-card p {
-  font-size: 15px;
-  color: var(--color-gray-600);
-  margin: 0 0 var(--space-5);
-  line-height: 1.6;
-}
-
-.state-icon {
-  font-size: 48px;
-  margin-bottom: var(--space-4);
-}
-
-.btn-primary-full {
-  display: block;
-  width: 100%;
-  text-align: center;
-  background: #f09c33;
-  color: white;
-  text-decoration: none;
-  border: none;
-  border-radius: 12px;
-  padding: 14px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.btn-primary-full:hover {
-  background: #c07b2a;
-}
-
-.btn-back {
-  display: inline-block;
-  color: #8a7f6e;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  margin-top: 16px;
-  transition: color 0.15s;
-}
-
-.btn-back:hover {
-  color: #c07b2a;
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
 }
 </style>

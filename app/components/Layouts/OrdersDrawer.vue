@@ -1,38 +1,30 @@
 <script setup lang="ts">
 /**
- * OrdersDrawer — Drawer kanan "Pesanan Saya"
+ * OrdersDrawer — "Pesanan Saya" fullscreen overlay
  *
  * Berisi:
- * - ActiveOrderCard: status pesanan aktif (dari backend, di-refresh saat drawer dibuka)
- * - OrderHistoryList: riwayat pesanan per org dari localStorage
+ * - ActiveOrderCard: status pesanan aktif (dari backend, di-refresh saat dibuka)
  *
- * Behavior:
- * - Saat drawer dibuka → refresh active order dari backend
- * - Refresh hanya item non-final di history (pending/processing/waiting_payment)
- * - Badge di header hanya untuk order aktif (bukan total history)
+ * Tampil sebagai fullscreen overlay seperti CartSheet.vue menggunakan
+ * Teleport + Transition. State buka/tutup via useUiOverlayStore.
  */
 
-const props = defineProps<{
-  isOpen: boolean
-}>()
-
-defineEmits<{
-  close: []
-}>()
+import { watch, onUnmounted } from 'vue'
 
 const route = useRoute()
 const orgSlug = computed(() => String(route.params.orgSlug || ''))
 const session = useCustomerSession()
+const overlay = useUiOverlayStore()
 
 // Active order
 const activeOrder = useActiveOrder(orgSlug.value)
 
-// Order history
+// Order history (untuk badge count di header)
 const history = useOrderHistory(orgSlug.value)
 
-// Refresh saat drawer dibuka
+// Refresh saat overlay dibuka
 watch(
-  () => props.isOpen,
+  () => overlay.isOrders,
   async (open) => {
     if (!open || !import.meta.client) return
     if (session.hasSession.value) {
@@ -42,305 +34,108 @@ watch(
   }
 )
 
-const handleRemoveOne = (orderPublicId: string) => {
-  history.removeOne(orderPublicId)
-}
+// Body scroll lock
+watch(
+  () => overlay.isOrders,
+  (isOpen) => {
+    if (import.meta.client) {
+      document.body.style.overflow = isOpen ? 'hidden' : ''
+    }
+  },
+  { immediate: true }
+)
 
-const handleRemoveAll = () => {
-  history.removeAll()
-}
+onUnmounted(() => {
+  if (import.meta.client) {
+    document.body.style.overflow = ''
+  }
+})
 </script>
 
 <template>
   <Teleport to="body">
-    <!-- Overlay -->
-    <Transition name="drawer-fade">
+    <Transition
+      enter-active-class="transition-all duration-300 ease-out"
+      enter-from-class="translate-y-full opacity-90"
+      enter-to-class="translate-y-0 opacity-100"
+      leave-active-class="transition-all duration-200 ease-in"
+      leave-from-class="translate-y-0 opacity-100"
+      leave-to-class="translate-y-full opacity-90"
+    >
       <div
-        v-if="isOpen"
-        class="drawer-overlay"
-        @click="$emit('close')"
-      />
-    </Transition>
-
-    <!-- Drawer panel -->
-    <Transition name="drawer-slide-right">
-      <div
-        v-if="isOpen"
-        class="drawer-panel"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Pesanan Saya"
-        @click.stop
+        v-if="overlay.isOrders"
+        class="fixed inset-0 z-50 flex justify-center bg-black/45 backdrop-blur-xs w-full h-dvh min-h-screen overflow-hidden"
       >
-        <!-- Header -->
-        <div class="drawer-header">
-          <div class="drawer-header-left">
-            <div class="drawer-header-icon">
-              <UIcon name="i-lucide-clipboard-list" class="size-4 text-orange-600" />
-            </div>
-            <h2 class="drawer-title">Pesanan Saya</h2>
-            <!-- Badge hanya untuk order aktif/pending -->
-            <span
-              v-if="history.activeCount.value > 0"
-              class="active-badge"
+        <div class="bg-gray-50 flex flex-col w-full max-w-lg md:max-w-xl h-full shadow-2xl relative outline-none">
+
+          <!-- Header (Sticky) -->
+          <header class="sticky top-0 z-10 flex-shrink-0 flex items-center justify-between gap-2 px-4 py-3 bg-white border-b border-gray-100">
+            <!-- Back / Close button -->
+            <button
+              type="button"
+              class="size-10 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100 active:scale-90 transition-all duration-150 cursor-pointer"
+              aria-label="Tutup pesanan saya"
+              @click="overlay.close('orders')"
             >
-              {{ history.activeCount.value }}
-            </span>
-          </div>
-          <button
-            class="close-btn"
-            aria-label="Tutup drawer pesanan"
-            @click="$emit('close')"
-          >
-            <UIcon name="i-lucide-x" class="size-5" />
-          </button>
-        </div>
+              <UIcon name="i-lucide-arrow-left" class="size-5" />
+            </button>
 
-        <!-- Body -->
-        <div class="drawer-body">
-          <!-- Section: Pesanan Aktif -->
-          <div class="body-section">
-            <div class="section-header-row">
-              <h3 class="section-title">Pesanan Aktif</h3>
-              <button
-                v-if="session.hasSession.value"
-                class="refresh-btn"
-                :disabled="activeOrder.isRefreshing.value"
-                aria-label="Refresh status pesanan"
-                @click="activeOrder.refresh()"
-              >
-                <UIcon
-                  name="i-lucide-refresh-cw"
-                  class="size-3.5"
-                  :class="{ 'animate-spin': activeOrder.isRefreshing.value }"
-                />
-              </button>
+            <!-- Title -->
+            <div class="flex flex-col items-center text-center">
+              <h2 class="text-base font-extrabold text-gray-900 leading-none">Pesanan Saya</h2>
+              <span v-if="history.activeCount.value > 0" class="text-xs text-orange-600 font-semibold mt-1">
+                {{ history.activeCount.value }} pesanan aktif
+              </span>
             </div>
 
-            <OrdersActiveOrderCard
-              :order="activeOrder.order.value"
-              :org-slug="orgSlug"
-              :is-refreshing="activeOrder.isRefreshing.value"
-            />
+            <!-- Refresh button -->
+            <button
+              v-if="session.hasSession.value"
+              type="button"
+              class="size-10 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 active:scale-90 transition-all duration-150 cursor-pointer disabled:opacity-40"
+              :disabled="activeOrder.isRefreshing.value"
+              aria-label="Refresh status pesanan"
+              @click="activeOrder.refresh()"
+            >
+              <UIcon
+                name="i-lucide-refresh-cw"
+                class="size-4.5"
+                :class="{ 'animate-spin': activeOrder.isRefreshing.value }"
+              />
+            </button>
+            <!-- Spacer when no refresh button (to keep title centered) -->
+            <span v-else class="size-10 flex-shrink-0" aria-hidden="true" />
+          </header>
 
-            <!-- No session hint -->
-            <p v-if="!session.hasSession.value" class="no-session-hint">
-              <UIcon name="i-lucide-info" class="size-3.5" />
-              Scan QR meja untuk melihat pesanan aktif
-            </p>
+          <!-- Scrollable body -->
+          <div class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+
+            <!-- Active orders section -->
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 px-1">Pesanan Aktif</h3>
+
+              <OrdersActiveOrderCard
+                :order="activeOrder.order.value"
+                :org-slug="orgSlug"
+                :is-refreshing="activeOrder.isRefreshing.value"
+              />
+
+              <!-- No session hint -->
+              <div
+                v-if="!session.hasSession.value"
+                class="flex items-center gap-2 mt-3 p-3 rounded-xl bg-amber-50 border border-amber-100"
+              >
+                <UIcon name="i-lucide-info" class="size-4 text-amber-600 shrink-0" />
+                <p class="text-xs text-amber-700 font-semibold">
+                  Scan QR meja untuk melihat pesanan aktif
+                </p>
+              </div>
+            </div>
+
           </div>
 
-          <div class="section-divider" />
-
-          <!-- Section: Riwayat -->
-          <div class="body-section">
-            <OrdersOrderHistoryList
-              :items="history.items.value"
-              :org-slug="orgSlug"
-              @remove-one="handleRemoveOne"
-              @remove-all="handleRemoveAll"
-            />
-          </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="drawer-footer">
-          <p>Riwayat disimpan di perangkat ini</p>
         </div>
       </div>
     </Transition>
   </Teleport>
 </template>
-
-<style scoped>
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  background: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.drawer-panel {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 101;
-  width: 88%;
-  max-width: 340px;
-  background: #ffffff;
-  box-shadow: -4px 0 32px rgba(0, 0, 0, 0.12);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.drawer-header {
-  padding: 18px 16px 14px;
-  border-bottom: 1px solid rgba(224, 217, 206, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-}
-
-.drawer-header-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.drawer-header-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 9px;
-  background: #fff7ed;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.drawer-title {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 700;
-  color: #1a1714;
-}
-
-.active-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  border-radius: 9px;
-  background: #ea580c;
-  color: white;
-  font-size: 10px;
-  font-weight: 700;
-}
-
-.close-btn {
-  background: transparent;
-  border: none;
-  color: #8a7f6e;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s;
-}
-
-.close-btn:hover {
-  background: rgba(0, 0, 0, 0.06);
-}
-
-.drawer-body {
-  flex: 1;
-  padding: 16px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.body-section {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 4px 0 16px;
-}
-
-.section-header-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.section-title {
-  margin: 0;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #8a7f6e;
-}
-
-.refresh-btn {
-  background: transparent;
-  border: none;
-  color: #a09080;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.15s, background 0.15s;
-}
-
-.refresh-btn:hover:not(:disabled) {
-  color: #ea580c;
-  background: rgba(234, 88, 12, 0.08);
-}
-
-.refresh-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.no-session-hint {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  color: #a09080;
-  margin: 0;
-}
-
-.section-divider {
-  height: 1px;
-  background: rgba(224, 217, 206, 0.5);
-  margin: 0 0 16px;
-}
-
-.drawer-footer {
-  padding: 12px 16px;
-  border-top: 1px solid rgba(224, 217, 206, 0.5);
-  flex-shrink: 0;
-}
-
-.drawer-footer p {
-  margin: 0;
-  font-size: 11px;
-  color: #a09080;
-  text-align: center;
-}
-
-/* ── Transitions ─────────────────────────────────────────── */
-.drawer-fade-enter-active,
-.drawer-fade-leave-active {
-  transition: opacity 0.25s ease;
-}
-
-.drawer-fade-enter-from,
-.drawer-fade-leave-to {
-  opacity: 0;
-}
-
-.drawer-slide-right-enter-active,
-.drawer-slide-right-leave-active {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.drawer-slide-right-enter-from,
-.drawer-slide-right-leave-to {
-  transform: translateX(100%);
-}
-</style>

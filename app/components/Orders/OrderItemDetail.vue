@@ -47,7 +47,7 @@ const children = computed(() => props.item.children ?? [])
   <div class="flex gap-3 py-3.5">
     <!-- Thumbnail + quantity badge -->
     <div class="relative flex-shrink-0">
-      <div class="size-14 rounded-xl overflow-hidden bg-gradient-to-br from-amber-100 via-orange-50 to-stone-100 flex items-center justify-center">
+      <div class="size-14 rounded-xl overflow-hidden bg-gradient-to-br from-orange-100 via-orange-50 to-stone-100 flex items-center justify-center">
         <img
           v-if="item.image"
           :src="item.image"
@@ -55,10 +55,10 @@ const children = computed(() => props.item.children ?? [])
           class="w-full h-full object-cover"
           loading="lazy"
         />
-        <UIcon v-else name="i-lucide-utensils" class="size-6 text-amber-900/20" />
+        <UIcon v-else name="i-lucide-utensils" class="size-6 text-orange-950/20" />
       </div>
       <span
-        class="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 rounded-full bg-amber-600 text-white text-[10px] font-extrabold flex items-center justify-center tabular-nums shadow-sm"
+        class="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 rounded-full bg-orange-600 text-white text-[10px] font-extrabold flex items-center justify-center tabular-nums shadow-sm"
       >
         {{ item.quantity }}×
       </span>
@@ -94,7 +94,7 @@ const children = computed(() => props.item.children ?? [])
             />
             <span class="truncate">{{ child.name }}</span>
           </span>
-          <span v-if="child.price > 0" class="font-semibold text-amber-700 whitespace-nowrap">
+          <span v-if="child.price > 0" class="font-semibold text-orange-600 whitespace-nowrap">
             + {{ formatPrice(child.price) }}
           </span>
         </li>

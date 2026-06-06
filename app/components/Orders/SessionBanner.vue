@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * SessionBanner.vue
- * Elegant active session details card rendered at the top of the menu grid.
+ * Compact active session badge.
  */
 
 import { computed } from 'vue'
@@ -9,49 +9,37 @@ import { useCustomerSession } from '~/composables/useCustomerSession'
 
 const session = useCustomerSession()
 
-defineProps<{
+const props = defineProps<{
   tableLabel?: string | null
   isOpenBill?: boolean
 }>()
 
-const modeLabel = computed(() => {
-  if (session.sessionMode.value === 'open_bill') return 'Open Bill'
-  return 'Pesanan Meja'
-})
-
-const modeIcon = computed(() => {
-  if (session.sessionMode.value === 'open_bill') return 'i-lucide-receipt'
-  return 'i-lucide-armchair'
+const displayTableLabel = computed(() => {
+  const label = props.tableLabel || session.sessionLabel.value || ''
+  if (!label) return ''
+  if (label.toLowerCase().startsWith('meja')) {
+    return label
+  }
+  return `Meja ${label}`
 })
 </script>
 
 <template>
-  <div v-if="session.hasSession.value" class="rounded-2xl border border-orange-100 bg-orange-50/50 p-3.5 shadow-sm flex items-center justify-between gap-4 animate-fade-in">
-    <div class="flex items-center gap-3 min-w-0">
-      <!-- Icon Container -->
-      <div class="size-9 rounded-xl bg-orange-100 flex items-center justify-center text-orange-600 shrink-0">
-        <UIcon :name="modeIcon" class="size-4.5" />
-      </div>
-      <!-- Info Context -->
-      <div class="min-w-0">
-        <p class="text-[10px] font-extrabold uppercase tracking-widest text-orange-600 leading-none mb-1">
-          <template v-if="session.sessionMode.value === 'table'">Meja Aktif</template>
-          <template v-else>Sesi Aktif • {{ modeLabel }}</template>
-        </p>
-        <p class="text-xs sm:text-sm font-bold text-gray-900 leading-normal truncate">
-          <span v-if="session.sessionMode.value === 'table'">Anda sedang memesan untuk <strong>Meja {{ tableLabel }}</strong></span>
-          <span v-else>Anda sedang menambahkan pesanan ke <strong>Open Bill {{ tableLabel }}</strong></span>
-        </p>
-      </div>
-    </div>
-
+  <div v-if="session.hasSession.value" class="animate-fade-in">
     <UBadge
-      v-if="session.sessionMode.value === 'open_bill'"
-      label="Sesi Aktif"
-      color="success"
+      color="primary"
       variant="soft"
-      class="shrink-0 font-bold px-2 py-0.5 rounded-full text-[10px]"
-    />
+      class="rounded-full font-extrabold px-3 py-1 text-[11px] border border-orange-200/40 flex items-center gap-1.5 shadow-none"
+    >
+      <template v-if="session.sessionMode.value === 'table'">
+        <UIcon name="i-lucide-armchair" class="size-3.5 text-orange-600 shrink-0" />
+        <span>{{ displayTableLabel }}</span>
+      </template>
+      <template v-else>
+        <UIcon name="i-lucide-receipt" class="size-3.5 text-orange-600 shrink-0" />
+        <span>Open Bill</span>
+      </template>
+    </UBadge>
   </div>
 </template>
 

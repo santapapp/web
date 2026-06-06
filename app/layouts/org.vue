@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useCustomerSession } from '~/composables/useCustomerSession'
 import OrgHeader from '~/components/Layouts/OrgHeader.vue'
 import SessionDrawer from '~/components/Layouts/SessionDrawer.vue'
@@ -15,14 +15,6 @@ import OrdersDrawer from '~/components/Layouts/OrdersDrawer.vue'
 
 const customerSession = useCustomerSession()
 
-const isSessionDrawerOpen = ref(false)
-const isOrdersDrawerOpen = ref(false)
-
-// Izinkan halaman child membuka drawer "Pesanan Saya" (mis. tombol Riwayat di landing).
-provide('openOrdersDrawer', () => {
-  isOrdersDrawerOpen.value = true
-})
-
 onMounted(() => {
   customerSession.restoreLocal()
 })
@@ -31,22 +23,13 @@ onMounted(() => {
 <template>
   <div class="org-shell">
     <!-- Header -->
-    <OrgHeader
-      @open-drawer="isSessionDrawerOpen = true"
-      @open-orders="isOrdersDrawerOpen = true"
-    />
+    <OrgHeader />
 
-    <!-- Drawer kiri: Menu Sesi -->
-    <SessionDrawer
-      :is-open="isSessionDrawerOpen"
-      @close="isSessionDrawerOpen = false"
-    />
+    <!-- Slideover kiri: Menu Sesi -->
+    <SessionDrawer />
 
-    <!-- Drawer kanan: Pesanan Saya -->
-    <OrdersDrawer
-      :is-open="isOrdersDrawerOpen"
-      @close="isOrdersDrawerOpen = false"
-    />
+    <!-- Slideover kanan: Pesanan Saya -->
+    <OrdersDrawer />
 
     <!-- Konten halaman -->
     <main class="org-main" id="org-main-content">

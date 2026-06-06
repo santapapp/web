@@ -1,19 +1,17 @@
 <script setup lang="ts">
 /**
  * MobileCheckoutBar.vue
- * Sticky floating bottom checkout bar — dark background, floating with margin,
- * large rounded corners for premium floating effect.
+ * Sticky floating bottom bar — membuka tinjauan keranjang ("Lihat Keranjang"),
+ * BUKAN membuat order langsung. Order baru dibuat dari dalam CartSheet.
  */
 
 const props = defineProps<{
   totalQty: number
   totalPrice: number
-  submitting?: boolean
-  error?: string | null
 }>()
 
 const emit = defineEmits<{
-  submit: []
+  'view-cart': []
 }>()
 
 const formatPrice = (v: number) =>
@@ -33,35 +31,22 @@ const formatPrice = (v: number) =>
   >
     <div
       v-if="totalQty > 0"
-      class="lg:hidden fixed bottom-4 inset-x-4 z-40"
+      class="fixed bottom-4 inset-x-4 md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-md z-40"
       role="complementary"
       aria-label="Keranjang pesanan"
     >
-      <!-- Error Alert -->
-      <UAlert
-        v-if="error"
-        icon="i-lucide-alert-circle"
-        color="error"
-        variant="soft"
-        :description="error"
-        class="mb-2 rounded-2xl"
-      />
-
-      <!-- Floating Dark Bar -->
+      <!-- Floating Dark Bar → buka tinjauan keranjang -->
       <button
         type="button"
-        :disabled="submitting"
-        class="w-full min-h-[56px] px-5 py-3.5 rounded-2xl bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none shadow-2xl shadow-gray-900/30 font-bold flex items-center justify-between gap-3 transition-all duration-200 cursor-pointer"
-        @click="emit('submit')"
+        class="w-full min-h-14 px-5 py-3.5 rounded-2xl bg-gray-900 text-white hover:bg-gray-800 active:scale-[0.98] shadow-2xl shadow-gray-900/30 font-bold flex items-center justify-between gap-3 transition-all duration-200 cursor-pointer"
+        @click="emit('view-cart')"
       >
         <!-- Left: qty badge + label -->
         <div class="flex items-center gap-3">
-          <span class="size-7 rounded-xl bg-orange-600 text-white text-xs font-black flex items-center justify-center flex-shrink-0">
+          <span class="size-7 rounded-xl bg-orange-600 text-white text-xs font-black flex items-center justify-center shrink-0">
             {{ totalQty }}
           </span>
-          <span class="text-sm font-bold tracking-wide">
-            {{ submitting ? 'Mengirim...' : 'Masukkan Keranjang!' }}
-          </span>
+          <span class="text-sm font-bold tracking-wide">Lihat Keranjang</span>
         </div>
 
         <!-- Right: price + icon -->

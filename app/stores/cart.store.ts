@@ -23,8 +23,10 @@ export interface SelectedVariant {
 }
 
 export interface CartItem {
-  /** Unique key: product_id + sorted variant_ids + note */
+  /** Stable unique identifier for UI and list rendering */
   id: string
+  /** Deterministic key used for merge check (product + variants + note) */
+  cartKey: string
   menuId: number
   name: string
   /** Harga dasar product (tanpa variant) */
@@ -32,6 +34,7 @@ export interface CartItem {
   quantity: number
   selected_variants: SelectedVariant[]
   note?: string
+  image?: string | null
   /** Preview subtotal = (base_price + sum(variant.price)) * quantity — hanya untuk display */
   preview_subtotal: number
 }
@@ -47,7 +50,7 @@ export interface OrderItemPayload {
   }>
 }
 
-// ─── Cart Key ─────────────────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
 /**
  * Generate deterministic cart key dari product_id, sorted variant_ids, dan note.
@@ -66,6 +69,16 @@ export function buildCartKey(
 }
 
 /**
+ * Helper untuk membuat stable unique ID secara SSR-safe
+ */
+export function generateId(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID()
+  }
+  return Date.now().toString(36) + Math.random().toString(36).substring(2, 9)
+}
+
+/**
  * Hitung preview subtotal (hanya untuk display — harga final dari backend).
  */
 export function calcPreviewSubtotal(
@@ -81,6 +94,8 @@ export function calcPreviewSubtotal(
 
 interface CartBucket {
   items: CartItem[]
+  customerName: string
+  orderNote: string
 }
 
 interface CartState {
@@ -90,7 +105,11 @@ interface CartState {
 
 const STORAGE_KEY = 'santap_cart_v2'
 
-const createBucket = (): CartBucket => ({ items: [] })
+const createBucket = (): CartBucket => ({
+  items: [],
+  customerName: '',
+  orderNote: ''
+})
 
 export const useCartStore = defineStore('cart', {
   state: (): CartState => ({
@@ -110,6 +129,10 @@ export const useCartStore = defineStore('cart', {
     /** Preview total — hanya untuk display, final price dari backend */
     totalPrice: (state) => (mode: CartMode) =>
       state.carts[mode].items.reduce((total, item) => total + item.preview_subtotal, 0),
+
+    customerName: (state) => (mode: CartMode) => state.carts[mode].customerName || '',
+
+    orderNote: (state) => (mode: CartMode) => state.carts[mode].orderNote || '',
 
     /** Payload siap kirim ke backend */
     orderPayload: (state) => (mode: CartMode): OrderItemPayload[] =>
@@ -137,14 +160,15 @@ export const useCartStore = defineStore('cart', {
         quantity?: number
         selected_variants?: SelectedVariant[]
         note?: string
+        image?: string | null
       }
     ) {
       const variants = params.selected_variants ?? []
       const note = params.note ?? ''
       const qty = params.quantity ?? 1
-      const key = buildCartKey(params.menuId, variants, note)
+      const cartKey = buildCartKey(params.menuId, variants, note)
 
-      const existing = this.carts[mode].items.find((i) => i.id === key)
+      const existing = this.carts[mode].items.find((i) => i.cartKey === cartKey)
 
       if (existing) {
         existing.quantity += qty
@@ -155,13 +179,15 @@ export const useCartStore = defineStore('cart', {
         )
       } else {
         this.carts[mode].items.push({
-          id: key,
+          id: generateId(),
+          cartKey,
           menuId: params.menuId,
           name: params.name,
           base_price: params.base_price,
           quantity: qty,
           selected_variants: variants,
           note: note || undefined,
+          image: params.image || null,
           preview_subtotal: calcPreviewSubtotal(params.base_price, variants, qty)
         })
       }
@@ -195,6 +221,46 @@ export const useCartStore = defineStore('cart', {
      */
     removeById(mode: CartMode, cartItemId: string) {
       this.carts[mode].items = this.carts[mode].items.filter((i) => i.id !== cartItemId)
+      this.persist()
+    },
+
+    /**
+     * Update catatan item menu berdasarkan cart item id dan hitung ulang merge.
+     */
+    updateNoteById(mode: CartMode, cartItemId: string, note: string) {
+      const item = this.carts[mode].items.find((i) => i.id === cartItemId)
+      if (!item) return
+
+      const cleanNote = note.trim()
+      item.note = cleanNote || undefined
+      item.cartKey = buildCartKey(item.menuId, item.selected_variants, cleanNote)
+
+      // Cek apakah ada tabrakan key dengan item lain (selain dirinya sendiri)
+      const duplicate = this.carts[mode].items.find(
+        (i) => i.cartKey === item.cartKey && i.id !== cartItemId
+      )
+
+      if (duplicate) {
+        duplicate.quantity += item.quantity
+        duplicate.preview_subtotal = calcPreviewSubtotal(
+          duplicate.base_price,
+          duplicate.selected_variants,
+          duplicate.quantity
+        )
+        // Hapus item lama karena sudah digabung
+        this.carts[mode].items = this.carts[mode].items.filter((i) => i.id !== cartItemId)
+      }
+
+      this.persist()
+    },
+
+    setCustomerName(mode: CartMode, name: string) {
+      this.carts[mode].customerName = name
+      this.persist()
+    },
+
+    setOrderNote(mode: CartMode, note: string) {
+      this.carts[mode].orderNote = note
       this.persist()
     },
 
@@ -239,8 +305,30 @@ export const useCartStore = defineStore('cart', {
       try {
         const parsed = JSON.parse(raw)
         if (parsed && typeof parsed === 'object') {
-          if (parsed.table_order?.items) this.carts.table_order = parsed.table_order
-          if (parsed.open_bill?.items) this.carts.open_bill = parsed.open_bill
+          const migrateBucket = (bucket: any): CartBucket => {
+            const items = (bucket.items || []).map((item: any) => {
+              const cartKey = item.cartKey || item.id || buildCartKey(item.menuId, item.selected_variants || [], item.note || '')
+              let id = item.id
+              // Jika id lama berupa key (mengandung '|') maka kita ganti dengan stable ID
+              if (!id || id.includes('|')) {
+                id = generateId()
+              }
+              return {
+                ...item,
+                id,
+                cartKey,
+                image: item.image || null
+              }
+            })
+            return {
+              items,
+              customerName: bucket.customerName || '',
+              orderNote: bucket.orderNote || ''
+            }
+          }
+
+          if (parsed.table_order) this.carts.table_order = migrateBucket(parsed.table_order)
+          if (parsed.open_bill) this.carts.open_bill = migrateBucket(parsed.open_bill)
         }
       } catch {
         this.carts = { table_order: createBucket(), open_bill: createBucket() }

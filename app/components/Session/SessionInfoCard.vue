@@ -37,48 +37,53 @@ const formatPrice = (v: number) =>
 
 <template>
   <!-- Active session -->
-  <div v-if="session.hasSession.value" class="bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm">
+  <div v-if="session.hasSession.value" class="bg-transparent rounded-xl border border-slate-200 overflow-hidden shadow-none transition-all duration-200">
 
     <!-- Mode row -->
-    <div class="flex items-center justify-between px-4 py-3 border-b border-slate-50">
-      <div class="flex items-center gap-2 text-slate-500">
-        <UIcon :name="modeIcon" class="size-3.5" />
-        <span class="text-[11px] font-bold uppercase tracking-wider">{{ modeLabel }}</span>
+    <div class="flex items-center justify-between px-3 py-2.5 border-b border-slate-200">
+      <div class="flex items-center gap-1.5 text-slate-500">
+        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">{{ modeLabel }}</span>
       </div>
       <UBadge
         :label="billStatusConfig.label"
         :color="billStatusConfig.color"
         variant="soft"
         size="sm"
-        class="rounded-full"
+        class="rounded-full text-[9px] px-1.5 py-0"
       />
     </div>
 
-    <!-- Session label row -->
-    <div v-if="session.sessionLabel.value" class="flex items-center gap-3 px-4 py-3">
-      <span class="text-base leading-none">
-        <template v-if="session.sessionMode.value === 'table'">🪑</template>
-        <template v-else>🧾</template>
-      </span>
+    <!-- Session label & info row -->
+    <div v-if="session.sessionLabel.value" class="flex items-center gap-3 px-3.5 py-3">
+      <div class="size-8 rounded-lg border border-slate-200 bg-transparent flex items-center justify-center shrink-0">
+        <span class="text-sm">
+          <template v-if="session.sessionMode.value === 'table'">
+            <UIcon name="i-lucide-armchair" class="size-4 text-slate-600" />
+          </template>
+          <template v-else>
+            <UIcon name="i-lucide-receipt" class="size-4 text-slate-600" />
+          </template>
+        </span>
+      </div>
       <div class="flex-1 min-w-0">
-        <p class="text-[11px] text-slate-400 font-medium mb-0.5">
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider leading-none mb-1">
           {{ session.sessionMode.value === 'table' ? 'Nomor Meja' : 'Nomor Bill' }}
         </p>
-        <p class="text-[14px] font-extrabold text-slate-800">
+        <p class="text-[13px] font-extrabold text-slate-800 leading-tight">
           {{ session.sessionLabel.value }}
         </p>
       </div>
-    </div>
 
-    <!-- Total tagihan (open_bill only) -->
-    <div
-      v-if="isOpenBill && session.openBill.value?.total_amount"
-      class="flex items-center justify-between px-4 py-3 bg-slate-50 border-t border-slate-100"
-    >
-      <span class="text-[12px] text-slate-500 font-medium">Total Tagihan</span>
-      <span class="text-[14px] font-extrabold text-slate-800">
-        {{ formatPrice(session.openBill.value.total_amount) }}
-      </span>
+      <!-- Inline Total tagihan (open_bill only) for ultimate visual lightness -->
+      <div
+        v-if="isOpenBill && session.openBill.value?.total_amount"
+        class="text-right"
+      >
+        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider leading-none mb-1">Tagihan</p>
+        <p class="text-[13px] font-extrabold text-slate-800 leading-tight">
+          {{ formatPrice(session.openBill.value.total_amount) }}
+        </p>
+      </div>
     </div>
   </div>
 

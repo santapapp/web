@@ -19,10 +19,14 @@ const {
 } = useOrderMode()
 
 const customerSession = useCustomerSession()
+const overlay = useUiOverlayStore()
 const sessionLoading = ref(mode.value !== 'invalid')
 const sessionError = ref<string | null>(null)
 const isSessionReady = ref(false)
-const showScanner = ref(false)
+
+// Konfigurasi pajak / biaya layanan org (publik, di-cache oleh useAsyncData key).
+// Dipakai untuk ringkasan pembayaran di CartSheet.
+const { org, openingStatus, fullAddress } = usePublicOrg(orgSlug)
 
 const {
   filteredProducts,
@@ -51,6 +55,8 @@ const cartMode = computed<CartMode>(() =>
 
 const cart = useOrderCart(cartMode)
 const checkout = useCheckout(orgSlug, cart)
+
+const productDetailCtaDisabled = computed(() => overlay.anyOpen && !overlay.isProduct)
 
 const cartItems = cart.items
 const cartTotalQuantity = cart.totalQuantity
@@ -264,7 +270,7 @@ const handleManualSubmit = (code: string) => {
 }
 
 const handleScanToken = (token: string) => {
-  showScanner.value = false
+  overlay.close('scanner')
   startSessionFromToken(token)
 }
 
@@ -304,7 +310,10 @@ const handleDecrease = (product: any) => {
       :loading="sessionLoading"
       :history-items="orderHistory.items.value"
       :org-slug="orgSlug"
-      @open-scanner="showScanner = true"
+      :org="org ?? undefined"
+      :opening-status="openingStatus ?? undefined"
+      :full-address="fullAddress || undefined"
+      @open-scanner="overlay.open('scanner')"
       @submit-manual="handleManualSubmit"
     />
 
@@ -327,37 +336,49 @@ const handleDecrease = (product: any) => {
             @increase="handleIncrease"
           />
         </main>
-
-        <OrdersCartSidebar
-          :items="cartItems"
-          :submitting="checkout.submitting.value"
-          :error="checkout.error.value"
-          @submit="checkout.checkout"
-          @update-qty="cart.updateQuantityById"
-          @remove="cart.removeById"
-        />
       </div>
 
       <OrdersMobileCheckoutBar
+        v-if="!overlay.anyOpen"
         :total-qty="cartTotalQuantity"
         :total-price="cartTotalPrice"
-        :submitting="checkout.submitting.value"
-        :error="checkout.error.value"
-        @submit="checkout.checkout"
+        @view-cart="overlay.open('cart')"
       />
     </template>
 
+    <OrdersCartSheet
+      v-model:customer-name="cart.customerName.value"
+      v-model:order-note="cart.orderNote.value"
+      :open="overlay.isCart"
+      :items="cartItems"
+      :submitting="checkout.submitting.value"
+      :error="checkout.error.value"
+      :is-open-bill="isOpenBill"
+      :tax-enabled="org?.tax_enabled"
+      :tax-rate="org?.tax_rate"
+      :service-charge-enabled="org?.service_charge_enabled"
+      :service-charge-rate="org?.service_charge_rate"
+      :table-label="tableLabel"
+      @close="overlay.close('cart')"
+      @add-more="overlay.close('cart')"
+      @update-qty="cart.updateQuantityById"
+      @remove="cart.removeById"
+      @update-note="cart.updateNoteById"
+      @submit="checkout.checkout"
+    />
+
     <Teleport to="body">
       <OrdersQrScannerPanel
-        v-if="showScanner"
+        v-if="overlay.isScanner"
         @scan="handleScanToken"
-        @close="showScanner = false"
+        @close="overlay.close('scanner')"
       />
     </Teleport>
 
     <OrdersProductDetailSheet
       :product="cart.selectedProduct.value"
       :open="cart.showProductDetail.value"
+      :cta-disabled="productDetailCtaDisabled"
       @close="cart.closeProductDetail"
       @add-to-cart="cart.addFromDetail"
     />

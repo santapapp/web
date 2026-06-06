@@ -14,12 +14,14 @@
  * Tidak menyimpan CartItem final — hanya emit pilihan user.
  */
 
+import { ref, computed, watch, onUnmounted, nextTick } from 'vue'
 import type { MenuProduct, MenuVariantGroup } from '~/types/customer-menu'
 import type { SelectedVariant } from '~/stores/cart.store'
 
 const props = defineProps<{
   product: MenuProduct | null
   open: boolean
+  ctaDisabled?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -42,6 +44,34 @@ const selections = ref<Record<number, Set<number>>>({})
 const quantity = ref(1)
 const note = ref('')
 const validationError = ref<string | null>(null)
+
+// Client-only body scroll lock
+watch(
+  () => props.open,
+  (isOpen) => {
+    if (import.meta.client) {
+      if (isOpen) {
+        document.body.style.overflow = 'hidden'
+      } else {
+        document.body.style.overflow = ''
+      }
+    }
+  },
+  { immediate: true }
+)
+
+onUnmounted(() => {
+  if (import.meta.client) {
+    document.body.style.overflow = ''
+  }
+})
+
+const handleBlur = (event: Event) => {
+  const target = event.target as HTMLInputElement | null
+  if (target) {
+    target.blur()
+  }
+}
 
 // Reset state setiap kali product berubah
 watch(() => props.product, (p) => {
@@ -127,7 +157,7 @@ const validate = (): boolean => {
 // ─── Submit ───────────────────────────────────────────────────────────────────
 
 const handleAddToCart = () => {
-  if (!props.product || !validate()) return
+  if (!props.product || props.ctaDisabled || !validate()) return
 
   const selected_variants: SelectedVariant[] = []
 
@@ -158,134 +188,151 @@ const handleAddToCart = () => {
 </script>
 
 <template>
-  <UDrawer
-    :open="open && !!product"
-    direction="bottom"
-    :handle="false"
-    @update:open="(v) => !v && emit('close')"
-  >
-    <template #content>
-      <div
-        v-if="product"
-        class="bg-white rounded-t-3xl flex flex-col w-full h-full max-h-[94dvh] outline-none"
+  <Teleport to="body">
+    <Transition name="slide-up">
+      <section
+        v-if="open && product"
+        class="fixed inset-0 z-[60] h-[100dvh] w-full overflow-hidden bg-gray-50"
       >
-        <!-- Drag handle (mobile) -->
-        <div class="flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div class="w-10 h-1 rounded-full bg-gray-200" />
-        </div>
+        <div class="mx-auto flex h-full w-full max-w-lg md:max-w-xl flex-col bg-gray-50 shadow-2xl relative outline-none">
+          <!-- Header (flex-none) -->
+          <header class="flex-none bg-white border-b border-gray-100 flex items-center justify-between gap-2 px-4 py-3">
+            <!-- Back Button -->
+            <button
+              type="button"
+              class="size-10 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100 active:scale-90 transition-all duration-150 cursor-pointer"
+              aria-label="Kembali"
+              @click="emit('close')"
+            >
+              <UIcon name="i-lucide-arrow-left" class="size-5" />
+            </button>
 
-        <!-- Header: back / title / spacer -->
-        <header class="flex-shrink-0 flex items-center justify-between gap-2 px-4 py-3">
-          <button
-            type="button"
-            class="size-10 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100 active:scale-90 transition-all duration-150 cursor-pointer"
-            aria-label="Kembali"
-            @click="emit('close')"
-          >
-            <UIcon name="i-lucide-arrow-left" class="size-5" />
-          </button>
+            <!-- Title & Subtitle -->
+            <div class="flex flex-col items-center text-center min-w-0">
+              <h2 class="text-base font-extrabold text-gray-900 leading-none truncate max-w-[200px]">
+                {{ product.name }}
+              </h2>
+              <span class="text-xs text-orange-600 font-semibold mt-1">
+                {{ formatPrice(product.price) }}
+              </span>
+            </div>
 
-          <h2 class="text-base font-bold text-gray-900 truncate">Pesanan saat ini</h2>
+            <!-- Spacer -->
+            <span class="size-10 shrink-0" aria-hidden="true" />
+          </header>
 
-          <!-- Spacer -->
-          <span class="size-10 flex-shrink-0" aria-hidden="true" />
-        </header>
-
-        <!-- Scrollable content -->
-        <div class="flex-1 overflow-y-auto px-4 pb-4">
-          <!-- White product card -->
-          <div class="bg-gray-50 rounded-2xl px-5 pt-6 pb-2">
-            <!-- Product image (centered) -->
-            <div class="flex justify-center">
-              <div class="size-40 sm:size-44 rounded-2xl overflow-hidden flex items-center justify-center">
-                <img
-                  v-if="product.image"
-                  :src="product.image"
-                  :alt="product.name"
-                  class="w-full h-full object-contain"
-                />
-                <div
-                  v-else
-                  class="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 via-gray-50 to-gray-100"
-                >
-                  <UIcon name="i-lucide-utensils" class="size-10 text-gray-300" />
+          <!-- Content (flex-1 overflow-y-auto) -->
+          <main class="min-h-0 flex-1 overflow-y-auto px-4 pt-4 pb-12 space-y-4">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-5">
+              <!-- Product Image (centered) -->
+              <div class="flex justify-center">
+                <div class="size-40 sm:size-44 rounded-2xl overflow-hidden flex items-center justify-center border border-gray-100 bg-gray-50 shrink-0">
+                  <img
+                    v-if="product.image"
+                    :src="product.image"
+                    :alt="product.name"
+                    class="w-full h-full object-cover"
+                  />
+                  <div
+                    v-else
+                    class="w-full h-full flex items-center justify-center bg-gradient-to-br from-orange-50 via-gray-50 to-gray-100"
+                  >
+                    <UIcon name="i-lucide-utensils" class="size-10 text-gray-300" />
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Name + price (centered) -->
-            <div class="text-center mt-4 mb-1">
-              <h1 class="text-lg font-extrabold uppercase tracking-wide text-gray-900">
-                {{ product.name }}
-              </h1>
-              <p class="text-base font-bold text-orange-600 mt-1">
-                {{ formatPrice(product.price) }}
-              </p>
-              <p
-                v-if="product.description"
-                class="text-sm text-gray-500 leading-relaxed mt-2 max-w-sm mx-auto"
-              >
-                {{ product.description }}
-              </p>
-            </div>
+              <!-- Product Details -->
+              <div class="text-center">
+                <h1 class="text-lg font-extrabold uppercase tracking-wide text-gray-900">
+                  {{ product.name }}
+                </h1>
+                <p class="text-base font-bold text-orange-600 mt-1">
+                  {{ formatPrice(product.price) }}
+                </p>
+                <p
+                  v-if="product.description"
+                  class="text-sm text-gray-500 leading-relaxed mt-2 max-w-sm mx-auto"
+                >
+                  {{ product.description }}
+                </p>
+              </div>
 
-            <!-- Option groups: divider antar section -->
-            <div v-if="product.variant_groups.length" class="mt-3 divide-y divide-gray-100">
-              <OrdersOptionGroup
-                v-for="group in product.variant_groups"
-                :key="group.id"
-                :group="group"
-                :selected-ids="selectedIdsFor(group.id)"
-                @toggle="(variantId) => toggleVariant(group, variantId)"
-              />
-            </div>
+              <!-- Option groups -->
+              <div v-if="product.variant_groups.length" class="mt-3 divide-y divide-gray-100">
+                <OrdersOptionGroup
+                  v-for="group in product.variant_groups"
+                  :key="group.id"
+                  :group="group"
+                  :selected-ids="selectedIdsFor(group.id)"
+                  @toggle="(variantId) => toggleVariant(group, variantId)"
+                />
+              </div>
 
-            <!-- Note per item -->
-            <div class="border-t border-gray-100 py-4">
-              <label
-                class="block text-xs font-extrabold uppercase tracking-wide text-gray-700 mb-2 px-1"
-                for="product-note"
-              >
-                Catatan (opsional)
-              </label>
-              <UTextarea
-                id="product-note"
-                v-model="note"
-                placeholder="Contoh: Tidak pedas, tanpa bawang"
-                :rows="2"
-                :maxlength="150"
-                class="w-full"
-                resize
-              />
+              <!-- Note per item -->
+              <div class="border-t border-gray-100 pt-5 mt-5">
+                <label
+                  class="block text-xs font-extrabold uppercase tracking-wide text-gray-700 mb-2 px-1"
+                  for="product-note"
+                >
+                  Catatan (opsional)
+                </label>
+                <UTextarea
+                  id="product-note"
+                  v-model="note"
+                  placeholder="Contoh: Tidak pedas, tanpa bawang"
+                  :rows="2"
+                  :maxlength="150"
+                  class="w-full"
+                  color="neutral"
+                  variant="outline"
+                  :ui="{
+                    base: 'rounded-2xl border border-orange-200 bg-white ring-0 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 placeholder:text-slate-400 transition-all duration-200 px-4 py-3 text-sm min-h-[72px] shadow-xs resize-none'
+                  }"
+                />
+              </div>
             </div>
-          </div>
+          </main>
+
+          <!-- Footer (flex-none) -->
+          <footer class="flex-none bg-white border-t border-gray-100 px-5 pt-4 pb-[max(20px,env(safe-area-inset-bottom))] space-y-4">
+            <!-- Validation error -->
+            <UAlert
+              v-slot:default
+              v-if="validationError"
+              icon="i-lucide-alert-circle"
+              color="error"
+              variant="soft"
+              :description="validationError"
+              class="rounded-xl"
+            />
+
+            <!-- Quantity -->
+            <OrdersQuantityControl v-model="quantity" :min="1" />
+
+            <!-- Add to cart CTA -->
+            <OrdersStickyCartButton
+              label="Tambah ke Keranjang"
+              :total="previewTotal"
+              :disabled="ctaDisabled"
+              @click="handleAddToCart"
+            />
+          </footer>
         </div>
-
-        <!-- Sticky Footer: quantity + CTA -->
-        <div
-          class="flex-shrink-0 border-t border-gray-100 bg-white px-5 pt-4 pb-[max(20px,env(safe-area-inset-bottom))] space-y-4"
-        >
-          <!-- Validation error -->
-          <UAlert
-            v-if="validationError"
-            icon="i-lucide-alert-circle"
-            color="error"
-            variant="soft"
-            :description="validationError"
-            class="rounded-xl"
-          />
-
-          <!-- Quantity -->
-          <OrdersQuantityControl v-model="quantity" :min="1" />
-
-          <!-- Add to cart CTA -->
-          <OrdersStickyCartButton
-            label="Tambah ke Keranjang"
-            :total="previewTotal"
-            @click="handleAddToCart"
-          />
-        </div>
-      </div>
-    </template>
-  </UDrawer>
+      </section>
+    </Transition>
+  </Teleport>
 </template>
+
+<style scoped>
+.slide-up-enter-active {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.slide-up-leave-active {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
+}
+</style>

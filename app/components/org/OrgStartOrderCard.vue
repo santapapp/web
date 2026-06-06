@@ -4,17 +4,11 @@
  * Main call-to-action card encouraging customers to initiate a new table order.
  *
  * Catatan: Table order BUKAN session. Kartu ini TIDAK menawarkan "lanjutkan sesi meja".
- * Setiap scan/masuk meja selalu memulai order baru. Jika ada riwayat pesanan
- * tersimpan untuk outlet ini, kartu menampilkan aksi "Riwayat Pesanan" terpisah.
+ * Setiap scan/masuk meja selalu memulai order baru.
  */
 
 defineProps<{
   orderTo: string
-  hasOrderHistory?: boolean
-}>()
-
-const emit = defineEmits<{
-  'open-history': []
 }>()
 </script>
 
@@ -40,18 +34,7 @@ const emit = defineEmits<{
       </div>
 
       <!-- Action Button Container -->
-      <div class="relative z-10 mt-2 md:mt-0 w-full md:w-auto shrink-0 flex flex-col sm:flex-row gap-3">
-        <!-- Secondary: Riwayat Pesanan (hanya jika ada history) -->
-        <button
-          v-if="hasOrderHistory"
-          type="button"
-          class="w-full md:w-auto min-h-[44px] px-5 py-3 rounded-xl border border-amber-300 bg-white text-amber-800 hover:bg-amber-50 active:scale-[0.98] focus:ring-2 focus:ring-amber-500 focus:outline-none font-bold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer text-sm"
-          @click="emit('open-history')"
-        >
-          <UIcon name="i-lucide-history" class="size-4.5 shrink-0" />
-          <span>Riwayat Pesanan</span>
-        </button>
-
+      <div class="relative z-10 mt-2 md:mt-0 w-full md:w-auto shrink-0">
         <!-- Primary: selalu mulai order baru -->
         <NuxtLink
           :to="orderTo"

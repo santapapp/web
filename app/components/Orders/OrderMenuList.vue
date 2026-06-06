@@ -32,9 +32,6 @@ const emit = defineEmits<{
 <template>
   <section class="mx-auto w-full max-w-4xl px-4 py-5 pb-32 lg:px-6 lg:pb-8">
     <div class="mb-5 flex flex-col gap-4">
-      <!-- Active session banner context -->
-      <OrdersSessionBanner :table-label="tableLabel" :is-open-bill="isOpenBill" />
-
       <!-- Search field input -->
       <OrdersMenuSearchBar v-model="searchQuery" />
 

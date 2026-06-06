@@ -58,7 +58,7 @@ const formatPrice = (v: number) =>
     <!-- Total -->
     <div class="flex items-center justify-between">
       <span class="text-base font-extrabold text-stone-900">Total Bayar</span>
-      <span class="text-base font-extrabold text-amber-700">{{ formatPrice(order.total_amount) }}</span>
+      <span class="text-base font-extrabold text-orange-600">{{ formatPrice(order.total_amount) }}</span>
     </div>
   </div>
 </template>

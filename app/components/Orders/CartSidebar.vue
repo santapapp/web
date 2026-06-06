@@ -5,19 +5,24 @@
  * and presenting the checkout primary actions with premium hierarchy.
  */
 
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import type { CartItem } from '~/stores/cart.store'
 
 const props = defineProps<{
   items: CartItem[]
   submitting?: boolean
   error?: string | null
+  customerName?: string
+  orderNote?: string
 }>()
 
 const emit = defineEmits<{
   submit: []
   'update-qty': [cartItemId: string, qty: number]
   remove: [cartItemId: string]
+  'update-note': [cartItemId: string, note: string]
+  'update:customerName': [name: string]
+  'update:orderNote': [note: string]
 }>()
 
 const formatPrice = (v: number) =>
@@ -34,6 +39,41 @@ const totalPrice = computed(() =>
 const totalQty = computed(() =>
   props.items.reduce((sum, item) => sum + item.quantity, 0)
 )
+
+const customerNameLocal = computed({
+  get: () => props.customerName || '',
+  set: (val: string) => emit('update:customerName', val)
+})
+
+const orderNoteLocal = computed({
+  get: () => props.orderNote || '',
+  set: (val: string) => emit('update:orderNote', val)
+})
+
+const itemNotes = ref<Record<string, string>>({})
+
+watch(
+  () => props.items,
+  (newItems) => {
+    const nextNotes: Record<string, string> = {}
+    for (const item of newItems) {
+      nextNotes[item.id] = itemNotes.value[item.id] ?? item.note ?? ''
+    }
+    itemNotes.value = nextNotes
+  },
+  { immediate: true, deep: true }
+)
+
+const updateItemNote = (cartItemId: string, noteText: string) => {
+  emit('update-note', cartItemId, noteText)
+}
+
+const handleBlur = (event: Event) => {
+  const target = event.target as HTMLInputElement | null
+  if (target) {
+    target.blur()
+  }
+}
 </script>
 
 <template>
@@ -80,7 +120,27 @@ const totalQty = computed(() =>
                   class="font-semibold text-[10px] rounded-full px-2 py-0"
                 />
               </div>
-              <p v-if="item.note" class="text-xs text-gray-400 mt-1.5 italic font-medium">"{{ item.note }}"</p>
+
+              <!-- Item note input -->
+              <div class="mt-2">
+                <UInput
+                  :id="'sidebar-note-' + item.id"
+                  v-model="itemNotes[item.id]"
+                  @blur="updateItemNote(item.id, itemNotes[item.id] ?? '')"
+                  @keydown.enter="handleBlur"
+                  placeholder="Catatan menu..."
+                  icon="i-lucide-pencil-line"
+                  size="sm"
+                  class="w-full"
+                  color="neutral"
+                  variant="outline"
+                  :ui="{
+                    base: 'rounded-xl border border-orange-200/80 bg-orange-50/10 ring-0 focus:bg-white focus:ring-2 focus:ring-orange-100 focus:border-orange-400 placeholder:text-slate-400 transition-all duration-200 h-9 text-xs pl-9 pr-3 shadow-xs',
+                    leading: 'absolute inset-y-0 left-0 flex items-center justify-center pl-3 pointer-events-none',
+                    leadingIcon: 'size-3.5 text-slate-400 shrink-0'
+                  }"
+                />
+              </div>
             </div>
 
             <!-- Delete button -->
@@ -120,6 +180,53 @@ const totalQty = computed(() =>
             <span class="text-sm font-extrabold text-gray-900">
               {{ formatPrice(item.preview_subtotal) }}
             </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Info & Global Order Notes -->
+      <div class="px-5 py-5 border-t border-gray-100 bg-gray-50/20 space-y-4">
+        <p class="text-xs font-extrabold text-gray-800 uppercase tracking-wide">Informasi Pesanan</p>
+        
+        <div class="space-y-3.5">
+          <div class="space-y-1.5">
+            <label for="sidebar-customer-name" class="block text-[11px] font-bold text-gray-600 px-1">
+              Nama Customer <span class="text-gray-400 font-medium normal-case">(Opsional)</span>
+            </label>
+            <UInput
+              id="sidebar-customer-name"
+              v-model="customerNameLocal"
+              placeholder="Contoh: Ilham"
+              icon="i-lucide-user"
+              size="sm"
+              class="w-full"
+              color="neutral"
+              variant="outline"
+              :ui="{
+                base: 'rounded-2xl border border-orange-200 bg-white ring-0 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 placeholder:text-slate-400 transition-all duration-200 h-11 text-xs pl-10 pr-3.5 shadow-xs',
+                leading: 'absolute inset-y-0 left-0 flex items-center justify-center pl-3.5 pointer-events-none',
+                leadingIcon: 'size-4 text-slate-400 shrink-0'
+              }"
+            />
+          </div>
+
+          <div class="space-y-1.5">
+            <label for="sidebar-order-note" class="block text-[11px] font-bold text-gray-600 px-1">
+              Catatan Pesanan <span class="text-gray-400 font-medium normal-case">(Opsional)</span>
+            </label>
+            <UTextarea
+              id="sidebar-order-note"
+              v-model="orderNoteLocal"
+              placeholder="Contoh: antar ke meja setelah semua siap"
+              :rows="2"
+              size="sm"
+              class="w-full"
+              color="neutral"
+              variant="outline"
+              :ui="{
+                base: 'rounded-2xl border border-orange-200 bg-white ring-0 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 placeholder:text-slate-400 transition-all duration-200 px-3.5 py-2.5 text-xs min-h-[64px] shadow-xs resize-none'
+              }"
+            />
           </div>
         </div>
       </div>
