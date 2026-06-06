@@ -326,27 +326,35 @@ onMounted(async () => {
     const mm = gsap.matchMedia()
 
     mm.add('(prefers-reduced-motion: no-preference)', () => {
-      const curtains = [ppCurtain1Ref.value, ppCurtain2Ref.value]
-      const texts    = [ppText1Ref.value,    ppText2Ref.value]
+      const curtains = [ppCurtain1Ref.value, ppCurtain2Ref.value].filter((c): c is HTMLElement => !!c)
+      const texts    = [ppText1Ref.value,    ppText2Ref.value].filter((t): t is HTMLElement => !!t)
 
       gsap.set(curtains, { position: 'absolute', inset: 0, zIndex: 2, yPercent: 0 })
       gsap.set(texts, { opacity: 0, y: 18 })
-      gsap.set(ppBadgeRef.value, { opacity: 0, y: 14 })
-      gsap.set(ppMetaRef.value,  { opacity: 0, y: 12 })
+      if (ppBadgeRef.value) gsap.set(ppBadgeRef.value, { opacity: 0, y: 14 })
+      if (ppMetaRef.value) gsap.set(ppMetaRef.value,  { opacity: 0, y: 12 })
 
       const tl = gsap.timeline({ delay: 0.2 })
 
-      tl.to(ppBadgeRef.value, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' })
+      if (ppBadgeRef.value) {
+        tl.to(ppBadgeRef.value, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' })
+      }
 
       curtains.forEach((curtain, i) => {
         const text   = texts[i]
         const offset = 0.25 + i * 0.18
 
-        tl.to(curtain, { yPercent: 110, duration: 1.35, ease: 'power4.out' }, offset)
-        tl.to(text,    { opacity: 1, y: 0, duration: 1.1, ease: 'power4.out' }, offset + 0.05)
+        if (curtain) {
+          tl.to(curtain, { yPercent: 110, duration: 1.35, ease: 'power4.out' }, offset)
+        }
+        if (text) {
+          tl.to(text,    { opacity: 1, y: 0, duration: 1.1, ease: 'power4.out' }, offset + 0.05)
+        }
       })
 
-      tl.to(ppMetaRef.value, { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' }, '-=0.5')
+      if (ppMetaRef.value) {
+        tl.to(ppMetaRef.value, { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' }, '-=0.5')
+      }
     })
 
     mm.add('(prefers-reduced-motion: reduce)', () => {

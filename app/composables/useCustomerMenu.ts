@@ -148,11 +148,11 @@ export function normalizeMenus(rawMenus: RawMenu[]): MenuProduct[] {
   )
 
   const variantGroups = sortByOrder(
-    flat.filter((item) => item.type === 'variant_group')
+    flat.filter((item) => item.type === 'variant_group' || item.type === 'addon_group')
   )
 
   const variants = sortByOrder(
-    flat.filter((item) => item.type === 'variant')
+    flat.filter((item) => item.type === 'variant' || item.type === 'addon')
   )
 
   return products.map((product): MenuProduct => {
@@ -161,7 +161,7 @@ export function normalizeMenus(rawMenus: RawMenu[]): MenuProduct[] {
       .map((group): MenuVariantGroup => ({
         id: toNumber(group.id),
         parent_id: toNumber(group.parent_id),
-        type: 'variant_group',
+        type: group.type as 'variant_group' | 'addon_group',
         name: group.name,
         price: toNumber(group.price),
         is_required: Boolean(group.is_required),
@@ -173,7 +173,7 @@ export function normalizeMenus(rawMenus: RawMenu[]): MenuProduct[] {
           .map((variant): MenuVariant => ({
             id: toNumber(variant.id),
             parent_id: toNumber(variant.parent_id),
-            type: 'variant',
+            type: variant.type as 'variant' | 'addon',
             name: variant.name,
             price: toNumber(variant.price),
             is_available: resolveAvailability(variant),

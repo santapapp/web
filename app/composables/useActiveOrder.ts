@@ -11,7 +11,7 @@
 
 import { ref } from 'vue'
 import type { CustomerOrderDetail } from '~/types/customer-order'
-import { mapToHistoryStatus } from '~/composables/useOrderHistory'
+import { mapToHistoryStatus } from '~/composables/useOrderStatus'
 
 /**
  * Status yang menandakan order sudah selesai dan tidak perlu di-refresh lagi.

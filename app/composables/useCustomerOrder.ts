@@ -332,13 +332,31 @@ function mapOrderItem(raw: any): CustomerOrderItem {
     item_type: raw.item_type ?? 'product',
     menu_id: raw.menu_id,
     name: raw.name ?? raw.menu_name_snapshot ?? raw.menu_name ?? '-',
-    price: Number(raw.price ?? raw.menu_price_snapshot ?? 0),
+    price: Number(raw.base_price ?? raw.price ?? raw.menu_price_snapshot ?? 0),
     quantity: raw.quantity,
     subtotal: Number(raw.subtotal ?? raw.subtotal_amount ?? 0),
     item_status: raw.item_status ?? raw.status ?? null,
     note: raw.note ?? raw.notes ?? null,
     image: raw.image ?? raw.image_url ?? raw.menu_image ?? raw.menu?.image ?? raw.menu?.image_url ?? null,
-    children: Array.isArray(raw.children) ? raw.children.map(mapOrderItem) : []
+    children: [
+      ...(Array.isArray(raw.children) ? raw.children.map(mapOrderItem) : []),
+      ...(Array.isArray(raw.selected_options)
+        ? raw.selected_options.map((opt: any, idx: number) => ({
+            id: `${raw.id}-opt-${opt.option_id ?? idx}`,
+            parent_item_id: raw.id,
+            item_type: opt.option_type === 'addon' ? 'addon' : 'variant',
+            menu_id: opt.option_id ?? 0,
+            name: opt.option_name ?? '-',
+            price: Number(opt.price_delta ?? 0),
+            quantity: raw.quantity,
+            subtotal: Number(opt.price_delta ?? 0) * raw.quantity,
+            item_status: null,
+            note: null,
+            image: null,
+            children: []
+          }))
+        : [])
+    ]
   }
 }
 

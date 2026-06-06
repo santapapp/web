@@ -38,10 +38,10 @@ defineProps<{
         <!-- Primary: selalu mulai order baru -->
         <NuxtLink
           :to="orderTo"
-          class="w-full md:w-auto min-h-[44px] px-6 py-3 rounded-xl bg-amber-700 text-white hover:bg-amber-800 active:scale-[0.98] focus:ring-2 focus:ring-amber-500 focus:outline-none shadow-sm font-bold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer text-sm"
+          class="w-full md:w-auto min-h-[44px] px-6 py-3 rounded-xl bg-amber-700 hover:bg-amber-800 active:scale-[0.98] focus:ring-2 focus:ring-amber-500 focus:outline-none shadow-sm font-bold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer text-sm"
         >
-          <UIcon name="i-lucide-utensils" class="size-4.5 shrink-0" />
-          <span>Mulai Pesan</span>
+          <UIcon name="i-lucide-utensils" class="size-4.5 shrink-0 text-white" />
+          <span class="text-white">Mulai Pesan</span>
         </NuxtLink>
       </div>
     </div>

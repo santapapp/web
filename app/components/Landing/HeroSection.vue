@@ -143,26 +143,34 @@ const ctaRef = ref<HTMLElement | null>(null)
 let ctx: { revert: () => void } | null = null
 
 function playHeroEntrance(gsap: typeof import('gsap').gsap) {
-  const curtains = [curtain1Ref.value, curtain2Ref.value].filter(Boolean)
-  const texts = [text1Ref.value, text2Ref.value].filter(Boolean)
+  const curtains = [curtain1Ref.value, curtain2Ref.value].filter((c): c is HTMLElement => !!c)
+  const texts = [text1Ref.value, text2Ref.value].filter((t): t is HTMLElement => !!t)
   const y = santapMotion.y.md
 
   gsap.set(curtains, { position: 'absolute', inset: 0, zIndex: 2, yPercent: 0 })
   gsap.set(texts, { opacity: 0, y })
-  gsap.set(subtitleRef.value, { opacity: 0, y })
-  gsap.set(ctaRef.value, { opacity: 0, y })
+  if (subtitleRef.value) gsap.set(subtitleRef.value, { opacity: 0, y })
+  if (ctaRef.value) gsap.set(ctaRef.value, { opacity: 0, y })
 
   const tl = gsap.timeline({ delay: 0.12 })
 
   curtains.forEach((curtain, i) => {
     const text = texts[i]
     const offset = i * santapMotion.stagger.tight
-    tl.to(curtain, { yPercent: 110, duration: 0.72, ease: santapEase }, offset)
-    tl.to(text, { opacity: 1, y: 0, duration: 0.62, ease: santapEase }, offset + 0.04)
+    if (curtain) {
+      tl.to(curtain, { yPercent: 110, duration: 0.72, ease: santapEase }, offset)
+    }
+    if (text) {
+      tl.to(text, { opacity: 1, y: 0, duration: 0.62, ease: santapEase }, offset + 0.04)
+    }
   })
 
-  tl.to(subtitleRef.value, { opacity: 1, y: 0, duration: 0.55, ease: santapEase }, '-=0.4')
-  tl.to(ctaRef.value, { opacity: 1, y: 0, duration: 0.5, ease: santapEase }, '-=0.38')
+  if (subtitleRef.value) {
+    tl.to(subtitleRef.value, { opacity: 1, y: 0, duration: 0.55, ease: santapEase }, '-=0.4')
+  }
+  if (ctaRef.value) {
+    tl.to(ctaRef.value, { opacity: 1, y: 0, duration: 0.5, ease: santapEase }, '-=0.38')
+  }
 
   if (bgImgRef.value) {
     gsap.fromTo(

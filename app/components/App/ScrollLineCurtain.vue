@@ -60,9 +60,9 @@ onMounted(async () => {
   const el = rootRef.value
   if (!el) return
 
-  const curtains = [curtain1Ref.value, curtain2Ref.value]
-  const texts = [text1Ref.value, text2Ref.value]
-  if (!curtains[0] || !curtains[1] || !texts[0] || !texts[1]) return
+  const curtains = [curtain1Ref.value, curtain2Ref.value].filter((c): c is HTMLElement => !!c)
+  const texts = [text1Ref.value, text2Ref.value].filter((t): t is HTMLElement => !!t)
+  if (curtains.length < 2 || texts.length < 2) return
 
   ctx = gsap.context(() => {
     const mm = gsap.matchMedia()
@@ -82,8 +82,12 @@ onMounted(async () => {
       curtains.forEach((curtain, i) => {
         const text = texts[i]
         const offset = i * santapMotion.stagger.tight
-        tl.to(curtain, { yPercent: 110, duration: 0.62, ease: santapEase }, offset)
-        tl.to(text, { opacity: 1, y: 0, duration: 0.55, ease: santapEase }, offset + 0.03)
+        if (curtain) {
+          tl.to(curtain, { yPercent: 110, duration: 0.62, ease: santapEase }, offset)
+        }
+        if (text) {
+          tl.to(text, { opacity: 1, y: 0, duration: 0.55, ease: santapEase }, offset + 0.03)
+        }
       })
     })
 

@@ -16,12 +16,34 @@
  */
 
 import { useRoute, useRouter } from '#imports'
+import { watch, onUnmounted } from 'vue'
 
 const route = useRoute()
 const router = useRouter()
 const session = useCustomerSession()
 const overlay = useUiOverlayStore()
 const { sessionMode, clearSession } = session
+
+// Body scroll lock
+watch(
+  () => overlay.isSession,
+  (isOpen) => {
+    if (import.meta.client) {
+      if (isOpen) {
+        document.body.style.overflow = 'hidden'
+      } else {
+        document.body.style.overflow = ''
+      }
+    }
+  },
+  { immediate: true }
+)
+
+onUnmounted(() => {
+  if (import.meta.client) {
+    document.body.style.overflow = ''
+  }
+})
 
 const orgSlug = computed(() =>
   String(route.params.orgSlug || session.organization.value?.slug || '')
@@ -87,20 +109,36 @@ const formatPrice = (v: number) =>
 </script>
 
 <template>
-  <!--
-  Tailwind Safelist for Nuxt UI USlideover:
-  fixed inset-y-0 left-0 bg-default bg-elevated/75 focus:outline-none divide-y divide-default sm:ring ring-default
-  -->
-  <USlideover
-    :open="overlay.isSession"
-    side="left"
-    title="Menu Sesi"
-    :ui="{ content: 'w-[85%] max-w-[340px]' }"
-    @update:open="(v: boolean) => { if (!v) overlay.close('session') }"
-  >
-    <template #content>
-      <div class="flex flex-col h-full bg-gray-50 overflow-hidden">
+  <Teleport to="body">
+    <!-- Backdrop -->
+    <Transition
+      enter-active-class="transition-opacity duration-300 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity duration-250 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="overlay.isSession"
+        class="fixed inset-0 z-50 bg-black/45 backdrop-blur-xs"
+        @click="overlay.close('session')"
+      />
+    </Transition>
 
+    <!-- Slide Panel -->
+    <Transition
+      enter-active-class="transition-transform duration-300 ease-out"
+      enter-from-class="-translate-x-full"
+      enter-to-class="translate-x-0"
+      leave-active-class="transition-transform duration-250 ease-in"
+      leave-from-class="translate-x-0"
+      leave-to-class="-translate-x-full"
+    >
+      <div
+        v-if="overlay.isSession"
+        class="fixed inset-y-0 left-0 z-50 w-[85%] max-w-[340px] h-full shadow-2xl flex flex-col bg-gray-50 overflow-hidden outline-none"
+      >
         <!-- ─── Clean White Top Bar ────────────────────────── -->
         <div class="bg-white border-b border-gray-100 px-4 py-3.5 flex-shrink-0">
           <div class="flex items-center gap-3">
@@ -142,8 +180,6 @@ const formatPrice = (v: number) =>
 
         <!-- ─── Body ──────────────────────────────────────── -->
         <div class="flex-1 p-4 overflow-y-auto flex flex-col gap-4">
-
-          <!-- Restaurant info card removed from drawer body -->
           <!-- Session Info Card (hanya tampil jika ada sesi aktif) -->
           <SessionInfoCard v-if="session.hasSession.value" />
 
@@ -197,7 +233,8 @@ const formatPrice = (v: number) =>
               </div>
               <UIcon name="i-lucide-chevron-right" class="size-4 text-white/70 flex-shrink-0" />
             </button>
-          </div>        </div>
+          </div>
+        </div>
 
         <!-- ─── Footer ────────────────────────────────────── -->
         <div class="px-4 py-3 border-t border-gray-100 flex-shrink-0 bg-white flex justify-center">
@@ -210,8 +247,8 @@ const formatPrice = (v: number) =>
           </NuxtLink>
         </div>
       </div>
-    </template>
-  </USlideover>
+    </Transition>
+  </Teleport>
 
   <!-- Confirm Exit Modal -->
   <SessionConfirmExitSessionModal

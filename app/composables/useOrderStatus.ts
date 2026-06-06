@@ -137,3 +137,67 @@ export function historyStatusConfig(status?: OrderHistoryStatus | string | null)
       return { label: 'Pending', color: 'neutral' }
   }
 }
+
+type RawOrderStatus = string | undefined | null
+
+export function mapToHistoryStatus(
+  orderStatus: RawOrderStatus,
+  paymentStatus: RawOrderStatus,
+  billStatus: RawOrderStatus
+): OrderHistoryStatus {
+  // 1) Terminal negatif menang.
+  if (
+    orderStatus === 'cancelled' ||
+    paymentStatus === 'cancelled' ||
+    paymentStatus === 'failed'
+  ) return 'cancelled'
+
+  // 2) Terminal selesai.
+  if (orderStatus === 'completed') return 'completed'
+
+  // 3) Progres dapur didahulukan agar riwayat mencerminkan flow asli backend:
+  //    order yang sudah dibayar & sedang diproses tampil "Diproses"/"Siap",
+  //    bukan terjebak di "Lunas". (order_status di-roll up dari item_status.)
+  if (orderStatus === 'ready') return 'ready'
+  if (
+    orderStatus === 'preparing' ||
+    orderStatus === 'confirmed' ||
+    orderStatus === 'processing'
+  ) return 'processing'
+
+  // 4) Sudah dibayar tetapi belum masuk antrian dapur (order_status masih pending).
+  if (paymentStatus === 'paid' || billStatus === 'closed') return 'paid'
+
+  // 5) Menunggu pembayaran (QRIS pending).
+  if (paymentStatus === 'pending') return 'waiting_payment'
+
+  return 'pending'
+}
+
+export function getCustomerOrderDisplayStatus(order: any): StatusConfig {
+  if (!order) {
+    return { label: 'Status belum tersedia', color: 'neutral' }
+  }
+
+  // Jika berupa string status langsung (misal dari cache status)
+  if (typeof order === 'string') {
+    return historyStatusConfig(order)
+  }
+
+  // Jika ini adalah history item (memiliki field `status` tapi bukan detail order penuh)
+  if ('status' in order && !('order_status' in order) && !('payment_status' in order)) {
+    if (!order.status) {
+      return { label: 'Status belum tersedia', color: 'neutral' }
+    }
+    return historyStatusConfig(order.status)
+  }
+
+  // Jika ini adalah detail order dari API
+  const orderStatus = order.order_status ?? order.status
+  const paymentStatus = order.payment_status
+  const billStatus = order.bill_status
+
+  const mappedStatus = mapToHistoryStatus(orderStatus, paymentStatus, billStatus)
+  return historyStatusConfig(mappedStatus)
+}
+

@@ -16,6 +16,7 @@ import {
   ORDER_HISTORY_STORAGE_VERSION,
   ORDER_HISTORY_MAX_ITEMS
 } from '~/types/order-history'
+import { mapToHistoryStatus } from '~/composables/useOrderStatus'
 
 const storageKey = (orgSlug: string) => `santap:${orgSlug}:order_history`
 
@@ -65,54 +66,13 @@ function writeStorage(orgSlug: string, items: OrderHistoryItem[]): void {
   }
 }
 
-// ─── Map status backend → OrderHistoryStatus ─────────────────────────────────
 
-type RawOrderStatus = string | undefined | null
-
-export function mapToHistoryStatus(
-  orderStatus: RawOrderStatus,
-  paymentStatus: RawOrderStatus,
-  billStatus: RawOrderStatus
-): OrderHistoryItem['status'] {
-  // Selaras dengan enum backend api-santap:
-  //   order_status   : pending | confirmed | preparing | ready | completed | cancelled
-  //   payment_status : unpaid | pending | paid | failed | cancelled
-  //   bill_status    : none | open | closed   (backend tidak mengirim 'cancelled')
-  // 'processing' = alias legacy untuk 'preparing'.
-
-  // 1) Terminal negatif menang.
-  if (
-    orderStatus === 'cancelled' ||
-    paymentStatus === 'cancelled' ||
-    paymentStatus === 'failed'
-  ) return 'cancelled'
-
-  // 2) Terminal selesai.
-  if (orderStatus === 'completed') return 'completed'
-
-  // 3) Progres dapur didahulukan agar riwayat mencerminkan flow asli backend:
-  //    order yang sudah dibayar & sedang diproses tampil "Diproses"/"Siap",
-  //    bukan terjebak di "Lunas". (order_status di-roll up dari item_status.)
-  if (orderStatus === 'ready') return 'ready'
-  if (
-    orderStatus === 'preparing' ||
-    orderStatus === 'confirmed' ||
-    orderStatus === 'processing'
-  ) return 'processing'
-
-  // 4) Sudah dibayar tetapi belum masuk antrian dapur (order_status masih pending).
-  if (paymentStatus === 'paid' || billStatus === 'closed') return 'paid'
-
-  // 5) Menunggu pembayaran (QRIS pending).
-  if (paymentStatus === 'pending') return 'waiting_payment'
-
-  return 'pending'
-}
 
 // ─── Composable ──────────────────────────────────────────────────────────────
 
 export const useOrderHistory = (orgSlug: string) => {
   const items = ref<OrderHistoryItem[]>([])
+  const isRefreshing = ref(false)
 
   // ── Load dari localStorage (SSR-safe) ──────────────────────────────────────
 
@@ -215,58 +175,66 @@ export const useOrderHistory = (orgSlug: string) => {
   const refreshFromBackend = async () => {
     if (!import.meta.client || items.value.length === 0) return
 
+    isRefreshing.value = true
     const api = useCustomerApi()
 
     // Status terminal — tidak perlu di-refresh lagi
-    const TERMINAL_STATUSES: OrderHistoryItem['status'][] = ['paid', 'cancelled', 'completed', 'expired']
+    // Hanya completed (selesai), expired (tidak ditemukan/session habis), dan cancelled yang terminal.
+    // Status 'paid' dibiarkan agar tetap disinkronkan bila ada perubahan backend.
+    const TERMINAL_STATUSES: OrderHistoryItem['status'][] = ['completed', 'expired', 'cancelled']
 
     const toRefresh = items.value.filter(
       (i) => !TERMINAL_STATUSES.includes(i.status ?? 'pending')
     )
 
-    await Promise.allSettled(
-      toRefresh.map(async (item) => {
-        // Identifier publik untuk tracking: utamakan public_token, fallback ke order_number.
-        const identifier = item.public_token ?? item.order_public_id ?? item.order_code
+    try {
+      await Promise.allSettled(
+        toRefresh.map(async (item) => {
+          // Identifier publik untuk tracking: utamakan public_token, fallback ke order_number.
+          const identifier = item.public_token ?? item.order_public_id ?? item.order_code
 
-        try {
-          const res = await api.getPublicOrder(orgSlug, identifier)
-          const raw = res?.data ?? res
+          try {
+            const res = await api.getPublicOrder(orgSlug, identifier)
+            const raw = res?.data ?? res
 
-          if (!raw) return
+            if (!raw) return
 
-          const newStatus = mapToHistoryStatus(
-            raw.order_status ?? raw.status,
-            raw.payment_status,
-            raw.bill_status
-          )
+            const newStatus = mapToHistoryStatus(
+              raw.order_status ?? raw.status,
+              raw.payment_status,
+              raw.bill_status
+            )
 
-          updateStatus(item.order_public_id, {
-            status: newStatus,
-            total_amount: Number(raw.total_amount ?? raw.total ?? item.total_amount ?? 0),
-            last_seen_at: new Date().toISOString()
-          })
-        } catch (err: any) {
-          const statusCode = err?.statusCode ?? err?.status
-
-          if (statusCode === 403 || statusCode === 404) {
-            // Order tidak ditemukan atau session sudah tidak valid
-            // Tandai sebagai 'expired' agar tidak terus di-refresh
             updateStatus(item.order_public_id, {
-              status: 'expired',
+              status: newStatus,
+              total_amount: Number(raw.total_amount ?? raw.total ?? item.total_amount ?? 0),
               last_seen_at: new Date().toISOString()
             })
+          } catch (err: any) {
+            const statusCode = err?.statusCode ?? err?.status
+
+            if (statusCode === 403 || statusCode === 404) {
+              // Order tidak ditemukan atau session sudah tidak valid
+              // Tandai sebagai 'expired' agar tidak terus di-refresh
+              updateStatus(item.order_public_id, {
+                status: 'expired',
+                last_seen_at: new Date().toISOString()
+              })
+            }
+            // Error lain (network error, 500) — biarkan status tidak berubah
+            // agar bisa di-retry pada kunjungan berikutnya
           }
-          // Error lain (network error, 500) — biarkan status tidak berubah
-          // agar bisa di-retry pada kunjungan berikutnya
-        }
-      })
-    )
+        })
+      )
+    } finally {
+      isRefreshing.value = false
+    }
   }
 
   return {
     items,
     activeCount,
+    isRefreshing,
     load,
     addOrUpdate,
     updateStatus,

@@ -14,7 +14,7 @@
 
 // ─── Menu Type ────────────────────────────────────────────────────────────────
 
-export type MenuType = 'product' | 'variant_group' | 'variant'
+export type MenuType = 'product' | 'variant_group' | 'variant' | 'addon_group' | 'addon'
 
 // ─── Raw API Shape (flat, sesuai MenuResource) ────────────────────────────────
 
@@ -61,7 +61,7 @@ export interface RawMenuCategory {
 export interface MenuVariant {
   id: number
   parent_id: number           // id variant_group
-  type: 'variant'
+  type: 'variant' | 'addon'
   name: string
   price: number               // harga tambahan (bisa 0)
   is_available: boolean
@@ -82,7 +82,7 @@ export interface MenuVariant {
 export interface MenuVariantGroup {
   id: number
   parent_id: number           // id product
-  type: 'variant_group'
+  type: 'variant_group' | 'addon_group'
   name: string
   price: number               // biasanya 0, harga ada di variant
   is_required: boolean

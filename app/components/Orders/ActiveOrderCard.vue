@@ -12,7 +12,7 @@
  */
 
 import type { CustomerOrderDetail } from '~/types/customer-order'
-import { paymentStatusConfig, orderStatusLabel } from '~/composables/useOrderStatus'
+import { getCustomerOrderDisplayStatus, orderStatusLabel } from '~/composables/useOrderStatus'
 
 const props = defineProps<{
   order: CustomerOrderDetail | null
@@ -34,7 +34,7 @@ const isOpenBill = computed(() =>
 )
 
 // Label & warna status → sumber tunggal di useOrderStatus.
-const paymentConfig = computed(() => paymentStatusConfig(props.order?.payment_status))
+const displayStatus = computed(() => getCustomerOrderDisplayStatus(props.order))
 
 const orderStatusText = computed(() => orderStatusLabel(props.order?.order_status))
 
@@ -72,8 +72,8 @@ const statusRoute = computed(() => ({
           <span>{{ isOpenBill ? 'Open Bill' : 'Table Order' }}</span>
         </div>
         <UBadge
-          :label="paymentConfig.label"
-          :color="paymentConfig.color"
+          :label="displayStatus.label"
+          :color="displayStatus.color"
           variant="soft"
           size="sm"
         />

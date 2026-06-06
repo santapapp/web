@@ -461,19 +461,19 @@ onMounted(async () => {
       }
 
       // Animate story section
-      const aboutContent = mainRef.value?.querySelector('[aria-label="Visi Misi & Sejarah"]')
+      const aboutContent = mainRef.value?.querySelector<HTMLElement>('[aria-label="Visi Misi & Sejarah"]')
       if (aboutContent) animateSection(aboutContent)
 
       // Animate pillars section
-      const pilarsSec = mainRef.value?.querySelector('[aria-label="Pilar Utama"]')
+      const pilarsSec = mainRef.value?.querySelector<HTMLElement>('[aria-label="Pilar Utama"]')
       if (pilarsSec) animateSection(pilarsSec)
 
       // Animate milestones section
-      const milestonesSec = mainRef.value?.querySelector('[aria-label="Milestone Perusahaan"]')
+      const milestonesSec = mainRef.value?.querySelector<HTMLElement>('[aria-label="Milestone Perusahaan"]')
       if (milestonesSec) animateSection(milestonesSec)
 
       // ─── CTA Section: left heading + right cards ──────────────────────────────
-      const ctaSec = mainRef.value?.querySelector('[aria-label="Bergabung bersama Santap"]')
+      const ctaSec = mainRef.value?.querySelector<HTMLElement>('[aria-label="Bergabung bersama Santap"]')
       if (ctaSec) {
         const leftCol = ctaSec.parentElement?.querySelector('.lg\\:col-span-5')
         const rightCards = ctaSec.parentElement?.querySelectorAll('.lg\\:col-span-7 > div > div')

@@ -76,14 +76,14 @@ export const useCustomerApi = () => {
 
   const request = async <T>(path: string, options: FetchOptions = {}): Promise<T> => {
     try {
-      return await $fetch<T>(`${baseUrl}${path}`, {
+      return await $fetch<any>(`${baseUrl}${path}`, {
         method: options.method ?? 'GET',
         headers: {
           ...buildHeaders(true),
           ...(options.headers ?? {})
         },
         body: options.body as BodyInit | Record<string, unknown> | null | undefined
-      })
+      }) as T
     } catch (error) {
       throw normalizeCustomerApiError(error)
     }
@@ -91,14 +91,14 @@ export const useCustomerApi = () => {
 
   const publicRequest = async <T>(path: string, options: FetchOptions = {}): Promise<T> => {
     try {
-      return await $fetch<T>(`${baseUrl}${path}`, {
+      return await $fetch<any>(`${baseUrl}${path}`, {
         method: options.method ?? 'GET',
         headers: {
           ...buildHeaders(false),
           ...(options.headers ?? {})
         },
         body: options.body as BodyInit | Record<string, unknown> | null | undefined
-      })
+      }) as T
     } catch (error) {
       throw normalizeCustomerApiError(error)
     }

@@ -36,7 +36,7 @@ const formatPrice = (value: number) =>
         :to="orderTo"
         class="px-4 py-2 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100 font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-all cursor-pointer shadow-sm hover:scale-[1.01]"
       >
-        <span>Mulai Pesan</span>
+        <span>Lebih banyak</span>
         <UIcon name="i-lucide-arrow-right" class="size-4" />
       </NuxtLink>
     </div>

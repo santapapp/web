@@ -16,18 +16,35 @@
  */
 
 import type { OrderHistoryItem } from '~/types/order-history'
-import { historyStatusConfig } from '~/composables/useOrderStatus'
+import { historyStatusConfig, getCustomerOrderDisplayStatus } from '~/composables/useOrderStatus'
 
 const props = withDefaults(defineProps<{
   items: OrderHistoryItem[]
   orgSlug: string
   /** Jumlah item per langkah expand */
   step?: number
+  refreshing?: boolean
 }>(), {
-  step: 5
+  step: 5,
+  refreshing: false
 })
 
 const stepSize = computed(() => props.step ?? 5)
+
+const getDisplayStatus = (item: OrderHistoryItem) => {
+  // 1. Jika ada status cache yang valid, tampilkan status cache
+  if (item.status) {
+    return getCustomerOrderDisplayStatus(item)
+  }
+
+  // 2. Jika tidak ada status cache, dan sedang me-refresh
+  if (props.refreshing) {
+    return { label: 'Memuat status...', color: 'neutral' as const }
+  }
+
+  // 3. Jika tidak ada status cache, dan tidak sedang me-refresh (misalnya refresh gagal)
+  return { label: 'Status belum tersedia', color: 'neutral' as const }
+}
 
 // Riwayat terbaru di atas — urutkan desc by created_at (fallback ke urutan asli)
 const sortedItems = computed(() =>
@@ -137,8 +154,8 @@ const orderDetailRoute = (item: OrderHistoryItem) => ({
               </template>
             </span>
             <UBadge
-              :label="statusConfig(item.status).label"
-              :color="statusConfig(item.status).color"
+              :label="getDisplayStatus(item).label"
+              :color="getDisplayStatus(item).color"
               variant="soft"
               size="xs"
             />

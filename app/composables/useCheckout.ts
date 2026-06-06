@@ -9,7 +9,7 @@
 
 import type { MaybeRefOrGetter } from 'vue'
 import { ref, toValue } from 'vue'
-import { mapToHistoryStatus } from '~/composables/useOrderHistory'
+import { mapToHistoryStatus } from '~/composables/useOrderStatus'
 
 type CheckoutCart = ReturnType<typeof useOrderCart>
 
@@ -47,7 +47,15 @@ export const useCheckout = (orgSlug: MaybeRefOrGetter<string>, cart: CheckoutCar
     submitting.value = false
 
     if (!result.success) {
-      error.value = result.error?.message ?? 'Gagal mengirim pesanan.'
+      if (result.error?.errors) {
+        if (import.meta.dev) {
+          console.error('Customer order validation failed:', result.error.errors)
+        }
+        // Extract and flatten all validation messages
+        error.value = Object.values(result.error.errors).flat().join(' ')
+      } else {
+        error.value = result.error?.message ?? 'Gagal mengirim pesanan.'
+      }
       return
     }
 

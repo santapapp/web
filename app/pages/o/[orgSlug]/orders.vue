@@ -309,6 +309,7 @@ const handleDecrease = (product: any) => {
       :session-error="sessionError"
       :loading="sessionLoading"
       :history-items="orderHistory.items.value"
+      :history-refreshing="orderHistory.isRefreshing.value"
       :org-slug="orgSlug"
       :org="org ?? undefined"
       :opening-status="openingStatus ?? undefined"

@@ -22,6 +22,7 @@ const props = defineProps<{
   org?: PublicOrg | null
   openingStatus?: OpeningStatus | null
   fullAddress?: string
+  historyRefreshing?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -322,6 +323,7 @@ const statusDotClass = computed(() => {
             :items="historyItems"
             :org-slug="orgSlug"
             :step="5"
+            :refreshing="historyRefreshing"
           />
         </Transition>
       </div>
