@@ -1,111 +1,158 @@
-import type { MaybeRefOrGetter } from 'vue'
-import { computed, onMounted, ref, toValue } from 'vue'
-import type { OpeningStatus, PublicOrg } from '~/types/org'
+import type { MaybeRefOrGetter } from "vue";
+import { computed, onMounted, ref, toValue } from "vue";
+import type { OpeningStatus, PublicOrg } from "~/types/org";
 
 type OpeningDay = {
-  is_open?: boolean
-  open?: string
-  close?: string
-}
+  is_open?: boolean;
+  open?: string;
+  close?: string;
+};
 
 const readTimeInMinutes = (value?: string): number | null => {
-  if (!value || typeof value !== 'string') return null
+  if (!value || typeof value !== "string") return null;
 
-  const parts = value.split(':').map(Number)
-  const hour = parts[0]
-  const minute = parts[1]
+  const parts = value.split(":").map(Number);
+  const hour = parts[0];
+  const minute = parts[1];
 
-  if (hour === undefined || minute === undefined) return null
-  if (!Number.isFinite(hour) || !Number.isFinite(minute)) return null
+  if (hour === undefined || minute === undefined) return null;
+  if (!Number.isFinite(hour) || !Number.isFinite(minute)) return null;
 
-  return hour * 60 + minute
-}
+  return hour * 60 + minute;
+};
 
 const resolveOpeningStatus = (org: PublicOrg | null): OpeningStatus | null => {
-  const openingHours = org?.opening_hours
-  if (!org || !openingHours || Array.isArray(openingHours)) return null
+  const openingHours = org?.opening_hours;
+  if (!org || !openingHours || Array.isArray(openingHours)) return null;
 
   try {
-    const now = new Date()
-    const formatter = new Intl.DateTimeFormat('en-US', {
-      timeZone: org.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
-      weekday: 'long',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    })
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone:
+        org.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+      weekday: "long",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
 
-    const parts = formatter.formatToParts(now)
-    const dayName = parts.find((part) => part.type === 'weekday')?.value.toLowerCase()
-    const hour = Number(parts.find((part) => part.type === 'hour')?.value ?? 0)
-    const minute = Number(parts.find((part) => part.type === 'minute')?.value ?? 0)
-    const currentMinutes = hour * 60 + minute
+    const parts = formatter.formatToParts(now);
+    const dayName = parts
+      .find((part) => part.type === "weekday")
+      ?.value.toLowerCase();
+    const hour = Number(parts.find((part) => part.type === "hour")?.value ?? 0);
+    const minute = Number(
+      parts.find((part) => part.type === "minute")?.value ?? 0,
+    );
+    const currentMinutes = hour * 60 + minute;
 
-    if (!dayName || !(dayName in openingHours)) return null
+    if (!dayName || !(dayName in openingHours)) return null;
 
-    const day = openingHours[dayName] as OpeningDay | null
-    if (!day || typeof day !== 'object') return null
+    const day = openingHours[dayName] as OpeningDay | null;
+    if (!day || typeof day !== "object") return null;
 
     if (day.is_open === false) {
-      return { open: false, label: 'Tutup hari ini', color: 'red' }
+      return { open: false, label: "Tutup hari ini", color: "red" };
     }
 
-    const openMinutes = readTimeInMinutes(day.open)
-    const closeMinutes = readTimeInMinutes(day.close)
-    if (openMinutes === null || closeMinutes === null) return null
+    const openMinutes = readTimeInMinutes(day.open);
+    const closeMinutes = readTimeInMinutes(day.close);
+    if (openMinutes === null || closeMinutes === null) return null;
 
-    const isOpen = currentMinutes >= openMinutes && currentMinutes < closeMinutes
+    const isOpen =
+      currentMinutes >= openMinutes && currentMinutes < closeMinutes;
 
     return {
       open: isOpen,
       label: isOpen ? `Buka sampai ${day.close}` : `Tutup, buka ${day.open}`,
-      color: isOpen ? 'green' : 'red'
-    }
+      color: isOpen ? "green" : "red",
+    };
   } catch {
-    return null
+    return null;
   }
-}
+};
 
 export const formatOrgAddress = (org: PublicOrg | null) =>
-  [org?.address, org?.city, org?.province].filter(Boolean).join(', ')
+  [org?.address, org?.city, org?.province].filter(Boolean).join(", ");
 
 export const usePublicOrg = (orgSlug: MaybeRefOrGetter<string>) => {
-  const api = useCustomerApi()
-  const normalizedSlug = computed(() => String(toValue(orgSlug) || '').trim())
+  const api = useCustomerApi();
+  const normalizedSlug = computed(() => String(toValue(orgSlug) || "").trim());
 
   const {
     data: org,
     error,
     refresh,
-    status
+    status,
   } = useAsyncData<PublicOrg | null>(
     () => `public-org-${normalizedSlug.value}`,
     async () => {
-      if (!normalizedSlug.value) return null
+      if (!normalizedSlug.value) return null;
 
-      const response = await api.getOrganization(normalizedSlug.value)
+      const response = await api.getOrganization(normalizedSlug.value);
 
-      return response.data ?? (response as unknown as PublicOrg)
+      return response.data ?? (response as unknown as PublicOrg);
     },
     {
-      watch: [normalizedSlug]
-    }
-  )
+      watch: [normalizedSlug],
+    },
+  );
 
-  const openingStatus = computed(() => resolveOpeningStatus(org.value ?? null))
-  const fullAddress = computed(() => formatOrgAddress(org.value ?? null))
-  const isLoading = computed(() => status.value === 'pending' || status.value === 'idle')
-  const isNotFound = computed(() => Boolean(error.value) || (status.value === 'success' && !org.value))
+  const openingStatus = computed(() => resolveOpeningStatus(org.value ?? null));
+  const fullAddress = computed(() => formatOrgAddress(org.value ?? null));
+  const isLoading = computed(
+    () => status.value === "pending" || status.value === "idle",
+  );
+
+  /**
+   * Extract HTTP status code from the error stored by useAsyncData.
+   * The handler throws a CustomerApiError plain object: { message, statusCode, errors }.
+   * useAsyncData stores it as-is in error.value.
+   */
+  const errorStatusCode = computed((): number | null => {
+    if (!error.value) return null;
+    const err = error.value as any;
+    const code =
+      err?.statusCode ??
+      err?.status ??
+      err?.response?.status ??
+      err?.data?.statusCode;
+    return typeof code === "number" ? code : null;
+  });
+
+  /**
+   * True only when the org genuinely does not exist:
+   * - API returned 404, 400, or 422
+   * - API returned success but org data is null/invalid
+   * Does NOT include 5xx or network errors.
+   */
+  const isNotFound = computed(() => {
+    if (status.value === "success" && !org.value) return true;
+    if (!error.value) return false;
+    const code = errorStatusCode.value;
+    return code === 404 || code === 400 || code === 422;
+  });
+
+  /**
+   * True when there is a server-side or network error (5xx, no status code).
+   * Distinct from isNotFound so the UI can offer a "Coba Lagi" action.
+   */
+  const isServerError = computed(() => {
+    if (!error.value) return false;
+    const code = errorStatusCode.value;
+    if (code === null) return true; // unknown / network error
+    return code >= 500;
+  });
 
   // Table order BUKAN session — landing tidak boleh menawarkan "lanjutkan sesi meja".
   // Sebagai gantinya, kita hanya menandai apakah ada RIWAYAT pesanan tersimpan untuk org ini.
-  const hasOrderHistory = ref(false)
+  const hasOrderHistory = ref(false);
 
   onMounted(() => {
-    if (!normalizedSlug.value) return
-    const history = useOrderHistory(normalizedSlug.value)
-    hasOrderHistory.value = history.items.value.length > 0
-  })
+    if (!normalizedSlug.value) return;
+    const history = useOrderHistory(normalizedSlug.value);
+    hasOrderHistory.value = history.items.value.length > 0;
+  });
 
   return {
     org,
@@ -114,7 +161,8 @@ export const usePublicOrg = (orgSlug: MaybeRefOrGetter<string>) => {
     hasOrderHistory,
     isLoading,
     isNotFound,
+    isServerError,
     error,
-    refresh
-  }
-}
+    refresh,
+  };
+};

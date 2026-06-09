@@ -1,10 +1,17 @@
 /**
  * useCheckout — Composable untuk proses checkout
  *
- * Setelah checkout sukses:
- * 1. Bersihkan cart
- * 2. Sync order ke riwayat localStorage (useOrderHistory)
- * 3. Redirect ke halaman status order
+ * Branching yang BENAR:
+ *
+ * Table Order (QR meja biasa):
+ *   → createNewOrder() → create order + payment bersama-sama
+ *   → redirect ke /payments?order=
+ *
+ * Open Bill:
+ *   → placeOrder() = POST /v1/customer/order/items → hanya tambah item
+ *   → JANGAN create payment otomatis
+ *   → clear cart → kembali ke halaman orders (tampilkan OpenBillSessionView)
+ *   Payment baru dibuat saat customer klik "Bayar Total Pesanan" di OpenBillSessionView.
  */
 
 import type { MaybeRefOrGetter } from 'vue'
@@ -28,21 +35,49 @@ export const useCheckout = (orgSlug: MaybeRefOrGetter<string>, cart: CheckoutCar
     error.value = null
 
     const isModeOpenBill = sessionStore.sessionType === 'open_bill'
-    let result
+    const slug = toValue(orgSlug)
 
+    // ── Open Bill ──────────────────────────────────────────────────────────
+    // Hanya tambah item ke order aktif — TIDAK create payment, TIDAK redirect
+    // ke halaman payment. Customer pesan berkali-kali, bayar di akhir.
     if (isModeOpenBill) {
-      result = await placeOrder(cart.orderPayload.value)
-    } else {
-      // Table order: qr_token meja dipegang sementara di memory (sessionStore.sessionToken)
-      // hanya untuk membuat order baru. Konteks ini dibersihkan setelah order dibuat.
-      const qrToken = sessionStore.sessionToken
-      if (!qrToken) {
-        submitting.value = false
-        error.value = 'Token meja tidak ditemukan.'
+      const result = await placeOrder(cart.orderPayload.value)
+
+      submitting.value = false
+
+      if (!result.success) {
+        if (result.error?.errors) {
+          error.value = Object.values(result.error.errors).flat().join(' ')
+        } else {
+          error.value = result.error?.message ?? 'Gagal mengirim pesanan.'
+        }
         return
       }
-      result = await createNewOrder(qrToken, cart.orderPayload.value)
+
+      // Bersihkan cart lokal — item sudah masuk ke backend/kitchen.
+      // Sesi open bill TETAP DIPERTAHANKAN agar customer bisa pesan lagi.
+      cart.clearCart()
+
+      // Kembali ke halaman orders — OpenBillSessionView akan otomatis tampil
+      // karena session open bill masih aktif dan fetchOpenBill() sudah diperbarui
+      // oleh placeOrder() via syncToSessionStore().
+      // Tutup cart sheet terlebih dahulu (jika masih buka), lalu close semua overlay.
+      const overlay = useUiOverlayStore()
+      overlay.closeAll()
+
+      return
     }
+
+    // ── Table Order ────────────────────────────────────────────────────────
+    // Flow lama: create order baru + create payment → redirect ke /payments.
+    const qrToken = sessionStore.sessionToken
+    if (!qrToken) {
+      submitting.value = false
+      error.value = 'Token meja tidak ditemukan.'
+      return
+    }
+
+    const result = await createNewOrder(qrToken, cart.orderPayload.value)
 
     submitting.value = false
 
@@ -51,7 +86,6 @@ export const useCheckout = (orgSlug: MaybeRefOrGetter<string>, cart: CheckoutCar
         if (import.meta.dev) {
           console.error('Customer order validation failed:', result.error.errors)
         }
-        // Extract and flatten all validation messages
         error.value = Object.values(result.error.errors).flat().join(' ')
       } else {
         error.value = result.error?.message ?? 'Gagal mengirim pesanan.'
@@ -59,11 +93,7 @@ export const useCheckout = (orgSlug: MaybeRefOrGetter<string>, cart: CheckoutCar
       return
     }
 
-    const slug = toValue(orgSlug)
-
-    // Simpan reference order ke history SEGERA setelah order berhasil dibuat —
-    // bukan menunggu payment paid. Jika user menutup browser saat payment pending,
-    // order sudah ada di backend dan tetap harus muncul di riwayat/tracking.
+    // Simpan reference order ke history SEGERA setelah order berhasil dibuat.
     if (import.meta.client && result.data && slug) {
       try {
         const raw = result.data
@@ -85,7 +115,7 @@ export const useCheckout = (orgSlug: MaybeRefOrGetter<string>, cart: CheckoutCar
               raw.dining_table?.code ??
               sessionStore.tableName ??
               undefined,
-            mode: isModeOpenBill ? 'open_bill' : 'table',
+            mode: 'table',
             status: mapToHistoryStatus(
               raw.order_status ?? raw.status,
               raw.payment_status,
@@ -102,26 +132,16 @@ export const useCheckout = (orgSlug: MaybeRefOrGetter<string>, cart: CheckoutCar
       }
     }
 
-    // Bersihkan cart untuk SEMUA mode segera setelah order berhasil dibuat.
-    // Jangan menunggu payment paid.
+    // Bersihkan cart dan session meja (table order bukan session persisten).
     cart.clearCart()
+    sessionStore.clear()
 
-    // Table order BUKAN session: bersihkan konteks meja sementara setelah order dibuat.
-    // Open bill dibiarkan — sesinya memang dibutuhkan untuk lanjut menambah item.
-    if (!isModeOpenBill) {
-      sessionStore.clear()
-    }
-
-    const trackingIdentifier = isModeOpenBill
-      ? (result.data?.public_token ?? result.data?.token)
-      : (result.data?.order_number ?? result.data?.public_token)
+    const trackingIdentifier = result.data?.order_number ?? result.data?.public_token
 
     if (trackingIdentifier) {
-      // Langsung redirect ke halaman payments/tracking.
-      // Table order memakai order_number (sesuai contract), open bill memakai bill token.
       await router.push({
         path: `/o/${slug}/payments`,
-        query: isModeOpenBill ? { bill: trackingIdentifier } : { order: trackingIdentifier }
+        query: { order: trackingIdentifier }
       })
       return
     }

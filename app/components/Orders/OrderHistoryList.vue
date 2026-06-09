@@ -74,6 +74,47 @@ const orderDetailRoute = (item: OrderHistoryItem) => ({
   path: `/o/${props.orgSlug}/orders`,
   query: { order: item.order_public_id }
 })
+
+const config = useRuntimeConfig()
+const baseUrl = String(config.public.apiBaseUrl || 'https://api.santap.app').replace(/\/$/, '')
+
+const activeDownloads = ref<Record<string, boolean>>({})
+
+const downloadReceipt = async (orderToken: string, orderCode: string) => {
+  if (activeDownloads.value[orderToken]) return
+  activeDownloads.value[orderToken] = true
+  try {
+    const response = await fetch(`${baseUrl}/v1/customer/orders/${orderToken}/receipt/download`, {
+      headers: {
+        Accept: 'application/pdf'
+      }
+    })
+    
+    if (!response.ok) {
+      const text = await response.text()
+      let message = 'Gagal mengunduh struk.'
+      try {
+        const json = JSON.parse(text)
+        message = json.message || message
+      } catch {}
+      throw new Error(message)
+    }
+
+    const blob = await response.blob()
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `receipt-${props.orgSlug}-${orderCode}.pdf`
+    document.body.appendChild(a)
+    a.click()
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+  } catch (err: any) {
+    alert(err.message || 'Terjadi kesalahan saat mengunduh struk.')
+  } finally {
+    activeDownloads.value[orderToken] = false
+  }
+}
 </script>
 
 <template>
@@ -150,13 +191,28 @@ const orderDetailRoute = (item: OrderHistoryItem) => ({
               <UIcon name="i-lucide-clock" class="size-3" />
               {{ formatDate(item.created_at) }}
             </span>
-            <button
-              class="delete-btn"
-              aria-label="Hapus riwayat ini"
-              @click="requestDelete(item.order_public_id)"
-            >
-              <UIcon name="i-lucide-trash-2" class="size-3" />
-            </button>
+            <div class="flex items-center gap-2">
+              <button
+                v-if="['paid', 'processing', 'ready', 'completed'].includes(item.status || '')"
+                class="download-btn"
+                :disabled="activeDownloads[item.order_public_id]"
+                :aria-label="'Download struk ' + item.order_code"
+                @click="downloadReceipt(item.order_public_id, item.order_code)"
+              >
+                <UIcon
+                  :name="activeDownloads[item.order_public_id] ? 'i-lucide-loader-2' : 'i-lucide-download'"
+                  class="size-3.5"
+                  :class="{ 'animate-spin': activeDownloads[item.order_public_id] }"
+                />
+              </button>
+              <button
+                class="delete-btn"
+                aria-label="Hapus riwayat ini"
+                @click="requestDelete(item.order_public_id)"
+              >
+                <UIcon name="i-lucide-trash-2" class="size-3" />
+              </button>
+            </div>
           </div>
         </template>
       </div>
@@ -491,5 +547,28 @@ const orderDetailRoute = (item: OrderHistoryItem) => ({
 .modal-fade-enter-from,
 .modal-fade-leave-to {
   opacity: 0;
+}
+
+.download-btn {
+  background: transparent;
+  border: none;
+  color: #a09080;
+  cursor: pointer;
+  padding: 3px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, background 0.15s;
+}
+
+.download-btn:hover:not(:disabled) {
+  color: #c07b2a;
+  background: #fdf8f2;
+}
+
+.download-btn:disabled {
+  color: #ccc;
+  cursor: not-allowed;
 }
 </style>

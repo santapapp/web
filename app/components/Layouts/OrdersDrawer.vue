@@ -1,12 +1,16 @@
 <script setup lang="ts">
 /**
- * OrdersDrawer — "Pesanan Saya" fullscreen overlay
+ * OrdersDrawer — "Pesanan Saya" panel dari kanan
+ *
+ * MIGRATION: USlideover → Teleport + Transition manual
+ * - Pattern konsisten dengan CartSheet.vue (Teleport + Transition + fixed overlay)
+ * - Animasi: slide dari kanan (translate-x-full → translate-x-0)
+ * - Overlay fade independen dari panel slide
+ * - Body scroll-lock sinkron dengan SessionDrawer dan CartSheet
  *
  * Berisi:
  * - ActiveOrderCard: status pesanan aktif (dari backend, di-refresh saat dibuka)
- *
- * Tampil sebagai fullscreen overlay seperti CartSheet.vue menggunakan
- * Teleport + Transition. State buka/tutup via useUiOverlayStore.
+ * - Riwayat pesanan (history.activeCount badge di header)
  */
 
 import { watch, onUnmounted } from 'vue'
@@ -34,7 +38,7 @@ watch(
   }
 )
 
-// Body scroll lock
+// ── Body scroll-lock — konsisten dengan CartSheet & SessionDrawer ──
 watch(
   () => overlay.isOrders,
   (isOpen) => {
@@ -46,30 +50,31 @@ watch(
 )
 
 onUnmounted(() => {
-  if (import.meta.client) {
-    document.body.style.overflow = ''
-  }
+  if (import.meta.client) document.body.style.overflow = ''
 })
 </script>
 
 <template>
   <Teleport to="body">
-    <Transition
-      enter-active-class="transition-all duration-300 ease-out"
-      enter-from-class="translate-y-full opacity-90"
-      enter-to-class="translate-y-0 opacity-100"
-      leave-active-class="transition-all duration-200 ease-in"
-      leave-from-class="translate-y-0 opacity-100"
-      leave-to-class="translate-y-full opacity-90"
-    >
+    <Transition name="orders-drawer">
       <div
         v-if="overlay.isOrders"
-        class="fixed inset-0 z-50 flex justify-center bg-black/45 backdrop-blur-xs w-full h-dvh min-h-screen overflow-hidden"
+        class="fixed inset-0 z-50 overflow-hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Pesanan Saya"
       >
-        <div class="bg-gray-50 flex flex-col w-full max-w-lg md:max-w-xl h-full shadow-2xl relative outline-none">
+        <!-- Backdrop (klik untuk tutup) -->
+        <div
+          class="absolute inset-0 bg-black/45 backdrop-blur-xs"
+          @click="overlay.close('orders')"
+        />
+
+        <!-- Panel — slide dari kanan -->
+        <div class="orders-panel absolute inset-y-0 right-0 w-full max-w-lg md:max-w-xl h-full shadow-2xl flex flex-col bg-gray-50 overflow-hidden outline-none">
 
           <!-- Header (Sticky) -->
-          <header class="sticky top-0 z-10 flex-shrink-0 flex items-center justify-between gap-2 px-4 py-3 bg-white border-b border-gray-100">
+          <header class="flex-shrink-0 flex items-center justify-between gap-2 px-4 py-3 bg-white border-b border-gray-100">
             <!-- Back / Close button -->
             <button
               type="button"
@@ -133,9 +138,46 @@ onUnmounted(() => {
             </div>
 
           </div>
-
         </div>
       </div>
     </Transition>
   </Teleport>
 </template>
+
+<style scoped>
+/* ── Overlay: fade in/out ─────────────────────────────────── */
+.orders-drawer-enter-active {
+  transition: opacity 0.25s ease-out;
+}
+.orders-drawer-leave-active {
+  transition: opacity 0.2s ease-in;
+}
+.orders-drawer-enter-from,
+.orders-drawer-leave-to {
+  opacity: 0;
+}
+
+/* ── Panel: slide dari kanan ──────────────────────────────── */
+/* Enter: ease-out (spring) untuk natural feel saat masuk */
+.orders-drawer-enter-active .orders-panel {
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+/* Leave: ease-in (accelerate) untuk cepat saat keluar */
+.orders-drawer-leave-active .orders-panel {
+  transition: transform 0.2s cubic-bezier(0.7, 0, 0.84, 0);
+}
+.orders-drawer-enter-from .orders-panel,
+.orders-drawer-leave-to .orders-panel {
+  transform: translateX(100%);
+}
+
+/* ── Reduced motion ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .orders-drawer-enter-active,
+  .orders-drawer-leave-active,
+  .orders-drawer-enter-active .orders-panel,
+  .orders-drawer-leave-active .orders-panel {
+    transition: none !important;
+  }
+}
+</style>

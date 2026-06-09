@@ -14,16 +14,29 @@
  */
 
 import { defineStore } from 'pinia'
+import { nextTick } from 'vue'
 
 export type OverlayKey = 'none' | 'session' | 'orders' | 'cart' | 'product' | 'scanner'
 
 interface UiOverlayState {
   active: OverlayKey
+  isSwitching: boolean
 }
+
+// Helper to wait for a browser animation frame to complete DOM rendering
+const waitFrame = () =>
+  new Promise<void>((resolve) => {
+    if (import.meta.client) {
+      requestAnimationFrame(() => resolve())
+    } else {
+      resolve()
+    }
+  })
 
 export const useUiOverlayStore = defineStore('ui-overlay', {
   state: (): UiOverlayState => ({
-    active: 'none'
+    active: 'none',
+    isSwitching: false
   }),
 
   getters: {
@@ -39,6 +52,29 @@ export const useUiOverlayStore = defineStore('ui-overlay', {
     /** Buka overlay tertentu — otomatis menutup overlay lain yang sedang aktif. */
     open(key: Exclude<OverlayKey, 'none'>) {
       this.active = key
+    },
+
+    /**
+     * Buka overlay secara aman dengan transisi tertunda untuk menghindari
+     * race condition / error insertBefore saat unmount & mount teleport secara simultan.
+     */
+    async openSafely(key: Exclude<OverlayKey, 'none'>) {
+      if (this.isSwitching) return
+      if (this.active === key) return
+
+      if (this.active === 'none') {
+        this.active = key
+        return
+      }
+
+      this.isSwitching = true
+      this.active = 'none'
+
+      await nextTick()
+      await waitFrame()
+
+      this.active = key
+      this.isSwitching = false
     },
 
     /**

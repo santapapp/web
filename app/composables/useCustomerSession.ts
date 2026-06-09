@@ -36,31 +36,89 @@ const isValidTokenFormat = (token: string): boolean => {
   return /^[a-zA-Z0-9._~:=+-]+$/.test(token)
 }
 
-export const extractQrToken = (rawInput: string): string | null => {
+/**
+ * Tipe hasil parsing QR input.
+ * - 'table'     : QR meja biasa (scan ?table= / ?qr= / pipe-format / literal token)
+ * - 'open_bill' : QR open bill dari kasir (?bill= URL)
+ * - 'order'     : Tracking order (?order= URL) — tidak butuh session flow
+ */
+export type ParsedQrInput =
+  | { type: 'table'; token: string }
+  | { type: 'open_bill'; token: string }
+  | { type: 'order'; token: string }
+
+/**
+ * Parse raw QR scan result atau input manual dan tentukan tipe session-nya.
+ *
+ * Format yang didukung:
+ * 1. URL dengan ?bill={token}          → open_bill
+ * 2. URL dengan ?order={token}         → order tracking
+ * 3. URL dengan ?table=/?qr=/?token=   → table
+ * 4. Pipe format: "slug|token"         → table
+ * 5. Literal token string              → table
+ *
+ * Menggantikan extractQrToken() yang hanya mendukung table order.
+ */
+export const parseQrInput = (rawInput: string): ParsedQrInput | null => {
   const trimmed = rawInput.trim()
   if (!trimmed) return null
 
+  // ── URL-based detection ──────────────────────────────────────────
   try {
     const url = new URL(trimmed)
 
+    // Open bill: URL dengan ?bill={public_token}
+    const bill = url.searchParams.get('bill')
+    if (bill?.trim()) {
+      const t = bill.trim()
+      return isValidTokenFormat(t) ? { type: 'open_bill', token: t } : null
+    }
+
+    // Order tracking: URL dengan ?order={token}
+    const order = url.searchParams.get('order')
+    if (order?.trim()) {
+      const t = order.trim()
+      return isValidTokenFormat(t) ? { type: 'order', token: t } : null
+    }
+
+    // Table QR: URL dengan ?table=/?qr=/?token=/?session=
     for (const key of ['table', 'qr', 'token', 'session']) {
       const value = url.searchParams.get(key)
-      if (value?.trim()) return value.trim()
+      if (value?.trim()) {
+        const t = value.trim()
+        return isValidTokenFormat(t) ? { type: 'table', token: t } : null
+      }
     }
 
-    if (url.searchParams.has('order') || url.searchParams.has('bill') || url.searchParams.has('bills')) {
-      return null
-    }
+    // URL valid tapi tidak ada query yang dikenali
+    return null
   } catch {
-    // Not a URL, continue with supported compact formats.
+    // Bukan URL valid — lanjut ke format compact
   }
 
+  // ── Pipe format: "orgSlug|qrToken" ───────────────────────────────
   const pipeParts = trimmed.split('|')
   if (pipeParts.length === 2 && pipeParts[0]?.trim() && pipeParts[1]?.trim()) {
-    return pipeParts[1].trim()
+    const t = pipeParts[1].trim()
+    return isValidTokenFormat(t) ? { type: 'table', token: t } : null
   }
 
-  return trimmed
+  // ── Literal token ────────────────────────────────────────────────
+  if (isValidTokenFormat(trimmed)) {
+    return { type: 'table', token: trimmed }
+  }
+
+  return null
+}
+
+/**
+ * @deprecated Gunakan parseQrInput() yang mengembalikan structured type.
+ * Dipertahankan untuk backward compatibility.
+ */
+export const extractQrToken = (rawInput: string): string | null => {
+  const parsed = parseQrInput(rawInput)
+  if (!parsed || parsed.type !== 'table') return null
+  return parsed.token
 }
 
 const normalizeBillStatus = (status: unknown): StoredSessionOpenBill['status'] => {
@@ -261,9 +319,14 @@ export const useCustomerSession = () => {
   }
 
   const startSessionForOpenBill = async (billToken: string, options: StartSessionOptions = {}) => {
-    // Inject token to localStorage manually so validateSession can use it
+    // Inject token ke Pinia store dan localStorage agar validateSession bisa membaca token.
+    // PENTING: set expiresAt fallback (24 jam) sebelum persist() agar store.isExpired = false.
+    // Tanpa ini, clearQuery() memicu initialize() ulang → restoreAndValidateForOrg →
+    // store.isExpired = true (expiresAt null) → session ter-clear → redirect loop.
+    const fallbackExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
     store.sessionToken = billToken
     store.sessionType = 'open_bill'
+    store.expiresAt = fallbackExpiry
     store.persist()
 
     try {
@@ -314,12 +377,24 @@ export const useCustomerSession = () => {
       return { success: false, error: 'Masukkan kode meja terlebih dahulu.' }
     }
 
-    const extracted = extractQrToken(trimmed)
-    if (!extracted || !isValidTokenFormat(extracted)) {
+    const parsed = parseQrInput(trimmed)
+
+    if (!parsed) {
       return { success: false, error: 'Format kode meja tidak valid.' }
     }
 
-    const result = await startSession(extracted, { orgSlug: expectedOrgSlug })
+    // Open bill token dari URL ?bill= — langsung ke open bill flow
+    if (parsed.type === 'open_bill') {
+      return startSessionForOpenBill(parsed.token, { orgSlug: expectedOrgSlug })
+    }
+
+    // Order tracking — tidak ada session yang dibuat, bukan kode meja
+    if (parsed.type === 'order') {
+      return { success: false, error: 'Kode ini adalah tracking pesanan, bukan kode meja.' }
+    }
+
+    // Table order — flow lama
+    const result = await startSession(parsed.token, { orgSlug: expectedOrgSlug })
     if (!result.success) {
       store.clear()
 

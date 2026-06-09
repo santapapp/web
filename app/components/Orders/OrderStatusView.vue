@@ -107,6 +107,53 @@ const header = computed(() => {
 })
 
 const tableLabel = computed(() => props.order?.dining_table?.name ?? null)
+
+const config = useRuntimeConfig()
+const baseUrl = String(config.public.apiBaseUrl || 'https://api.santap.app').replace(/\/$/, '')
+
+const downloadLoading = ref(false)
+const downloadError = ref<string | null>(null)
+
+const downloadReceipt = async () => {
+  if (downloadLoading.value) return
+  downloadLoading.value = true
+  downloadError.value = null
+  try {
+    const token = props.orderToken || props.order?.public_token || props.order?.order_number
+    if (!token) {
+      throw new Error('Token pesanan tidak ditemukan.')
+    }
+    const response = await fetch(`${baseUrl}/v1/customer/orders/${token}/receipt/download`, {
+      headers: {
+        Accept: 'application/pdf'
+      }
+    })
+    
+    if (!response.ok) {
+      const text = await response.text()
+      let message = 'Gagal mengunduh struk.'
+      try {
+        const json = JSON.parse(text)
+        message = json.message || message
+      } catch {}
+      throw new Error(message)
+    }
+
+    const blob = await response.blob()
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `receipt-${props.orgSlug}-${props.order?.order_number || token}.pdf`
+    document.body.appendChild(a)
+    a.click()
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+  } catch (err: any) {
+    downloadError.value = err.message || 'Terjadi kesalahan saat mengunduh struk.'
+  } finally {
+    downloadLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -251,6 +298,22 @@ const tableLabel = computed(() => props.order?.dining_table?.name ?? null)
                   <UIcon name="i-lucide-credit-card" class="size-5" />
                   <span>Bayar Sekarang</span>
                 </button>
+
+                <button
+                  v-if="isPaid"
+                  type="button"
+                  :disabled="downloadLoading"
+                  class="w-full min-h-[52px] px-6 py-3.5 rounded-2xl bg-stone-900 text-white hover:bg-stone-850 active:scale-[0.98] shadow-lg shadow-stone-900/20 font-bold flex items-center justify-center gap-2 transition-all duration-150 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  @click="downloadReceipt"
+                >
+                  <UIcon v-if="downloadLoading" name="i-lucide-loader-2" class="size-5 animate-spin" />
+                  <UIcon v-else name="i-lucide-download" class="size-5" />
+                  <span>{{ downloadLoading ? 'Mengunduh...' : 'Download Struk' }}</span>
+                </button>
+
+                <p v-if="downloadError" class="text-xs text-rose-600 text-center font-medium mt-1">
+                  {{ downloadError }}
+                </p>
 
                 <NuxtLink
                   :to="`/o/${orgSlug}/orders`"

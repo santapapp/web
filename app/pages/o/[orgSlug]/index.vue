@@ -18,7 +18,9 @@ const {
   openingStatus,
   fullAddress,
   isLoading,
-  isNotFound
+  isNotFound,
+  isServerError,
+  refresh
 } = usePublicOrg(orgSlug)
 
 const {
@@ -40,17 +42,18 @@ watch(
   { immediate: true }
 )
 
-useSeoMeta({
-  title: () => org.value ? `${org.value.name} | Santap` : 'Outlet | Santap',
-  description: () =>
-    org.value
-      ? `Lihat informasi outlet dan preview menu ${org.value.name}. Mulai pesanan dari halaman order Santap.`
-      : 'Lihat informasi outlet dan preview menu di Santap.'
+useOutletSeo(orgSlug, {
+  org,
+  isLoading,
+  isNotFound,
+  isServerError,
+  routeType: 'outlet-index',
 })
 </script>
 
 <template>
   <div class="min-h-dvh bg-gray-50">
+    <!-- Loading skeleton -->
     <div v-if="isLoading" class="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
       <USkeleton class="h-64 w-full rounded-lg" />
       <div class="mt-5 grid gap-3 sm:grid-cols-3">
@@ -61,24 +64,20 @@ useSeoMeta({
       </div>
     </div>
 
-    <section v-else-if="isNotFound || !org" class="flex min-h-[calc(100dvh-64px)] items-center justify-center px-4 py-12">
-      <div class="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 text-center">
-        <UIcon name="i-lucide-store" class="mx-auto size-10 text-gray-300" />
-        <h1 class="mt-4 text-xl font-bold text-gray-950">Outlet tidak ditemukan</h1>
-        <p class="mt-2 text-sm leading-6 text-gray-500">
-          Link outlet tidak valid atau outlet sedang tidak tersedia.
-        </p>
-        <UButton
-          to="/"
-          color="primary"
-          variant="solid"
-          icon="i-lucide-home"
-          label="Kembali"
-          class="mt-5"
-        />
-      </div>
-    </section>
+    <!-- Server error state -->
+    <OrgStatusPage
+      v-else-if="isServerError"
+      type="server_error"
+      @retry="refresh"
+    />
 
+    <!-- Not found state -->
+    <OrgStatusPage
+      v-else-if="isNotFound || !org"
+      type="not_found"
+    />
+
+    <!-- Success state -->
     <template v-else>
       <OrgHeroSection
         :org="org"

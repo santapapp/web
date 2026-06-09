@@ -8,6 +8,21 @@ const route = useRoute()
 const router = useRouter()
 const orgSlug = computed(() => String(route.params.orgSlug || ''))
 
+// SEO: halaman payment selalu noindex — berisi session pembayaran customer.
+// Tidak perlu fetch data org hanya untuk SEO; title statis sudah cukup.
+useSeoMeta({
+  title: 'Pembayaran | Santap',
+  description: 'Selesaikan pembayaran pesanan Anda di Santap.',
+  ogTitle: 'Pembayaran | Santap',
+  ogDescription: 'Selesaikan pembayaran pesanan Anda di Santap.',
+  ogSiteName: 'Santap',
+  ogLocale: 'id_ID',
+  twitterCard: 'summary_large_image',
+})
+useHead({
+  meta: [{ name: 'robots', content: 'noindex, nofollow' }],
+})
+
 // Composables
 const customerSession = useCustomerSession()
 const sessionStore = useCustomerSessionStore()
@@ -227,7 +242,7 @@ onMounted(async () => {
     if (bill.payment_status === 'pending' || !qrDataUrl.value) {
       // Cari history untuk melihat apakah ada qris_data cache (untuk table order yang fetch public tidak mengembalikan qris_data)
       const history = useOrderHistory(orgSlug.value)
-      const historyItem = history.items.value.find(i => 
+      const historyItem = history.items.value.find(i =>
         i.order_code === trackingIdentifier || i.order_public_id === trackingIdentifier
       )
       const cachedQris = historyItem?.qris_data
@@ -390,7 +405,7 @@ onMounted(async () => {
               <div class="bg-white rounded-3xl border border-stone-200/60 shadow-sm p-6 space-y-5 relative overflow-hidden transition-all duration-200">
                 <!-- Top decorative line -->
                 <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-500" />
-                
+
                 <div class="flex items-center justify-between border-b border-stone-100 pb-4">
                   <h3 class="text-sm font-extrabold text-stone-900 uppercase tracking-wider flex items-center gap-2">
                     <UIcon name="i-lucide-receipt" class="size-4 text-orange-500" />
@@ -485,9 +500,9 @@ onMounted(async () => {
                     <div class="absolute top-2.5 right-2.5 w-5 h-5 border-t-2 border-r-2 border-orange-500 rounded-tr-md"></div>
                     <div class="absolute bottom-2.5 left-2.5 w-5 h-5 border-b-2 border-l-2 border-orange-500 rounded-bl-md"></div>
                     <div class="absolute bottom-2.5 right-2.5 w-5 h-5 border-b-2 border-r-2 border-orange-500 rounded-br-md"></div>
-                    
+
                     <img :src="qrDataUrl" alt="QRIS QR Code" class="size-64 sm:size-72 object-contain block relative z-10 mx-auto" />
-                    
+
                     <!-- Animated scanner line -->
                     <div class="absolute left-4 right-4 h-[2px] bg-gradient-to-r from-transparent via-orange-500 to-transparent top-4 animate-scanner z-20 pointer-events-none" />
                   </div>
@@ -613,18 +628,18 @@ onMounted(async () => {
                   <UIcon name="i-lucide-shield-check" class="size-4.5 text-orange-600 shrink-0" />
                   <span class="text-xs font-bold text-orange-800 uppercase tracking-wider">Informasi Gerbang Pembayaran</span>
                 </div>
-                
+
                 <p class="text-xs text-stone-500 leading-relaxed font-medium mb-6">
                   Layanan pembayaran QRIS ini diproses secara aman oleh mitra resmi kami, <span class="text-stone-800 font-semibold">Sekeco Payment</span>.
                 </p>
-                
+
                 <div class="bg-white/80 border border-orange-100/60 rounded-2xl p-4 mb-6 space-y-2">
                   <span class="text-[10px] font-bold text-orange-700 uppercase tracking-wider block">Catatan Penerima QRIS:</span>
                   <p class="text-xs text-stone-600 leading-relaxed font-medium italic">
                     Pada aplikasi e-wallet atau mobile banking Anda, detail penerima / merchant akan tertera atas nama <span class="text-stone-900 font-bold not-italic">PT Sarwa Kalyana Cara</span> selaku penyelenggara gerbang pembayaran resmi.
                   </p>
                 </div>
-                
+
                 <p class="text-[11px] text-stone-400 leading-relaxed italic">
                   * Jika terjadi kendala koneksi atau QRIS tidak dapat dipindai, Anda dapat melakukan pembayaran langsung melalui kasir restoran. Mohon simpan bukti pembayaran Anda untuk keperluan konfirmasi manual jika diperlukan.
                 </p>

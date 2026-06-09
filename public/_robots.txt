@@ -1,2 +1,7 @@
-User-Agent: *
-Disallow:
+User-agent: *
+Allow: /
+
+# Halaman sesi, order, dan pembayaran customer tidak boleh di-index.
+# Token meja, open bill, dan referensi order bersifat sensitif.
+Disallow: /o/*/orders
+Disallow: /o/*/payments

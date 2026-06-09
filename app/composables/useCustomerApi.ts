@@ -46,12 +46,34 @@ export const useCustomerApi = () => {
   const getToken = (): string | null => {
     if (!import.meta.client) return null
     try {
-      const stored = localStorage.getItem(SESSION_STORAGE_KEY)
-      if (!stored) return null
-      const parsed = JSON.parse(stored)
-      // table_order = lokal, jangan kirim token ke backend
-      if (parsed.sessionType === 'table_order') return null
-      return parsed.sessionToken || null
+      // persist() menyimpan raw token di 'customer_session' (string, bukan JSON)
+      // dan metadata JSON di 'customer_session.meta'.
+      // Kita baca dari .meta agar bisa cek sessionType sebelum mengirim token.
+      const meta = localStorage.getItem(`${SESSION_STORAGE_KEY}.meta`)
+      if (meta) {
+        const parsed = JSON.parse(meta)
+        // table_order = lokal, tidak perlu token ke backend
+        if (parsed.sessionType === 'table_order') return null
+        return parsed.sessionToken || null
+      }
+
+      // Fallback: baca raw token langsung (format lama / edge case)
+      // Ini hanya berlaku jika .meta tidak ada tapi token ada — kirim apa adanya.
+      const raw = localStorage.getItem(SESSION_STORAGE_KEY)
+      if (!raw) return null
+
+      // Coba parse sebagai JSON (format lama)
+      try {
+        const parsed = JSON.parse(raw)
+        if (typeof parsed === 'object' && parsed !== null) {
+          if (parsed.sessionType === 'table_order') return null
+          return parsed.sessionToken || null
+        }
+      } catch {
+        // raw adalah string token biasa, bukan JSON — kembalikan langsung
+      }
+
+      return raw
     } catch {
       return null
     }

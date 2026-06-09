@@ -15,6 +15,7 @@ const props = defineProps<{
   submitting?: boolean
   error?: string | null
   isOpenBill?: boolean
+  paymentLocked?: boolean   // Open bill: payment pending → tidak bisa tambah item
   taxEnabled?: boolean
   taxRate?: number
   serviceChargeEnabled?: boolean
@@ -366,6 +367,20 @@ onUnmounted(() => {
             v-if="items.length > 0"
             class="flex-shrink-0 border-t border-gray-100 bg-white px-5 pt-4 pb-[max(20px,env(safe-area-inset-bottom))] space-y-3"
           >
+            <!-- Payment locked banner (open bill dengan payment pending) -->
+            <div
+              v-if="paymentLocked"
+              class="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3.5"
+            >
+              <UIcon name="i-lucide-lock" class="size-4.5 text-amber-700 shrink-0 mt-0.5" />
+              <div>
+                <p class="text-sm font-extrabold text-amber-900">Pesanan Terkunci</p>
+                <p class="text-xs text-amber-700 font-medium mt-0.5 leading-relaxed">
+                  Pembayaran sedang menunggu konfirmasi. Selesaikan atau batalkan pembayaran terlebih dahulu.
+                </p>
+              </div>
+            </div>
+
             <UAlert
               v-slot:default
               v-if="error"
@@ -378,7 +393,7 @@ onUnmounted(() => {
 
             <button
               type="button"
-              :disabled="submitting"
+              :disabled="submitting || paymentLocked"
               class="w-full min-h-[56px] px-6 py-3.5 rounded-full bg-orange-600 text-white hover:bg-orange-700 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none shadow-lg shadow-orange-500/20 font-bold flex items-center justify-between gap-3 transition-all duration-150 cursor-pointer"
               @click="emit('submit')"
             >
@@ -387,7 +402,7 @@ onUnmounted(() => {
                   {{ totalQty }}
                 </span>
                 <span class="text-[15px] font-extrabold tracking-wide">
-                  {{ submitting ? 'Mengirim...' : 'Pesan Sekarang' }}
+                  {{ submitting ? 'Mengirim...' : isOpenBill ? 'Tambah ke Pesanan' : 'Pesan Sekarang' }}
                 </span>
               </span>
               <span class="flex items-center gap-2">
