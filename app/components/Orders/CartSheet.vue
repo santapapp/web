@@ -23,6 +23,9 @@ const props = defineProps<{
   tableLabel?: string | null
   customerName?: string
   orderNote?: string
+  submitDisabled?: boolean
+  submitDisabledReason?: string | null
+  submitLabel?: string
 }>()
 
 const emit = defineEmits<{
@@ -64,6 +67,16 @@ const serviceChargeAmount = computed(() =>
 )
 
 const total = computed(() => subtotal.value + taxAmount.value + serviceChargeAmount.value)
+
+const checkoutLabel = computed(() => {
+  if (props.submitting) return 'Mengirim...'
+  if (props.submitLabel) return props.submitLabel
+  return props.isOpenBill ? 'Tambah ke Pesanan' : 'Pesan Sekarang'
+})
+
+const isSubmitDisabled = computed(() =>
+  Boolean(props.submitting || props.paymentLocked || props.submitDisabled)
+)
 
 // Writable computed properties untuk customerName dan orderNote
 const customerNameLocal = computed({
@@ -383,6 +396,16 @@ onUnmounted(() => {
 
             <UAlert
               v-slot:default
+              v-if="submitDisabledReason"
+              icon="i-lucide-info"
+              color="warning"
+              variant="soft"
+              :description="submitDisabledReason"
+              class="rounded-xl"
+            />
+
+            <UAlert
+              v-slot:default
               v-if="error"
               icon="i-lucide-alert-circle"
               color="error"
@@ -393,7 +416,7 @@ onUnmounted(() => {
 
             <button
               type="button"
-              :disabled="submitting || paymentLocked"
+              :disabled="isSubmitDisabled"
               class="w-full min-h-[56px] px-6 py-3.5 rounded-full bg-orange-600 text-white hover:bg-orange-700 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none shadow-lg shadow-orange-500/20 font-bold flex items-center justify-between gap-3 transition-all duration-150 cursor-pointer"
               @click="emit('submit')"
             >
@@ -402,7 +425,7 @@ onUnmounted(() => {
                   {{ totalQty }}
                 </span>
                 <span class="text-[15px] font-extrabold tracking-wide">
-                  {{ submitting ? 'Mengirim...' : isOpenBill ? 'Tambah ke Pesanan' : 'Pesan Sekarang' }}
+                  {{ checkoutLabel }}
                 </span>
               </span>
               <span class="flex items-center gap-2">

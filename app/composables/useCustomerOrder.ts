@@ -26,7 +26,7 @@ export const useCustomerOrder = () => {
   const order = ref<CustomerOrderDetail | null>(null)
   const orderPending = ref(false)
   const fetchPending = ref(false)
-  const statusPending = ref(false)
+  const statusPending = ref(true)
   const orderError = ref<CustomerApiError | null>(null)
   const fetchError = ref<CustomerApiError | null>(null)
   const statusError = ref<CustomerApiError | null>(null)

@@ -42,12 +42,23 @@ const isSelected = (variantId: number) => props.selectedIds.includes(variantId)
         <span v-if="group.is_required" class="text-orange-500 align-super text-sm">*</span>
       </h3>
 
-      <span
-        v-if="group.max_select > 1"
-        class="text-[10px] font-bold uppercase tracking-wide text-gray-400"
-      >
-        Maks {{ group.max_select }}
-      </span>
+      <div class="flex shrink-0 items-center gap-1.5">
+        <span class="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-gray-500">
+          {{ group.type === 'addon_group' ? 'Add-on' : 'Variant' }}
+        </span>
+        <span
+          class="rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide"
+          :class="group.is_required ? 'bg-orange-50 text-orange-600' : 'bg-gray-100 text-gray-500'"
+        >
+          {{ group.is_required ? 'Wajib' : 'Opsional' }}
+        </span>
+        <span
+          v-if="group.max_select > 1"
+          class="text-[10px] font-bold uppercase tracking-wide text-gray-400"
+        >
+          Maks {{ group.max_select }}
+        </span>
+      </div>
     </div>
 
     <!-- Options -->

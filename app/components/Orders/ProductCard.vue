@@ -13,6 +13,7 @@ const props = defineProps<{
   product: MenuProduct
   /** Quantity in cart */
   cartQty?: number
+  readOnly?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -33,8 +34,7 @@ const hasVariants = computed(() => props.product.variant_groups.length > 0)
 const isUnavailable = computed(() => !props.product.is_available)
 
 const handleAction = () => {
-  if (isUnavailable.value) return
-  if (hasVariants.value) {
+  if (isUnavailable.value || hasVariants.value || props.readOnly) {
     emit('open-detail', props.product)
   } else {
     emit('add', props.product)
@@ -45,7 +45,7 @@ const handleAction = () => {
 <template>
   <article
     class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col h-full relative"
-    :class="{ 'opacity-60 cursor-not-allowed': isUnavailable }"
+    :class="{ 'opacity-75': isUnavailable }"
     @click="handleAction"
   >
     <!-- Image with fallback warm gradient -->
@@ -93,7 +93,7 @@ const handleAction = () => {
         <span class="text-sm font-extrabold text-orange-600 whitespace-nowrap">{{ formatPrice(product.price) }}</span>
 
         <!-- Action Buttons -->
-        <div v-if="!isUnavailable" class="flex-shrink-0" @click.stop>
+        <div v-if="!isUnavailable && !readOnly" class="flex-shrink-0" @click.stop>
           <!-- Choose variant button -->
           <button
             v-if="hasVariants"

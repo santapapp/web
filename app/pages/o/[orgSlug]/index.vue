@@ -12,6 +12,7 @@ definePageMeta({
 const route = useRoute()
 const orgSlug = computed(() => String(route.params.orgSlug || ''))
 const orderPath = computed(() => `/o/${orgSlug.value}/orders`)
+const menuPath = computed(() => `/o/${orgSlug.value}/menu`)
 
 const {
   org,
@@ -91,7 +92,7 @@ useOutletSeo(orgSlug, {
         <OrgMenuPreviewSection
           :products="products"
           :loading="menuPending"
-          :order-to="orderPath"
+          :menu-to="menuPath"
         />
       </div>
     </template>

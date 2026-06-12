@@ -22,6 +22,7 @@ const props = defineProps<{
   product: MenuProduct | null
   open: boolean
   ctaDisabled?: boolean
+  readOnly?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -95,6 +96,42 @@ const formatPrice = (v: number) =>
     maximumFractionDigits: 0
   }).format(v)
 
+const isUnavailable = computed(() => Boolean(props.product && !props.product.is_available))
+
+const statusLabel = computed(() => isUnavailable.value ? 'Habis' : 'Tersedia')
+const statusColor = computed<'error' | 'success'>(() => isUnavailable.value ? 'error' : 'success')
+
+const missingRequiredMessage = computed(() => {
+  if (!props.product) return null
+
+  for (const group of props.product.variant_groups) {
+    const selected = selections.value[group.id]
+    const count = selected?.size ?? 0
+    const minSelect = group.min_select || 1
+
+    if (group.is_required && count < minSelect) {
+      return `Pilih minimal ${minSelect} dari "${group.name}".`
+    }
+  }
+
+  return null
+})
+
+const isSelectionComplete = computed(() => !missingRequiredMessage.value)
+
+const disabledReason = computed(() => {
+  if (isUnavailable.value) return 'Menu ini sedang tidak tersedia.'
+  return missingRequiredMessage.value
+})
+
+const disabledReasonColor = computed<'error' | 'warning'>(() =>
+  isUnavailable.value ? 'error' : 'warning'
+)
+
+const addDisabled = computed(() =>
+  Boolean(props.ctaDisabled || isUnavailable.value || !isSelectionComplete.value)
+)
+
 /** Preview total = (base_price + sum variant prices) * qty */
 const previewTotal = computed(() => {
   if (!props.product) return 0
@@ -142,15 +179,16 @@ const toggleVariant = (group: MenuVariantGroup, variantId: number) => {
 const validate = (): boolean => {
   if (!props.product) return false
 
-  for (const group of props.product.variant_groups) {
-    const selected = selections.value[group.id]
-    const count = selected?.size ?? 0
-
-    if (group.is_required && count < (group.min_select || 1)) {
-      validationError.value = `Pilih minimal ${group.min_select || 1} dari "${group.name}".`
-      return false
-    }
+  if (isUnavailable.value) {
+    validationError.value = 'Menu ini sedang tidak tersedia.'
+    return false
   }
+
+  if (missingRequiredMessage.value) {
+    validationError.value = missingRequiredMessage.value
+    return false
+  }
+
   return true
 }
 
@@ -192,9 +230,9 @@ const handleAddToCart = () => {
     <Transition name="slide-up">
       <section
         v-if="open && product"
-        class="fixed inset-0 z-[60] h-[100dvh] w-full overflow-hidden bg-gray-50"
+        class="fixed inset-0 z-[60] flex h-[100dvh] w-full items-end justify-center overflow-hidden bg-black/35 backdrop-blur-xs sm:items-center lg:justify-end"
       >
-        <div class="mx-auto flex h-full w-full max-w-lg md:max-w-xl flex-col bg-gray-50 shadow-2xl relative outline-none">
+        <div class="relative flex h-[92dvh] max-h-[860px] w-full max-w-lg flex-col overflow-hidden rounded-t-[28px] bg-gray-50 shadow-2xl outline-none sm:h-[88dvh] sm:rounded-[28px] md:max-w-xl lg:h-full lg:max-h-none lg:rounded-none lg:rounded-l-[28px]">
           <!-- Header (flex-none) -->
           <header class="flex-none bg-white border-b border-gray-100 flex items-center justify-between gap-2 px-4 py-3">
             <!-- Back Button -->
@@ -244,6 +282,23 @@ const handleAddToCart = () => {
 
               <!-- Product Details -->
               <div class="text-center">
+                <div class="mb-3 flex flex-wrap items-center justify-center gap-2">
+                  <UBadge
+                    v-if="product.category_name"
+                    :label="product.category_name"
+                    color="neutral"
+                    variant="soft"
+                    size="sm"
+                    class="rounded-full font-bold"
+                  />
+                  <UBadge
+                    :label="statusLabel"
+                    :color="statusColor"
+                    variant="soft"
+                    size="sm"
+                    class="rounded-full font-bold"
+                  />
+                </div>
                 <h1 class="text-lg font-extrabold uppercase tracking-wide text-gray-900">
                   {{ product.name }}
                 </h1>
@@ -270,7 +325,7 @@ const handleAddToCart = () => {
               </div>
 
               <!-- Note per item -->
-              <div class="border-t border-gray-100 pt-5 mt-5">
+              <div v-if="!readOnly" class="border-t border-gray-100 pt-5 mt-5">
                 <label
                   class="block text-xs font-extrabold uppercase tracking-wide text-gray-700 mb-2 px-1"
                   for="product-note"
@@ -296,27 +351,43 @@ const handleAddToCart = () => {
 
           <!-- Footer (flex-none) -->
           <footer class="flex-none bg-white border-t border-gray-100 px-5 pt-4 pb-[max(20px,env(safe-area-inset-bottom))] space-y-4">
-            <!-- Validation error -->
-            <UAlert
-              v-slot:default
-              v-if="validationError"
-              icon="i-lucide-alert-circle"
-              color="error"
-              variant="soft"
-              :description="validationError"
-              class="rounded-xl"
-            />
+            <template v-if="!readOnly">
+              <!-- Validation error -->
+              <UAlert
+                v-if="validationError || disabledReason"
+                icon="i-lucide-alert-circle"
+                :color="disabledReasonColor"
+                variant="soft"
+                :description="validationError || disabledReason || undefined"
+                class="rounded-xl"
+              />
 
-            <!-- Quantity -->
-            <OrdersQuantityControl v-model="quantity" :min="1" />
+              <!-- Quantity -->
+              <OrdersQuantityControl v-model="quantity" :min="1" />
 
-            <!-- Add to cart CTA -->
-            <OrdersStickyCartButton
-              label="Tambah ke Keranjang"
-              :total="previewTotal"
-              :disabled="ctaDisabled"
-              @click="handleAddToCart"
-            />
+              <!-- Add to cart CTA -->
+              <OrdersStickyCartButton
+                label="Tambah ke Keranjang"
+                :total="previewTotal"
+                :disabled="addDisabled"
+                @click="handleAddToCart"
+              />
+            </template>
+            <template v-else>
+              <!-- Close CTA -->
+              <UButton
+                id="btn-close-product-detail"
+                block
+                color="neutral"
+                variant="outline"
+                label="Tutup"
+                size="lg"
+                :ui="{
+                  base: 'rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-extrabold transition-all duration-200 cursor-pointer justify-center h-12 shadow-xs ring-0 focus:ring-2 focus:ring-slate-100'
+                }"
+                @click="emit('close')"
+              />
+            </template>
           </footer>
         </div>
       </section>

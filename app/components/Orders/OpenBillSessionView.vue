@@ -23,6 +23,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   'add-more': []
   'payment-initiated': []
+  'exit-session': []
 }>()
 
 const router = useRouter()
@@ -168,6 +169,16 @@ const itemStatusLabel = (status: string | null) => {
           @click="showQrModal = true"
         >
           <UIcon name="i-lucide-qr-code" class="size-4.5" />
+        </button>
+
+        <!-- Keluar Sesi Button -->
+        <button
+          type="button"
+          class="size-9 rounded-xl flex items-center justify-center text-stone-500 hover:bg-rose-50 hover:text-rose-600 border border-stone-200 hover:border-rose-200 active:scale-95 transition-all duration-150 cursor-pointer shadow-xs"
+          title="Keluar Sesi"
+          @click="emit('exit-session')"
+        >
+          <UIcon name="i-lucide-log-out" class="size-4.5" />
         </button>
       </div>
     </header>
@@ -392,6 +403,16 @@ const itemStatusLabel = (status: string | null) => {
             >
               <UIcon name="i-lucide-share-2" class="size-4.5" />
               <span>Bagikan Sesi ke Teman</span>
+            </button>
+
+            <!-- Keluar Sesi Button (selalu ada) -->
+            <button
+              type="button"
+              class="w-full min-h-[48px] rounded-2xl border border-rose-200 bg-rose-50/20 text-rose-600 font-bold hover:bg-rose-50 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer text-sm"
+              @click="emit('exit-session')"
+            >
+              <UIcon name="i-lucide-log-out" class="size-4.5" />
+              <span>Keluar dari Sesi Ini</span>
             </button>
           </div>
 

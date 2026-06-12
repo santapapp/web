@@ -16,7 +16,7 @@
 import type { MaybeRefOrGetter } from 'vue'
 import type { PublicOrg } from '~/types/org'
 
-export type OutletRouteType = 'outlet-index' | 'orders' | 'payment'
+export type OutletRouteType = 'outlet-index' | 'orders' | 'payment' | 'menu'
 
 export interface UseOutletSeoOptions {
   org: Ref<PublicOrg | null | undefined>
@@ -66,6 +66,7 @@ export function useOutletSeo(
       case 'success': {
         const name = org.value!.name
         if (routeType === 'outlet-index') return `${name} | ${SITE_NAME}`
+        if (routeType === 'menu') return `Daftar Menu ${name} | ${SITE_NAME}`
         if (routeType === 'orders') return `Pesan Menu di ${name} | ${SITE_NAME}`
         if (routeType === 'payment') return `Pembayaran — ${name} | ${SITE_NAME}`
         return `${name} | ${SITE_NAME}`
@@ -91,6 +92,9 @@ export function useOutletSeo(
           }
           return `Lihat menu, pesan makanan, dan kelola pesanan Anda di ${o.name} melalui Santap.`
         }
+        if (routeType === 'menu') {
+          return `Lihat daftar menu lengkap ${o.name}, pilihan kategori, harga, dan ketersediaan terbaru melalui Santap.`
+        }
         // orders dan payment: halaman ini noindex, description tidak kritis
         return `Pesan menu di ${o.name} melalui Santap.`
       }
@@ -101,7 +105,7 @@ export function useOutletSeo(
   // Hanya halaman outlet publik (outlet-index) dengan data valid yang boleh di-index.
   // Halaman orders/payment/not-found/error selalu noindex.
   const seoRobots = computed(() => {
-    if (seoStatus.value === 'success' && routeType === 'outlet-index') {
+    if (seoStatus.value === 'success' && (routeType === 'outlet-index' || routeType === 'menu')) {
       return 'index, follow'
     }
     return 'noindex, nofollow'
@@ -122,6 +126,7 @@ export function useOutletSeo(
     if (seoStatus.value !== 'success') return undefined
     const base = `${SITE_URL}/o/${slug.value}`
     if (routeType === 'outlet-index') return `${base}/index`
+    if (routeType === 'menu') return `${base}/menu`
     if (routeType === 'orders') return `${base}/orders`
     if (routeType === 'payment') return `${base}/payments`
     return undefined

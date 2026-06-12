@@ -141,6 +141,21 @@ const clearQuery = async () => {
 // otomatis menangkap pembayaran yang baru settle maupun progres dapur.
 const TRACKING_POLL_MS = 8000
 let trackingPoll: ReturnType<typeof setInterval> | null = null
+let openBillPoll: ReturnType<typeof setInterval> | null = null
+
+const stopTrackingPoll = () => {
+  if (trackingPoll) {
+    clearInterval(trackingPoll)
+    trackingPoll = null
+  }
+}
+
+const stopOpenBillPoll = () => {
+  if (openBillPoll) {
+    clearInterval(openBillPoll)
+    openBillPoll = null
+  }
+}
 
 const isOrderTerminal = (o: typeof order.value): boolean => {
   if (!o) return false
@@ -150,13 +165,6 @@ const isOrderTerminal = (o: typeof order.value): boolean => {
     o.payment_status === 'cancelled' ||
     o.payment_status === 'failed'
   )
-}
-
-const stopTrackingPoll = () => {
-  if (trackingPoll) {
-    clearInterval(trackingPoll)
-    trackingPoll = null
-  }
 }
 
 const startTrackingPoll = () => {
@@ -176,7 +184,56 @@ const startTrackingPoll = () => {
   }, TRACKING_POLL_MS)
 }
 
-onUnmounted(stopTrackingPoll)
+const startOpenBillPoll = () => {
+  stopOpenBillPoll()
+  if (!isOpenBill.value || isOrderTerminal(order.value) || order.value?.bill_status === 'closed' || order.value?.payment_status === 'paid') return
+
+  openBillPoll = setInterval(async () => {
+    if (!isOpenBill.value) {
+      stopOpenBillPoll()
+      return
+    }
+
+    const res = await fetchOpenBill()
+    if (res.success) {
+      if (order.value?.bill_status === 'closed' || order.value?.payment_status === 'paid') {
+        stopOpenBillPoll()
+        const orderNumber = order.value.order_number
+        if (orderNumber) {
+          const publicRes = await fetchOrderStatus(orgSlug.value, orderNumber, { silent: true })
+          if (publicRes.success) {
+            customerSession.clearSession()
+            await router.replace({
+              path: `/o/${orgSlug.value}/orders`,
+              query: { order: orderNumber }
+            })
+          }
+        }
+      }
+    } else {
+      const err = res.error as any
+      if (err?.statusCode === 403) {
+        stopOpenBillPoll()
+        const orderNumber = order.value?.order_number
+        if (orderNumber) {
+          const publicRes = await fetchOrderStatus(orgSlug.value, orderNumber, { silent: true })
+          if (publicRes.success) {
+            customerSession.clearSession()
+            await router.replace({
+              path: `/o/${orgSlug.value}/orders`,
+              query: { order: orderNumber }
+            })
+          }
+        }
+      }
+    }
+  }, TRACKING_POLL_MS)
+}
+
+onUnmounted(() => {
+  stopTrackingPoll()
+  stopOpenBillPoll()
+})
 
 const loadOrderingUi = async () => {
   isSessionReady.value = true
@@ -202,6 +259,10 @@ const loadOrderingUi = async () => {
     isSessionReady.value = false
     sessionError.value = orderResult.error?.message ?? 'Sesi tidak valid atau sudah kedaluwarsa.'
     return
+  }
+
+  if (isOpenBill.value) {
+    startOpenBillPoll()
   }
 }
 
@@ -256,6 +317,7 @@ const initialize = async () => {
   sessionError.value = null
   // Hentikan polling tracking sebelumnya saat route berubah / re-init.
   stopTrackingPoll()
+  stopOpenBillPoll()
 
   if (mode.value === 'invalid') {
     customerSession.clearSession()
@@ -408,6 +470,23 @@ const handleDecrease = (product: any) => {
     cart.updateQuantityById(item.id, item.quantity - 1)
   }
 }
+
+// ── Sesi Exit Handlers ──
+const showExitConfirm = ref(false)
+
+const handleExitSession = () => {
+  showExitConfirm.value = true
+}
+
+const handleConfirmExit = () => {
+  customerSession.clearSession()
+  showExitConfirm.value = false
+  router.push(`/o/${orgSlug.value}`)
+}
+
+const handleCancelExit = () => {
+  showExitConfirm.value = false
+}
 </script>
 
 <template>
@@ -465,6 +544,7 @@ const handleDecrease = (product: any) => {
           :org-slug="orgSlug"
           :bill-token="customerSession.sessionToken.value ?? ''"
           @add-more="handleOpenBillAddMore"
+          @exit-session="handleExitSession"
         />
 
         <!-- ── Menu (Table Order atau Add-More open bill) ────────── -->
@@ -493,6 +573,38 @@ const handleDecrease = (product: any) => {
               >
                 ← Kembali ke Sesi
               </button>
+            </div>
+
+            <!-- Banner table session: ganti meja & keluar sesi -->
+            <div
+              v-else-if="tableLabel"
+              class="sticky top-0 z-10 px-4 py-2.5 bg-stone-50/95 backdrop-blur-sm border-b border-stone-200/60 flex items-center justify-between gap-3"
+            >
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="size-6 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center shrink-0">
+                  <UIcon name="i-lucide-armchair" class="size-3.5 text-stone-600" />
+                </span>
+                <span class="text-xs font-extrabold text-stone-800 truncate">
+                  {{ tableLabel.toLowerCase().includes('meja') ? tableLabel : 'Meja ' + tableLabel }}
+                </span>
+              </div>
+              <div class="flex items-center gap-3 shrink-0">
+                <button
+                  type="button"
+                  class="text-xs font-bold text-stone-600 hover:text-stone-850 underline underline-offset-2 cursor-pointer"
+                  @click="overlay.open('scanner')"
+                >
+                  Ganti Meja
+                </button>
+                <span class="h-3 w-px bg-stone-300" />
+                <button
+                  type="button"
+                  class="text-xs font-bold text-rose-600 hover:text-rose-800 underline underline-offset-2 cursor-pointer"
+                  @click="handleExitSession"
+                >
+                  Keluar Sesi
+                </button>
+              </div>
             </div>
 
             <OrdersOrderMenuList
@@ -558,6 +670,14 @@ const handleDecrease = (product: any) => {
       :cta-disabled="productDetailCtaDisabled"
       @close="cart.closeProductDetail"
       @add-to-cart="cart.addFromDetail"
+    />
+
+    <SessionConfirmExitSessionModal
+      :open="showExitConfirm"
+      :has-cart-items="customerSession.hasCart.value"
+      :session-mode="customerSession.sessionMode.value"
+      @confirm="handleConfirmExit"
+      @cancel="handleCancelExit"
     />
   </div>
 </template>

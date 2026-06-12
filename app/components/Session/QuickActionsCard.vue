@@ -54,11 +54,11 @@ const isOpenBill = computed(() => session.sessionMode.value === 'open_bill')
       <UIcon name="i-lucide-chevron-right" class="size-4 text-slate-300 flex-shrink-0" />
     </button>
 
-    <!-- Table only: Keluar Sesi -->
+    <!-- Table & Open Bill: Keluar Sesi -->
     <button
-      v-if="isTable"
+      v-if="isTable || isOpenBill"
       class="w-full bg-white border border-rose-100 rounded-xl px-3.5 py-3 text-[13px] font-semibold text-rose-500 cursor-pointer flex items-center justify-between gap-3 hover:bg-rose-50 hover:border-rose-200 transition-all duration-150"
-      aria-label="Keluar dari sesi meja ini"
+      :aria-label="isOpenBill ? 'Keluar dari sesi open bill ini' : 'Keluar dari sesi meja ini'"
       @click="$emit('exit-session')"
     >
       <div class="flex items-center gap-3">

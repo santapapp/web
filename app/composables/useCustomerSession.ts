@@ -359,6 +359,9 @@ export const useCustomerSession = () => {
     } catch (error) {
       store.clear()
       const apiErr = error as CustomerApiError
+      if (apiErr?.statusCode === 403) {
+          return { success: false, error: apiErr.message || 'Sesi open bill tidak valid atau sudah berakhir.' }
+      }
       if (apiErr?.statusCode === 404 || apiErr?.statusCode === 401) {
           return { success: false, error: 'Bill tidak valid atau sudah kedaluwarsa.' }
       }

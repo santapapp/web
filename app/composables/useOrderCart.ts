@@ -61,6 +61,8 @@ export const useOrderCart = (mode: MaybeRefOrGetter<CartMode> = 'table_order') =
   )
 
   const addDirect = (product: MenuProduct) => {
+    if (!product.is_available) return
+
     store.addItem(currentMode.value, {
       menuId: product.id,
       name: product.name,
@@ -77,6 +79,8 @@ export const useOrderCart = (mode: MaybeRefOrGetter<CartMode> = 'table_order') =
     note: string
     selected_variants: SelectedVariant[]
   }) => {
+    if (!payload.product.is_available) return
+
     store.addItem(currentMode.value, {
       menuId: payload.product.id,
       name: payload.product.name,
