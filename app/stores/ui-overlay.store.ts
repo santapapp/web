@@ -21,6 +21,7 @@ export type OverlayKey = 'none' | 'session' | 'orders' | 'cart' | 'product' | 's
 interface UiOverlayState {
   active: OverlayKey
   isSwitching: boolean
+  openBillHeaderPassed: boolean
 }
 
 // Helper to wait for a browser animation frame to complete DOM rendering
@@ -36,7 +37,8 @@ const waitFrame = () =>
 export const useUiOverlayStore = defineStore('ui-overlay', {
   state: (): UiOverlayState => ({
     active: 'none',
-    isSwitching: false
+    isSwitching: false,
+    openBillHeaderPassed: false
   }),
 
   getters: {

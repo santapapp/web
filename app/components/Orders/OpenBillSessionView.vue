@@ -124,21 +124,39 @@ const itemStatusLabel = (status: string | null) => {
     default: return status ?? '-'
   }
 }
+
+const overlayStore = useUiOverlayStore()
+
+const handleScroll = (e: Event) => {
+  const target = e.target as HTMLElement
+  if (!target) return
+  overlayStore.openBillHeaderPassed = target.scrollTop > 50
+}
+
+onMounted(() => {
+  overlayStore.openBillHeaderPassed = false
+})
+
+onUnmounted(() => {
+  overlayStore.openBillHeaderPassed = false
+})
 </script>
 
 <template>
   <div class="flex-1 flex flex-col min-h-0 bg-gray-50">
-    <!-- Header -->
-    <header class="sticky top-0 z-20 flex-shrink-0 flex items-center justify-between gap-2 px-4 py-3 bg-white/90 backdrop-blur-md border-b border-stone-100/80">
-      <div class="flex flex-col">
-        <h2 class="text-base font-black text-stone-900 leading-tight">Pesanan Open Bill</h2>
-        <p v-if="order?.order_number" class="text-xs text-stone-400 font-semibold font-mono">
+    <!-- Main scroll container -->
+    <div class="flex-1 overflow-y-auto" @scroll="handleScroll">
+      <!-- Header Banner -->
+      <header class="flex-shrink-0 flex items-center justify-between gap-4 px-4 py-4 sm:px-6 md:px-8 bg-emerald-50/50 border-b border-emerald-100 shadow-none">
+      <div class="flex flex-col min-w-0">
+        <h2 class="text-base sm:text-lg font-black text-emerald-950 leading-tight">Pesanan Open Bill</h2>
+        <p v-if="order?.order_number" class="text-xs sm:text-sm text-emerald-700/95 font-bold font-mono mt-0.5">
           #{{ order.order_number }}
         </p>
       </div>
 
-      <!-- Badge status sesi -->
-      <div class="flex items-center gap-2">
+      <!-- Badge status sesi & Aksi Cepat -->
+      <div class="flex items-center gap-2 shrink-0">
         <div
           v-if="isBillClosed || isPaid"
           class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-stone-100 text-stone-500 border border-stone-200"
@@ -148,23 +166,16 @@ const itemStatusLabel = (status: string | null) => {
         </div>
         <div
           v-else-if="isPaymentPending"
-          class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 animate-pulse"
+          class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-750 border border-amber-200 animate-pulse"
         >
           <span class="size-1.5 rounded-full bg-amber-500" />
           Menunggu Bayar
-        </div>
-        <div
-          v-else
-          class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"
-        >
-          <span class="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          Sesi Aktif
         </div>
 
         <!-- Share QR Button -->
         <button
           type="button"
-          class="size-9 rounded-xl flex items-center justify-center text-stone-600 hover:bg-orange-50 hover:text-orange-600 border border-stone-200 hover:border-orange-200 active:scale-95 transition-all duration-150 cursor-pointer shadow-xs"
+          class="size-9 rounded-xl flex items-center justify-center text-emerald-800 hover:bg-emerald-100 hover:text-emerald-900 border border-emerald-200 bg-white/80 active:scale-95 transition-all duration-150 cursor-pointer shadow-xs"
           title="Bagikan QR Sesi"
           @click="showQrModal = true"
         >
@@ -174,7 +185,7 @@ const itemStatusLabel = (status: string | null) => {
         <!-- Keluar Sesi Button -->
         <button
           type="button"
-          class="size-9 rounded-xl flex items-center justify-center text-stone-500 hover:bg-rose-50 hover:text-rose-600 border border-stone-200 hover:border-rose-200 active:scale-95 transition-all duration-150 cursor-pointer shadow-xs"
+          class="size-9 rounded-xl flex items-center justify-center text-rose-600 hover:bg-rose-100 hover:text-rose-700 border border-rose-200 bg-white/80 active:scale-95 transition-all duration-150 cursor-pointer shadow-xs"
           title="Keluar Sesi"
           @click="emit('exit-session')"
         >
@@ -184,8 +195,7 @@ const itemStatusLabel = (status: string | null) => {
     </header>
 
     <!-- Content -->
-    <div class="flex-1 overflow-y-auto">
-      <div class="w-full max-w-lg lg:max-w-4xl mx-auto px-4 py-5 space-y-4 lg:space-y-5">
+    <div class="w-full max-w-lg lg:max-w-4xl mx-auto px-4 py-5 space-y-4 lg:space-y-5">
 
         <!-- Loading skeleton -->
         <template v-if="loading">
@@ -376,7 +386,7 @@ const itemStatusLabel = (status: string | null) => {
             <button
               v-if="!isBillClosed && !isPaid && !isPaymentPending"
               type="button"
-              class="w-full min-h-[52px] rounded-2xl border border-stone-200 bg-white text-stone-700 font-extrabold hover:bg-orange-50 hover:border-orange-200 hover:text-orange-700 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2.5 cursor-pointer"
+              class="w-full min-h-[52px] rounded-2xl bg-stone-900 text-white font-extrabold hover:bg-stone-850 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2.5 cursor-pointer shadow-md shadow-stone-900/10"
               @click="emit('add-more')"
             >
               <UIcon name="i-lucide-plus" class="size-5" />
@@ -398,7 +408,7 @@ const itemStatusLabel = (status: string | null) => {
             <button
               v-if="!isBillClosed && !isPaid"
               type="button"
-              class="w-full min-h-[48px] rounded-2xl border border-stone-200 bg-white text-stone-600 font-bold hover:bg-stone-50 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer text-sm"
+              class="w-full min-h-[48px] rounded-2xl bg-stone-100 text-stone-700 font-bold hover:bg-stone-200/80 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer text-sm"
               @click="showQrModal = true"
             >
               <UIcon name="i-lucide-share-2" class="size-4.5" />
@@ -408,7 +418,7 @@ const itemStatusLabel = (status: string | null) => {
             <!-- Keluar Sesi Button (selalu ada) -->
             <button
               type="button"
-              class="w-full min-h-[48px] rounded-2xl border border-rose-200 bg-rose-50/20 text-rose-600 font-bold hover:bg-rose-50 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer text-sm"
+              class="w-full min-h-[48px] rounded-2xl bg-rose-50 text-rose-600 font-bold hover:bg-rose-100 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer text-sm"
               @click="emit('exit-session')"
             >
               <UIcon name="i-lucide-log-out" class="size-4.5" />
@@ -449,75 +459,55 @@ const itemStatusLabel = (status: string | null) => {
               class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden"
             >
               <!-- Modal header -->
-              <div class="relative px-6 pt-6 pb-4 text-center border-b border-stone-100">
+              <div class="relative px-5 pt-5 pb-3.5 text-center border-b border-stone-100">
                 <button
                   type="button"
-                  class="absolute top-4 right-4 size-8 rounded-full text-stone-400 hover:bg-stone-100 hover:text-stone-600 flex items-center justify-center transition-all cursor-pointer"
+                  class="absolute top-3.5 right-3.5 size-7 rounded-full text-stone-400 hover:bg-stone-100 hover:text-stone-600 flex items-center justify-center transition-all cursor-pointer"
+                  aria-label="Tutup modal"
                   @click="showQrModal = false"
                 >
                   <UIcon name="i-lucide-x" class="size-4" />
                 </button>
-                <div class="size-12 rounded-2xl bg-orange-50 border border-orange-100 flex items-center justify-center mx-auto mb-3">
-                  <UIcon name="i-lucide-qr-code" class="size-6 text-orange-600" />
+                <div class="size-10 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center mx-auto mb-2.5">
+                  <UIcon name="i-lucide-qr-code" class="size-5 text-orange-600" />
                 </div>
-                <h3 class="text-base font-black text-stone-900">Bagikan Sesi Open Bill</h3>
-                <p class="text-xs text-stone-500 mt-1 leading-relaxed">
-                  Scan QR ini untuk bergabung ke sesi yang sama dan memesan bersama.
+                <h3 class="text-sm font-bold text-stone-900">Bagikan Sesi Open Bill</h3>
+                <p class="text-xs text-stone-400 mt-1 leading-relaxed">
+                  Scan QR ini untuk bergabung dan memesan bersama.
                 </p>
               </div>
 
               <!-- QR Code -->
-              <div class="px-6 py-6 flex flex-col items-center gap-5">
-                <!-- QR Image -->
-                <div class="relative p-4 bg-white border-2 border-stone-100 rounded-2xl shadow-sm">
-                  <!-- Corner brackets -->
-                  <div class="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-orange-500 rounded-tl" />
-                  <div class="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-orange-500 rounded-tr" />
-                  <div class="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-orange-500 rounded-bl" />
-                  <div class="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-orange-500 rounded-br" />
+              <div class="px-5 py-5 flex flex-col items-center gap-4">
+                <!-- QR Image — clean, no corner decorations -->
+                <div class="bg-white border border-stone-200 rounded-2xl p-3 shadow-xs inline-flex items-center justify-center">
                   <img
                     :src="qrImageUrl"
-                    alt="QR Code Open Bill"
-                    class="size-52 object-contain block"
+                    alt="QR Code sesi Open Bill — pindai untuk bergabung ke sesi yang sama"
+                    class="size-44 sm:size-48 object-contain block"
                     loading="lazy"
                   />
                 </div>
 
                 <!-- Order number badge -->
-                <div class="flex items-center gap-2 bg-stone-50 border border-stone-200 rounded-full px-4 py-1.5">
-                  <UIcon name="i-lucide-receipt" class="size-3.5 text-stone-500" />
-                  <span class="text-xs font-black text-stone-700 font-mono tracking-wide">
+                <div class="flex items-center gap-1.5 bg-stone-50 border border-stone-200 rounded-full px-3.5 py-1.5">
+                  <UIcon name="i-lucide-receipt" class="size-3.5 text-stone-400 shrink-0" />
+                  <span class="text-xs font-bold text-stone-700 font-mono tracking-wide">
                     {{ order?.order_number ?? '—' }}
                   </span>
                 </div>
 
-                <!-- URL + Copy -->
-                <div class="w-full space-y-2">
-                  <div class="flex items-center gap-2 bg-stone-50 border border-stone-200 rounded-xl px-3 py-2.5">
-                    <p class="flex-1 text-[11px] text-stone-500 font-mono truncate">{{ shareUrl }}</p>
-                    <button
-                      type="button"
-                      class="shrink-0 flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-lg transition-all duration-150 cursor-pointer"
-                      :class="copySuccess
-                        ? 'text-emerald-700 bg-emerald-50 border border-emerald-200'
-                        : 'text-stone-600 hover:text-orange-600 hover:bg-orange-50 border border-stone-200'"
-                      @click="copyLink"
-                    >
-                      <UIcon :name="copySuccess ? 'i-lucide-check' : 'i-lucide-copy'" class="size-3.5" />
-                      {{ copySuccess ? 'Tersalin!' : 'Salin' }}
-                    </button>
-                  </div>
-                  <p class="text-center text-[10px] text-stone-400 font-medium">
-                    Siapapun yang scan/buka link ini bisa memesan di sesi yang sama
-                  </p>
-                </div>
+                <!-- Helper text -->
+                <p class="text-center text-xs text-stone-400 font-medium leading-relaxed max-w-[220px]">
+                  Siapapun yang scan QR ini bisa memesan di sesi yang sama.
+                </p>
               </div>
 
               <!-- Footer button -->
-              <div class="px-6 pb-6">
+              <div class="px-5 pb-5">
                 <button
                   type="button"
-                  class="w-full h-12 rounded-2xl bg-stone-900 text-white font-extrabold hover:bg-stone-800 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer text-sm"
+                  class="w-full h-11 rounded-xl bg-stone-900 text-white font-bold hover:bg-stone-800 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer text-sm"
                   @click="showQrModal = false"
                 >
                   Tutup

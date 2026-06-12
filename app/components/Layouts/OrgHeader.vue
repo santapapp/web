@@ -11,10 +11,20 @@
  */
 
 const overlay = useUiOverlayStore()
+const session = useCustomerSession()
+
+const isGreen = computed(() =>
+  session.sessionMode.value === 'open_bill' && overlay.openBillHeaderPassed
+)
 </script>
 
 <template>
-  <header class="sticky top-0 left-0 right-0 z-40 bg-white/97 backdrop-blur-md border-b border-gray-100 h-14 lg:h-16 flex items-center">
+  <header
+    class="sticky top-0 left-0 right-0 z-40 backdrop-blur-md h-14 lg:h-16 flex items-center transition-all duration-300"
+    :class="isGreen
+      ? 'bg-emerald-50/95 border-b border-emerald-100'
+      : 'bg-white/97 border-b border-gray-100'"
+  >
     <div class="w-full max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-between gap-3">
 
       <!-- Left: Hamburger → Session Drawer -->

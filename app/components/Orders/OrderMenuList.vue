@@ -31,7 +31,7 @@ const emit = defineEmits<{
 
 <template>
   <section class="mx-auto w-full max-w-4xl px-4 py-5 pb-32 lg:px-6 lg:pb-8">
-    <div class="mb-5 flex flex-col gap-4">
+    <div class="sticky top-0 z-10 bg-gray-50/95 backdrop-blur-md py-3 -mx-4 px-4 mb-4 flex flex-col gap-3.5 border-b border-stone-250/10">
       <!-- Search field input -->
       <OrdersMenuSearchBar v-model="searchQuery" />
 

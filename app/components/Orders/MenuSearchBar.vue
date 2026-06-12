@@ -4,14 +4,14 @@ const model = defineModel<string>({ default: '' })
 
 <template>
   <div class="relative">
-    <!-- Wrapper: rounded-full, bg-gray-100, no outline border -->
-    <div class="relative flex items-center w-full rounded-full bg-gray-100 px-4 py-2.5 gap-3 focus-within:ring-2 focus-within:ring-orange-300 focus-within:bg-white transition-all duration-200">
+    <!-- Wrapper: rounded-full, with a border and subtle shadow for contrast, orange ring on focus -->
+    <div class="relative flex items-center w-full rounded-full bg-gray-50/80 border border-gray-200 shadow-xs px-4 py-2.5 gap-3 focus-within:ring-4 focus-within:ring-orange-100 focus-within:border-orange-500 focus-within:bg-white transition-all duration-200">
       <!-- Search icon -->
       <svg
-        class="size-4 text-gray-400 flex-shrink-0"
+        class="size-4 text-gray-500 flex-shrink-0"
         fill="none"
         stroke="currentColor"
-        stroke-width="2"
+        stroke-width="2.5"
         stroke-linecap="round"
         stroke-linejoin="round"
         viewBox="0 0 24 24"
@@ -26,7 +26,7 @@ const model = defineModel<string>({ default: '' })
         type="text"
         placeholder="Cari menu di sini..."
         aria-label="Cari menu"
-        class="flex-1 bg-transparent border-none outline-none text-sm text-gray-800 placeholder-gray-400 font-medium"
+        class="flex-1 bg-transparent border-none outline-none text-sm text-gray-900 placeholder-gray-500 font-medium"
       />
 
       <!-- Clear button -->

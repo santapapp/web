@@ -556,29 +556,32 @@ const handleCancelExit = () => {
             <!-- Banner open bill: pesan lagi -->
             <div
               v-if="isOpenBill"
-              class="sticky top-0 z-10 px-4 py-2.5 bg-orange-50/95 backdrop-blur-sm border-b border-orange-200/60 flex items-center justify-between gap-3"
+              class="px-4 py-3 bg-emerald-50/50 border-b border-emerald-100 flex items-center justify-between gap-3 shadow-none"
             >
-              <div class="flex items-center gap-2 min-w-0">
-                <span class="size-6 rounded-full bg-orange-100 border border-orange-200 flex items-center justify-center shrink-0">
-                  <UIcon name="i-lucide-receipt" class="size-3.5 text-orange-600" />
-                </span>
-                <span class="text-xs font-bold text-orange-800 truncate">
-                  Open Bill — Tambah Pesanan
+              <div class="flex items-center gap-2.5 min-w-0">
+                <button
+                  type="button"
+                  class="size-8 rounded-full flex items-center justify-center text-emerald-700 hover:bg-emerald-100 hover:text-emerald-950 bg-white border border-emerald-200 active:scale-95 transition-all duration-150 cursor-pointer shadow-xs shrink-0"
+                  title="Kembali ke Sesi"
+                  @click="showMenuForAddMore = false"
+                >
+                  <UIcon name="i-lucide-arrow-left" class="size-4" />
+                </button>
+                <span class="text-xs font-black text-emerald-900 truncate">
+                  Tambah Pesanan
                 </span>
               </div>
-              <button
-                type="button"
-                class="shrink-0 text-xs font-bold text-orange-700 hover:text-orange-900 underline underline-offset-2 cursor-pointer"
-                @click="showMenuForAddMore = false"
-              >
-                ← Kembali ke Sesi
-              </button>
+              <div v-if="order?.order_number" class="text-right shrink-0">
+                <span class="text-[10px] sm:text-xs font-bold font-mono text-emerald-800 bg-emerald-100/60 border border-emerald-200/50 px-2 py-0.5 rounded-lg">
+                  #{{ order.order_number }}
+                </span>
+              </div>
             </div>
 
             <!-- Banner table session: ganti meja & keluar sesi -->
             <div
               v-else-if="tableLabel"
-              class="sticky top-0 z-10 px-4 py-2.5 bg-stone-50/95 backdrop-blur-sm border-b border-stone-200/60 flex items-center justify-between gap-3"
+              class="px-4 py-3 bg-stone-50 border-b border-stone-200/60 flex items-center justify-between gap-3 shadow-none"
             >
               <div class="flex items-center gap-2 min-w-0">
                 <span class="size-6 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center shrink-0">

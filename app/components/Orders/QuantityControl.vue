@@ -31,15 +31,15 @@ const increase = () => {
 </script>
 
 <template>
-  <div class="flex items-center justify-between gap-4">
-    <span class="text-xs font-extrabold uppercase tracking-wider text-gray-700">
+  <div class="flex items-center justify-between gap-4 max-w-[240px] mx-auto w-full py-0.5">
+    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 select-none">
       Jumlah
     </span>
 
     <div class="flex items-center gap-3">
       <button
         type="button"
-        class="size-9 rounded-full border-2 border-orange-500 text-orange-600 flex items-center justify-center hover:bg-orange-50 active:scale-90 disabled:opacity-30 disabled:pointer-events-none transition-all duration-150 cursor-pointer"
+        class="size-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center hover:bg-orange-100 active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all duration-150 cursor-pointer"
         :disabled="modelValue <= minValue"
         aria-label="Kurangi jumlah"
         @click="decrease"
@@ -47,13 +47,13 @@ const increase = () => {
         <UIcon name="i-lucide-minus" class="size-4" />
       </button>
 
-      <span class="text-base font-extrabold text-gray-900 w-7 text-center tabular-nums">
+      <span class="text-sm font-extrabold text-gray-900 w-7 text-center tabular-nums select-none">
         {{ modelValue }}
       </span>
 
       <button
         type="button"
-        class="size-9 rounded-full border-2 border-orange-500 text-orange-600 flex items-center justify-center hover:bg-orange-50 active:scale-90 disabled:opacity-30 disabled:pointer-events-none transition-all duration-150 cursor-pointer"
+        class="size-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center hover:bg-orange-100 active:scale-95 disabled:opacity-30 disabled:pointer-events-none transition-all duration-150 cursor-pointer"
         :disabled="max != null && modelValue >= max"
         aria-label="Tambah jumlah"
         @click="increase"

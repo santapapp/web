@@ -66,30 +66,26 @@ const isSelected = (variantId: number) => props.selectedIds.includes(variantId)
       <li v-for="variant in group.variants" :key="variant.id">
         <button
           type="button"
-          class="w-full flex items-center justify-between gap-3 px-1 py-2.5 rounded-xl text-left transition-colors duration-150"
+          class="w-full flex items-center justify-between gap-3 px-2 py-2.5 rounded-xl text-left transition-colors duration-150"
           :class="[
             variant.is_available
-              ? 'hover:bg-orange-50/60 cursor-pointer'
+              ? 'hover:bg-orange-50/50 cursor-pointer'
               : 'opacity-40 cursor-not-allowed'
           ]"
           :disabled="!variant.is_available"
           @click="variant.is_available && emit('toggle', variant.id)"
         >
-          <!-- Left: bullet + name + extra price -->
-          <span class="flex items-baseline gap-2 min-w-0">
-            <span
-              class="leading-none"
-              :class="isSelected(variant.id) ? 'text-orange-500' : 'text-gray-300'"
-            >•</span>
+          <!-- Left: name + extra price badge -->
+          <span class="flex items-center gap-2 min-w-0">
             <span
               class="text-sm truncate"
-              :class="isSelected(variant.id) ? 'font-semibold text-gray-900' : 'font-medium text-gray-600'"
+              :class="isSelected(variant.id) ? 'font-bold text-gray-900' : 'font-medium text-gray-700'"
             >
               {{ variant.name }}
             </span>
             <span
               v-if="variant.price > 0"
-              class="text-xs font-bold text-orange-600 whitespace-nowrap"
+              class="text-[11px] font-bold text-orange-600 bg-orange-50/70 border border-orange-100/80 px-2 py-0.5 rounded-lg whitespace-nowrap"
             >
               + {{ formatPrice(variant.price) }}
             </span>
@@ -97,18 +93,22 @@ const isSelected = (variantId: number) => props.selectedIds.includes(variantId)
 
           <!-- Right: circular radio / checkbox indicator -->
           <span
-            class="flex-shrink-0 size-5 flex items-center justify-center border-2 transition-all duration-150"
+            class="flex-shrink-0 size-5 flex items-center justify-center border transition-all duration-150"
             :class="[
               isRadio ? 'rounded-full' : 'rounded-md',
               isSelected(variant.id)
-                ? 'border-orange-500'
-                : 'border-gray-300'
+                ? 'border-orange-600 bg-orange-600 text-white'
+                : 'border-gray-300 bg-white'
             ]"
           >
             <span
-              v-if="isSelected(variant.id)"
-              class="bg-orange-500"
-              :class="isRadio ? 'size-2.5 rounded-full' : 'size-3 rounded-sm'"
+              v-if="isSelected(variant.id) && isRadio"
+              class="size-1.5 rounded-full bg-white"
+            />
+            <UIcon
+              v-else-if="isSelected(variant.id) && !isRadio"
+              name="i-lucide-check"
+              class="size-3.5 text-white"
             />
           </span>
         </button>

@@ -247,7 +247,7 @@ const handleAddToCart = () => {
 
             <!-- Title & Subtitle -->
             <div class="flex flex-col items-center text-center min-w-0">
-              <h2 class="text-base font-extrabold text-gray-900 leading-none truncate max-w-[200px]">
+              <h2 class="text-sm font-bold text-gray-900 leading-none truncate max-w-[220px]">
                 {{ product.name }}
               </h2>
               <span class="text-xs text-orange-600 font-semibold mt-1">
@@ -299,7 +299,7 @@ const handleAddToCart = () => {
                     class="rounded-full font-bold"
                   />
                 </div>
-                <h1 class="text-lg font-extrabold uppercase tracking-wide text-gray-900">
+                <h1 class="text-base font-bold text-gray-900 leading-snug">
                   {{ product.name }}
                 </h1>
                 <p class="text-base font-bold text-orange-600 mt-1">
@@ -352,15 +352,25 @@ const handleAddToCart = () => {
           <!-- Footer (flex-none) -->
           <footer class="flex-none bg-white border-t border-gray-100 px-5 pt-4 pb-[max(20px,env(safe-area-inset-bottom))] space-y-4">
             <template v-if="!readOnly">
-              <!-- Validation error -->
-              <UAlert
+              <!-- Validation error banner -->
+              <div
                 v-if="validationError || disabledReason"
-                icon="i-lucide-alert-circle"
-                :color="disabledReasonColor"
-                variant="soft"
-                :description="validationError || disabledReason || undefined"
-                class="rounded-xl"
-              />
+                class="flex items-start gap-2.5 px-4 py-3 rounded-2xl border text-sm transition-all duration-200"
+                :class="[
+                  isUnavailable
+                    ? 'bg-red-50/70 border-red-100 text-red-800'
+                    : 'bg-amber-50/70 border-amber-100 text-amber-800'
+                ]"
+              >
+                <UIcon
+                  :name="isUnavailable ? 'i-lucide-alert-octagon' : 'i-lucide-info'"
+                  class="size-5 shrink-0 mt-0.5"
+                  :class="isUnavailable ? 'text-red-500' : 'text-amber-600'"
+                />
+                <span class="flex-1 font-semibold leading-relaxed">
+                  {{ validationError || disabledReason }}
+                </span>
+              </div>
 
               <!-- Quantity -->
               <OrdersQuantityControl v-model="quantity" :min="1" />

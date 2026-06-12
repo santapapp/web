@@ -107,6 +107,20 @@ const formatPrice = (v: number) =>
     currency: 'IDR',
     maximumFractionDigits: 0
   }).format(v)
+
+const billStatusConfigLabel = computed(() => {
+  const status = session.openBill.value?.status
+  if (status === 'locked') return 'Terkunci'
+  if (status === 'closed') return 'Ditutup'
+  return 'Aktif'
+})
+
+const billStatusConfigClass = computed(() => {
+  const status = session.openBill.value?.status
+  if (status === 'locked') return 'bg-amber-50 text-amber-700 border border-amber-200'
+  if (status === 'closed') return 'bg-rose-50 text-rose-700 border border-rose-200'
+  return 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+})
 </script>
 
 <template>
@@ -167,62 +181,160 @@ const formatPrice = (v: number) =>
             </div>
           </div>
 
-          <!-- ─── Body ──────────────────────────────────────── -->
-          <div class="flex-1 p-4 overflow-y-auto flex flex-col gap-4">
-            <!-- Session Info Card (hanya tampil jika ada sesi aktif) -->
-            <SessionInfoCard v-if="session.hasSession.value" />
-
-            <!-- Empty state: tidak ada sesi aktif -->
-            <div
-              v-else
-              class="rounded-xl border border-gray-100 bg-white p-4 flex flex-col gap-3 shadow-sm"
-            >
-              <div class="flex items-center gap-2.5">
-                <div class="size-9 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
-                  <UIcon name="i-lucide-circle-off" class="size-4 text-gray-400" />
-                </div>
-                <div>
-                  <p class="text-[13px] font-extrabold text-gray-700 leading-tight">Belum ada sesi aktif</p>
-                  <p class="text-[11px] text-gray-400 font-medium mt-0.5 leading-snug">
-                    Scan QR meja atau masukkan kode untuk mulai memesan.
-                  </p>
-                </div>
-              </div>
-              <div class="flex flex-col gap-1.5">
-                <button
-                  class="motion-btn w-full bg-gray-900 rounded-lg px-3 py-2.5 text-[12px] font-bold text-white cursor-pointer flex items-center gap-2.5 hover:bg-gray-800 active:scale-[0.98] transition-all duration-150"
-                  @click="handleInlineScan"
-                >
-                  <UIcon name="i-lucide-scan-line" class="size-3.5 text-orange-400 shrink-0" />
-                  <span>Scan QR Meja</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <SessionQuickActionsCard
-              @open-cart="handleOpenCart"
-              @scan-code="handleScanCode"
-              @exit-session="handleExitSession"
-            />
-
-            <!-- Org Actions -->
-            <div v-if="shouldShowOrdersBtn" class="flex flex-col gap-1.5">
-              <!-- Buka Pesanan Saya -->
-              <button
-                class="motion-btn w-full bg-orange-600 border border-orange-600 rounded-xl px-3.5 py-2.5 text-[13px] font-semibold text-white cursor-pointer flex items-center justify-between gap-3 hover:bg-orange-700 active:scale-[0.98] transition-all duration-150"
-                aria-label="Buka pesanan saya"
-                @click="openOrders"
+          <!-- Banner Ringkasan Open Bill (Full Width) -->
+          <div
+            v-if="isOpenBill && session.hasSession.value"
+            class="bg-emerald-50/50 border-b border-emerald-100 px-4 py-3.5 flex flex-col gap-2 flex-shrink-0"
+          >
+            <!-- Top line: Label Open Bill + status singkat -->
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-800/80">Open Bill</span>
+              <span
+                class="px-2 py-0.5 rounded-full text-[9px] font-bold"
+                :class="billStatusConfigClass"
               >
-                <div class="flex items-center gap-3">
-                  <span class="size-7 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
-                    <UIcon name="i-lucide-shopping-bag" class="size-3.5 text-white" />
-                  </span>
-                  <span>Buka Pesanan Saya</span>
-                </div>
-                <UIcon name="i-lucide-chevron-right" class="size-4 text-white/70 flex-shrink-0" />
-              </button>
+                {{ billStatusConfigLabel }}
+              </span>
             </div>
+
+            <!-- Bottom line: Nomor Bill + Total Tagihan -->
+            <div class="flex items-center justify-between gap-4">
+              <!-- Bill Number -->
+              <div class="flex items-center gap-2 min-w-0">
+                <UIcon name="i-lucide-receipt" class="size-4 text-emerald-700 shrink-0" />
+                <span class="text-xs font-black text-emerald-950 font-mono truncate leading-none">
+                  {{ session.sessionLabel.value }}
+                </span>
+              </div>
+              
+              <!-- Total tagihan -->
+              <div
+                v-if="session.openBill.value?.total_amount"
+                class="text-right shrink-0"
+              >
+                <span class="text-xs font-black text-orange-600">
+                  {{ formatPrice(session.openBill.value.total_amount) }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ─── Body ──────────────────────────────────────── -->
+          <div class="flex-1 p-4 overflow-y-auto flex flex-col">
+            <!-- Active Session Area -->
+            <template v-if="session.hasSession.value">
+              <div class="flex-1 flex flex-col justify-between min-h-0">
+                <div class="space-y-3">
+                  <!-- Session Info Card (only for Table Order) -->
+                  <SessionInfoCard v-if="!isOpenBill" />
+
+                  <!-- Lihat Keranjang (Solid Light Neutral) -->
+                  <button
+                    class="motion-btn w-full bg-stone-100 rounded-xl px-3.5 py-3 text-[13px] font-semibold text-stone-800 cursor-pointer flex items-center justify-between gap-3 hover:bg-stone-200/85 transition-all duration-150"
+                    aria-label="Lihat keranjang belanja"
+                    @click="handleOpenCart"
+                  >
+                    <div class="flex items-center gap-3">
+                      <span class="size-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
+                        <UIcon name="i-lucide-shopping-bag" class="size-4 text-orange-600" />
+                      </span>
+                      <span>Lihat Keranjang</span>
+                    </div>
+                    <UIcon name="i-lucide-chevron-right" class="size-4 text-stone-400 flex-shrink-0" />
+                  </button>
+
+                  <!-- Buka Pesanan Saya (Primary Action - Solid Orange) -->
+                  <button
+                    v-if="shouldShowOrdersBtn"
+                    class="motion-btn w-full bg-orange-600 border border-orange-600 rounded-xl px-3.5 py-2.5 text-[13px] font-semibold text-white cursor-pointer flex items-center justify-between gap-3 hover:bg-orange-700 active:scale-[0.98] transition-all duration-150 shadow-sm"
+                    aria-label="Buka pesanan saya"
+                    @click="openOrders"
+                  >
+                    <div class="flex items-center gap-3">
+                      <span class="size-8 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
+                        <UIcon name="i-lucide-clipboard-list" class="size-4 text-white" />
+                      </span>
+                      <span>Buka Pesanan Saya</span>
+                    </div>
+                    <UIcon name="i-lucide-chevron-right" class="size-4 text-white/70 flex-shrink-0" />
+                  </button>
+
+                  <!-- Ganti Meja (Table order only - Solid Light Neutral) -->
+                  <button
+                    v-if="session.sessionMode.value === 'table'"
+                    class="motion-btn w-full bg-stone-100 rounded-xl px-3.5 py-3 text-[13px] font-semibold text-stone-800 cursor-pointer flex items-center justify-between gap-3 hover:bg-stone-200/85 transition-all duration-150"
+                    aria-label="Ganti meja dengan scan QR baru"
+                    @click="handleScanCode"
+                  >
+                    <div class="flex items-center gap-3">
+                      <span class="size-8 rounded-lg bg-slate-200 flex items-center justify-center flex-shrink-0">
+                        <UIcon name="i-lucide-scan-line" class="size-4 text-slate-600" />
+                      </span>
+                      <span>Ganti Meja</span>
+                    </div>
+                    <UIcon name="i-lucide-chevron-right" class="size-4 text-stone-400 flex-shrink-0" />
+                  </button>
+
+                  <!-- Informasi sesi Open Bill -->
+                  <div
+                    v-if="isOpenBill"
+                    class="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl p-3.5"
+                  >
+                    <span class="size-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <UIcon name="i-lucide-info" class="size-4.5 text-blue-500" />
+                    </span>
+                    <p class="text-xs text-blue-600 leading-relaxed font-semibold">
+                      Sesi Open Bill hanya dapat diakhiri saat pembayaran selesai atau oleh kasir &amp; admin.
+                    </p>
+                  </div>
+                </div>
+
+                <!-- Bottom Leave Session Action (Solid Soft Rose) -->
+                <div class="mt-auto pt-8 pb-2">
+                  <button
+                    class="motion-btn w-full bg-rose-600 rounded-xl px-3.5 py-3 text-[13px] font-bold text-white cursor-pointer flex items-center justify-between gap-3 hover:bg-rose-700 active:scale-[0.98] transition-all duration-150"
+                    :aria-label="isOpenBill ? 'Keluar dari sesi open bill ini' : 'Keluar dari sesi meja ini'"
+                    @click="handleExitSession"
+                  >
+                    <div class="flex items-center gap-3">
+                      <span class="size-8 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
+                        <UIcon name="i-lucide-log-out" class="size-4 text-white" />
+                      </span>
+                      <span>Keluar Sesi</span>
+                    </div>
+                    <UIcon name="i-lucide-chevron-right" class="size-4 text-rose-200 flex-shrink-0" />
+                  </button>
+                </div>
+              </div>
+            </template>
+
+            <!-- No Session Area -->
+            <template v-else>
+              <div class="space-y-3">
+                <div class="rounded-xl border border-gray-100 bg-white p-4 flex flex-col gap-3 shadow-sm">
+                  <div class="flex items-center gap-2.5">
+                    <div class="size-9 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
+                      <UIcon name="i-lucide-circle-off" class="size-4 text-gray-400" />
+                    </div>
+                    <div>
+                      <p class="text-[13px] font-extrabold text-gray-700 leading-tight">Belum ada sesi aktif</p>
+                      <p class="text-[11px] text-gray-400 font-medium mt-0.5 leading-snug">
+                        Scan QR meja atau masukkan kode untuk mulai memesan.
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex flex-col gap-1.5">
+                    <button
+                      class="motion-btn w-full bg-gray-900 rounded-lg px-3 py-2.5 text-[12px] font-bold text-white cursor-pointer flex items-center gap-2.5 hover:bg-gray-800 active:scale-[0.98] transition-all duration-150"
+                      @click="handleInlineScan"
+                    >
+                      <UIcon name="i-lucide-scan-line" class="size-3.5 text-orange-400 shrink-0" />
+                      <span>Scan QR Meja</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </template>
           </div>
 
           <!-- ─── Footer ────────────────────────────────────── -->

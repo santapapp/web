@@ -19,16 +19,16 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="flex min-h-11 items-center gap-2 overflow-x-auto pb-1 scrollbar-none flex-shrink-0 -mx-1 px-1">
+  <div class="flex min-h-7 items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none flex-shrink-0 -mx-1 px-1">
     <button
       v-for="category in categories"
       :key="category.id"
       type="button"
-      class="shrink-0 px-4 py-2 rounded-full font-semibold text-[13px] tracking-wide transition-all duration-200 cursor-pointer"
+      class="shrink-0 px-3 py-0.5 rounded-full font-semibold text-[11px] tracking-wide transition-all duration-200 cursor-pointer border"
       :class="[
         activeCategory === category.id
-          ? 'bg-orange-600 text-white shadow-sm shadow-orange-200'
-          : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800'
+          ? 'bg-orange-600 border-orange-600 text-white shadow-sm shadow-orange-500/20'
+          : 'bg-gray-50 border-gray-200/90 text-gray-600 hover:bg-gray-100/80 hover:text-gray-900 hover:border-gray-300'
       ]"
       @click="$emit('change', category.id)"
     >

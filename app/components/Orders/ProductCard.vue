@@ -44,88 +44,96 @@ const handleAction = () => {
 
 <template>
   <article
-    class="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col h-full relative"
+    class="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-350 cursor-pointer flex flex-col group border border-stone-200/10"
     :class="{ 'opacity-75': isUnavailable }"
     @click="handleAction"
   >
-    <!-- Image with fallback warm gradient -->
-    <div class="relative aspect-[4/3] bg-gradient-to-br from-orange-50 via-gray-50 to-gray-100 flex-shrink-0 overflow-hidden">
+    <!-- Background Image / Aesthetic Placeholder -->
+    <div class="absolute inset-0 bg-gradient-to-br from-stone-900 to-stone-950 flex-shrink-0 overflow-hidden">
       <img
         v-if="product.image"
         :src="product.image"
         :alt="product.name"
-        class="w-full h-full object-cover transition-transform duration-500 hover:scale-105 rounded-xl"
+        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         loading="lazy"
       />
-      <div v-else class="w-full h-full flex items-center justify-center bg-transparent">
-        <UIcon name="i-lucide-utensils" class="size-8 text-gray-300" />
+      <!-- Soft gradient F&B placeholder if no image -->
+      <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-orange-950/20 via-stone-900 to-stone-950 p-4">
+        <UIcon name="i-lucide-utensils" class="size-7 text-white/10 mb-1" />
       </div>
-
-      <!-- Badge: Out of stock -->
-      <span
-        v-if="isUnavailable"
-        class="absolute top-2 left-2 bg-gray-800 text-white text-[10px] font-bold px-2 py-0.5 rounded-full"
-      >
-        Habis
-      </span>
-
-      <!-- Badge: Cart quantity (circular, orange/red) -->
-      <span
-        v-if="cartQty && cartQty > 0 && !isUnavailable"
-        class="absolute top-2 right-2 size-6 rounded-full bg-orange-600 text-white text-xs font-bold flex items-center justify-center shadow-md animate-scale-in"
-      >
-        {{ cartQty }}
-      </span>
+      
+      <!-- Gradient overlay for readability -->
+      <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent" />
     </div>
 
-    <!-- Body text and pricing details -->
-    <div class="p-3 flex flex-col gap-1.5 flex-1 justify-between">
+    <!-- Badge: Out of stock -->
+    <span
+      v-if="isUnavailable"
+      class="absolute top-2.5 left-2.5 bg-black/60 backdrop-blur-sm border border-white/10 text-white text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full z-10"
+    >
+      Habis
+    </span>
+
+    <!-- Badge: Cart quantity -->
+    <span
+      v-if="cartQty && cartQty > 0 && !isUnavailable"
+      class="absolute top-2.5 right-2.5 size-6 rounded-full bg-orange-600 text-white text-[11px] font-black flex items-center justify-center shadow-lg border border-white/20 z-10 animate-scale-in"
+    >
+      {{ cartQty }}
+    </span>
+
+    <!-- Overlay Content at bottom -->
+    <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-3.5 flex flex-col justify-end z-10 gap-2 min-h-[50%]">
+      <!-- Title & Description -->
       <div class="flex flex-col gap-0.5">
-        <h4 class="text-sm font-bold text-gray-900 leading-snug line-clamp-2">
+        <h4 class="text-xs sm:text-sm font-black text-white leading-snug line-clamp-2 drop-shadow-sm">
           {{ product.name }}
         </h4>
-        <p v-if="product.description" class="text-xs text-gray-400 leading-relaxed line-clamp-1 font-medium">
+        <p v-if="product.description" class="text-[10px] sm:text-[11px] text-white/70 leading-normal line-clamp-1 font-medium">
           {{ product.description }}
         </p>
       </div>
 
-      <div class="flex items-center justify-between mt-auto pt-2 gap-2">
-        <span class="text-sm font-extrabold text-orange-600 whitespace-nowrap">{{ formatPrice(product.price) }}</span>
+      <!-- Price & Actions Row -->
+      <div class="flex items-center justify-between gap-2 pt-1">
+        <span class="text-xs sm:text-sm font-black text-orange-400 whitespace-nowrap drop-shadow-sm">
+          {{ formatPrice(product.price) }}
+        </span>
 
         <!-- Action Buttons -->
         <div v-if="!isUnavailable && !readOnly" class="flex-shrink-0" @click.stop>
-          <!-- Choose variant button -->
+          <!-- Choose variant button (Glass pill button) -->
           <button
             v-if="hasVariants"
             type="button"
-            class="px-3 py-1.5 rounded-full bg-orange-50 text-orange-600 border border-orange-200 hover:bg-orange-100 font-bold text-xs flex items-center gap-1 transition-all duration-150 cursor-pointer"
+            class="size-8 sm:size-auto sm:px-3 sm:py-1.5 rounded-full bg-orange-500/15 border border-orange-400/35 hover:bg-orange-500/25 text-orange-300 hover:text-orange-200 backdrop-blur-md font-black text-[10px] uppercase tracking-wider flex items-center justify-center sm:justify-start gap-1 transition-all duration-150 cursor-pointer"
             @click="handleAction"
           >
-            <span>Pilih</span>
-            <UIcon name="i-lucide-chevron-right" class="size-3.5" />
+            <span class="hidden sm:inline">Pilih</span>
+            <UIcon name="i-lucide-chevron-right" class="size-4 sm:size-3.5" />
           </button>
 
-          <!-- Stepper for non-variant products -->
+          <!-- Stepper for non-variant products (Glass stepper) -->
           <div
             v-else-if="cartQty && cartQty > 0"
-            class="flex items-center gap-1 bg-gray-50 rounded-full px-1 py-0.5 border border-gray-200 shadow-sm animate-scale-in"
+            class="flex items-center gap-1 bg-black/40 backdrop-blur-md rounded-full px-1 py-0.5 border border-white/10 shadow-sm animate-scale-in"
           >
             <!-- Minus -->
             <button
               type="button"
-              class="size-7 rounded-full text-orange-600 hover:bg-orange-50 active:scale-90 flex items-center justify-center transition-all cursor-pointer"
+              class="size-7 rounded-full text-orange-400 hover:bg-white/10 active:scale-90 flex items-center justify-center transition-all cursor-pointer"
               aria-label="Kurangi"
               @click="emit('decrease', product)"
             >
               <UIcon name="i-lucide-minus" class="size-3.5" />
             </button>
-            <span class="text-xs font-black text-gray-900 w-4 text-center tabular-nums">
+            <span class="text-xs font-black text-white w-4 text-center tabular-nums">
               {{ cartQty }}
             </span>
             <!-- Plus -->
             <button
               type="button"
-              class="size-7 rounded-full text-orange-600 hover:bg-orange-50 active:scale-90 flex items-center justify-center transition-all cursor-pointer"
+              class="size-7 rounded-full text-orange-400 hover:bg-white/10 active:scale-90 flex items-center justify-center transition-all cursor-pointer"
               aria-label="Tambah"
               @click="emit('increase', product)"
             >
@@ -133,11 +141,11 @@ const handleAction = () => {
             </button>
           </div>
 
-          <!-- Add to cart direct button -->
+          <!-- Add to cart direct button (Glass circular button) -->
           <button
             v-else
             type="button"
-            class="size-8 rounded-full bg-orange-600 text-white hover:bg-orange-700 active:scale-95 flex items-center justify-center shadow-sm shadow-orange-200 transition-all duration-150 cursor-pointer"
+            class="size-8 rounded-full bg-orange-500/15 border border-orange-400/35 hover:bg-orange-500/25 text-orange-400 hover:text-orange-300 backdrop-blur-md flex items-center justify-center transition-all duration-150 cursor-pointer"
             :aria-label="`Tambah ${product.name}`"
             @click="handleAction"
           >
