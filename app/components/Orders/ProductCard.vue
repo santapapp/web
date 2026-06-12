@@ -49,7 +49,7 @@ const handleAction = () => {
     @click="handleAction"
   >
     <!-- Background Image / Aesthetic Placeholder -->
-    <div class="absolute inset-0 bg-gradient-to-br from-stone-900 to-stone-950 flex-shrink-0 overflow-hidden">
+    <div class="absolute inset-0 bg-stone-100 flex-shrink-0 overflow-hidden">
       <img
         v-if="product.image"
         :src="product.image"
@@ -57,13 +57,18 @@ const handleAction = () => {
         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         loading="lazy"
       />
-      <!-- Soft gradient F&B placeholder if no image -->
-      <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-orange-950/20 via-stone-900 to-stone-950 p-4">
-        <UIcon name="i-lucide-utensils" class="size-7 text-white/10 mb-1" />
+      <!-- Warm placeholder if no image -->
+      <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-orange-50 via-stone-100 to-stone-200">
+        <UIcon name="i-lucide-utensils" class="size-8 text-stone-300" />
       </div>
-      
-      <!-- Gradient overlay for readability -->
-      <div class="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-transparent" />
+
+      <!-- Gradient overlay for readability — only needed when image present -->
+      <div
+        class="absolute inset-0"
+        :class="product.image
+          ? 'bg-gradient-to-t from-black/90 via-black/40 to-transparent'
+          : 'bg-gradient-to-t from-black/60 via-black/20 to-transparent'"
+      />
     </div>
 
     <!-- Badge: Out of stock -->

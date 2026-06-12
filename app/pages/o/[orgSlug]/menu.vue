@@ -140,67 +140,48 @@ const productDetailCtaDisabled = computed(() => overlay.anyOpen && !overlay.isPr
     />
 
     <template v-else>
+      <!-- Hero Section -->
       <section class="border-b border-gray-100 bg-white">
-        <div class="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-5 sm:px-6 lg:flex-row lg:items-end lg:justify-between lg:px-8">
-          <div class="min-w-0">
-            <NuxtLink
-              :to="outletPath"
-              class="inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-bold text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-900"
-            >
-              <UIcon name="i-lucide-arrow-left" class="size-3.5" />
-              Kembali ke restoran
-            </NuxtLink>
+        <div class="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+          <!-- Back link -->
+          <NuxtLink
+            :to="outletPath"
+            class="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-900 mb-4"
+          >
+            <UIcon name="i-lucide-arrow-left" class="size-3.5" />
+            Kembali ke restoran
+          </NuxtLink>
 
-            <p class="mt-5 text-xs font-extrabold uppercase tracking-wide text-orange-600">Menu lengkap</p>
-            <h1 class="mt-1 text-3xl font-black tracking-tight text-gray-950 sm:text-4xl">
-              {{ org.name }}
-            </h1>
-            <p class="mt-2 max-w-2xl text-sm font-medium leading-relaxed text-gray-500">
-              {{ fullAddress || 'Pilih menu favorit dari katalog restoran.' }}
-            </p>
+          <div class="flex items-start justify-between gap-4">
+            <!-- Left: identity -->
+            <div class="min-w-0 flex-1">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-orange-600 mb-0.5">Menu Lengkap</p>
+              <h1 class="text-2xl font-black tracking-tight text-gray-950 sm:text-3xl leading-none">
+                {{ org.name }}
+              </h1>
+              <p v-if="fullAddress" class="mt-1.5 text-xs font-medium text-gray-400 leading-relaxed">
+                {{ fullAddress }}
+              </p>
 
-            <div class="mt-4 flex flex-wrap items-center gap-2">
-              <UBadge
-                v-if="openingStatus"
-                :label="openingStatus.label"
-                :color="openingStatus.open ? 'success' : 'error'"
-                variant="soft"
-                size="sm"
-                class="rounded-full font-bold"
-              />
-              <UBadge
-                :label="`${totalCount} menu`"
-                color="neutral"
-                variant="soft"
-                size="sm"
-                class="rounded-full font-bold"
-              />
-              <UBadge
-                :label="`${availableCount} tersedia`"
-                color="neutral"
-                variant="soft"
-                size="sm"
-                class="rounded-full font-bold"
-              />
-              <UBadge
-                v-if="realCategories.length"
-                :label="`${realCategories.length} kategori`"
-                color="neutral"
-                variant="soft"
-                size="sm"
-                class="rounded-full font-bold"
-              />
+              <!-- Stats row -->
+              <div class="mt-3 flex flex-wrap items-center gap-1.5">
+                <UBadge
+                  v-if="openingStatus"
+                  :label="openingStatus.label"
+                  :color="openingStatus.open ? 'success' : 'error'"
+                  variant="soft"
+                  size="xs"
+                  class="rounded-full font-semibold"
+                />
+                <span class="text-xs font-semibold text-gray-500">{{ totalCount }} menu</span>
+                <span class="text-gray-300 text-xs">·</span>
+                <span class="text-xs font-semibold text-gray-500">{{ availableCount }} tersedia</span>
+                <template v-if="realCategories.length">
+                  <span class="text-gray-300 text-xs">·</span>
+                  <span class="text-xs font-semibold text-gray-500">{{ realCategories.length }} kategori</span>
+                </template>
+              </div>
             </div>
-          </div>
-
-          <div class="flex flex-col gap-2 sm:flex-row lg:justify-end">
-            <UButton
-              :to="orderPath"
-              color="primary"
-              icon="i-lucide-receipt"
-              label="Mulai Memesan"
-              class="justify-center rounded-full font-bold shadow-md shadow-orange-600/10"
-            />
           </div>
         </div>
       </section>
