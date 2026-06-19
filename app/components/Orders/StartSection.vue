@@ -2,17 +2,12 @@
 /**
  * StartSection.vue
  * Entry state ketika customer belum memiliki sesi aktif.
- *
- * Layout desktop: 2 kolom
- * - Kiri (sticky): Restaurant Info Panel — logo, nama, status, alamat, kontak, deskripsi, quick CTAs
- * - Kanan (scrollable): QR scanner card, manual code input, recent history
- *
- * Layout mobile: satu kolom, info restoran sebagai compact card di atas
  */
 
 import { ref } from 'vue'
 import type { OrderHistoryItem } from '~/types/order-history'
 import type { PublicOrg, OpeningStatus } from '~/types/org'
+import OrgHeroSection from '~/components/org/OrgHeroSection.vue'
 
 const props = defineProps<{
   sessionError?: string | null
@@ -42,147 +37,21 @@ const submitManualCode = () => {
   }
   emit('submit-manual', trimmed)
 }
-
-// Initials fallback untuk logo
-const initials = computed(() => {
-  if (!props.org?.name) return 'R'
-  return props.org.name
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join('')
-    .toUpperCase()
-})
-
-// Status warna
-const statusDotClass = computed(() => {
-  if (!props.openingStatus) return 'bg-gray-300'
-  return props.openingStatus.open ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'
-})
 </script>
 
 <template>
-  <div class="flex-1 bg-gray-50 px-4 py-6 lg:py-10 min-h-[calc(100dvh-56px)] lg:min-h-[calc(100dvh-64px)]">
-    <div class="w-full max-w-5xl mx-auto lg:grid lg:grid-cols-12 lg:gap-8 lg:items-start">
+  <div class="flex-1 flex flex-col bg-gray-50 min-h-[calc(100dvh-56px)] lg:min-h-[calc(100dvh-64px)]">
+    <!-- Hero Section matching Index page -->
+    <OrgHeroSection
+      v-if="org"
+      :org="org"
+      :opening-status="openingStatus ?? null"
+      :full-address="fullAddress"
+    />
 
-      <!-- ════════════════════════════════════════════════════════════
-           LEFT COLUMN — Restaurant Info Panel (sticky on desktop)
-           ════════════════════════════════════════════════════════════ -->
-      <aside class="lg:col-span-5 lg:sticky lg:top-[88px] lg:self-start mb-6 lg:mb-0">
-        <div class="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden motion-card hover:shadow-md">
-
-          <!-- Loading skeleton saat org belum tersedia -->
-          <template v-if="!org && !orgSlug">
-            <div class="p-5 flex flex-col gap-3">
-              <div class="flex items-center gap-3">
-                <div class="size-14 rounded-xl bg-gray-100 animate-pulse shrink-0" />
-                <div class="flex-1 space-y-2">
-                  <div class="h-4 bg-gray-100 rounded animate-pulse w-3/4" />
-                  <div class="h-3 bg-gray-100 rounded animate-pulse w-1/2" />
-                </div>
-              </div>
-              <div class="h-3 bg-gray-100 rounded animate-pulse" />
-              <div class="h-3 bg-gray-100 rounded animate-pulse w-5/6" />
-            </div>
-          </template>
-
-          <template v-else>
-            <!-- Header area: logo + nama + slug -->
-            <div class="p-5 pb-4 flex items-start gap-4 border-b border-gray-50">
-              <!-- Logo / Avatar -->
-              <div class="size-14 rounded-xl overflow-hidden flex-shrink-0 bg-orange-50 border border-orange-100/60 flex items-center justify-center shadow-sm">
-                <img
-                  v-if="org?.logo"
-                  :src="org.logo"
-                  :alt="org?.name"
-                  class="w-full h-full object-cover"
-                />
-                <span v-else class="text-xl font-black text-orange-600 select-none">{{ initials }}</span>
-              </div>
-
-              <!-- Name + status -->
-              <div class="flex-1 min-w-0 pt-0.5">
-                <h1 class="text-base font-extrabold text-gray-900 leading-snug line-clamp-2">
-                  {{ org?.name || 'Restoran' }}
-                </h1>
-
-                <!-- Status badge -->
-                <div v-if="openingStatus" class="mt-2 flex items-center gap-1.5 w-fit">
-                  <span class="size-1.5 rounded-full flex-shrink-0" :class="statusDotClass" />
-                  <span class="text-xs font-bold" :class="openingStatus.open ? 'text-emerald-700' : 'text-rose-600'">
-                    {{ openingStatus.label }}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Info rows -->
-            <div class="px-5 py-4 flex flex-col gap-3">
-
-              <!-- Deskripsi -->
-              <p
-                v-if="org?.description"
-                class="text-xs text-gray-500 leading-relaxed font-medium"
-              >
-                {{ org.description }}
-              </p>
-
-              <!-- Telepon -->
-              <a
-                v-if="org?.phone"
-                :href="`tel:${org.phone}`"
-                class="flex items-center gap-2.5 group"
-              >
-                <span class="size-7 rounded-lg bg-orange-50 border border-orange-100/60 flex items-center justify-center shrink-0 transition-colors duration-200 group-hover:bg-orange-100">
-                  <UIcon name="i-lucide-phone" class="size-3.5 text-orange-600" />
-                </span>
-                <span class="text-xs text-gray-600 font-semibold group-hover:text-orange-700 transition-colors duration-200">
-                  {{ org.phone }}
-                </span>
-              </a>
-
-              <!-- Email -->
-              <a
-                v-if="org?.email"
-                :href="`mailto:${org.email}`"
-                class="flex items-center gap-2.5 group"
-              >
-                <span class="size-7 rounded-lg bg-orange-50 border border-orange-100/60 flex items-center justify-center shrink-0 transition-colors duration-200 group-hover:bg-orange-100">
-                  <UIcon name="i-lucide-mail" class="size-3.5 text-orange-600" />
-                </span>
-                <span class="text-xs text-gray-600 font-semibold group-hover:text-orange-700 transition-colors duration-200 truncate">
-                  {{ org.email }}
-                </span>
-              </a>
-
-              <!-- Mata uang / Pajak -->
-              <div class="flex items-center gap-2.5">
-                <span class="size-7 rounded-lg bg-orange-50 border border-orange-100/60 flex items-center justify-center shrink-0">
-                  <UIcon name="i-lucide-receipt-text" class="size-3.5 text-orange-600" />
-                </span>
-                <div class="flex flex-wrap items-center gap-1.5 text-xs text-gray-500 font-medium">
-                  <span>{{ org?.currency || 'IDR' }}</span>
-                  <template v-if="org?.tax_enabled">
-                    <span class="text-gray-300">·</span>
-                    <span>PPN {{ org.tax_rate }}%</span>
-                  </template>
-                  <template v-if="org?.service_charge_enabled">
-                    <span class="text-gray-300">·</span>
-                    <span>Layanan {{ org.service_charge_rate }}%</span>
-                  </template>
-                </div>
-              </div>
-            </div>
-          </template>
-        </div>
-      </aside>
-
-      <!-- ════════════════════════════════════════════════════════════
-           RIGHT COLUMN — Action cards + history
-           ════════════════════════════════════════════════════════════ -->
-      <div class="lg:col-span-7 flex flex-col gap-4">
-
+    <!-- Main Content Area below the Hero -->
+    <div class="mx-auto w-full max-w-2xl px-5 sm:px-6 lg:px-8 py-6">
+      <div class="flex flex-col gap-5">
         <!-- Error Alert -->
         <Transition
           enter-active-class="transition-all duration-300 ease-out"
@@ -327,7 +196,6 @@ const statusDotClass = computed(() => {
           />
         </Transition>
       </div>
-
     </div>
   </div>
 </template>

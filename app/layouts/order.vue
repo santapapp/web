@@ -24,7 +24,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-dvh bg-gray-50">
+  <div class="min-h-dvh bg-gray-50 customer-ordering-layout">
     <OrgHeader />
 
     <!-- Slideover kiri: Menu Sesi -->

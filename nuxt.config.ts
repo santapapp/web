@@ -18,6 +18,10 @@ export default defineNuxtConfig({
       // Default production menunjuk ke API publik Santap.
       apiBaseUrl: "https://api.santap.app",
       useMockApi: false,
+      reverbAppKey: process.env.NUXT_PUBLIC_REVERB_APP_KEY || process.env.VITE_REVERB_APP_KEY || process.env.REVERB_APP_KEY || "",
+      reverbHost: process.env.NUXT_PUBLIC_REVERB_HOST || process.env.VITE_REVERB_HOST || process.env.REVERB_HOST || "",
+      reverbPort: process.env.NUXT_PUBLIC_REVERB_PORT || process.env.VITE_REVERB_PORT || process.env.REVERB_PORT || "",
+      reverbScheme: process.env.NUXT_PUBLIC_REVERB_SCHEME || process.env.VITE_REVERB_SCHEME || process.env.REVERB_SCHEME || "https",
     },
   },
   // Konfigurasi site — dipakai oleh @nuxtjs/seo (nuxt-site-config) sebagai default

@@ -230,21 +230,12 @@ const handleAddToCart = () => {
     <Transition name="slide-up">
       <section
         v-if="open && product"
-        class="fixed inset-0 z-[60] flex h-[100dvh] w-full items-end justify-center overflow-hidden bg-black/35 backdrop-blur-xs sm:items-center lg:justify-end"
+        class="fixed inset-0 z-[60] flex h-[100dvh] w-full items-end justify-center overflow-hidden bg-black/35 backdrop-blur-xs sm:items-center customer-ordering-layout"
+        @click.self="emit('close')"
       >
-        <div class="relative flex h-[92dvh] max-h-[860px] w-full max-w-lg flex-col overflow-hidden rounded-t-[28px] bg-gray-50 shadow-2xl outline-none sm:h-[88dvh] sm:rounded-[28px] md:max-w-xl lg:h-full lg:max-h-none lg:rounded-none lg:rounded-l-[28px]">
+        <div class="relative flex h-[92dvh] max-h-[860px] w-full max-w-lg flex-col overflow-hidden rounded-t-[28px] bg-gray-50 shadow-2xl outline-none sm:h-[88dvh] sm:rounded-[28px] md:max-w-xl">
           <!-- Header (flex-none) -->
-          <header class="flex-none bg-white border-b border-gray-100 flex items-center justify-between gap-2 px-4 py-3">
-            <!-- Back Button -->
-            <button
-              type="button"
-              class="size-10 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-100 active:scale-90 transition-all duration-150 cursor-pointer"
-              aria-label="Kembali"
-              @click="emit('close')"
-            >
-              <UIcon name="i-lucide-arrow-left" class="size-5" />
-            </button>
-
+          <header class="flex-none bg-white border-b border-gray-100 flex items-center justify-center gap-2 px-4 py-3">
             <!-- Title & Subtitle -->
             <div class="flex flex-col items-center text-center min-w-0">
               <h2 class="text-sm font-bold text-gray-900 leading-none truncate max-w-[220px]">
@@ -254,14 +245,10 @@ const handleAddToCart = () => {
                 {{ formatPrice(product.price) }}
               </span>
             </div>
-
-            <!-- Spacer -->
-            <span class="size-10 shrink-0" aria-hidden="true" />
           </header>
 
           <!-- Content (flex-1 overflow-y-auto) -->
-          <main class="min-h-0 flex-1 overflow-y-auto px-4 pt-4 pb-12 space-y-4">
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-5">
+          <main class="min-h-0 flex-1 overflow-y-auto px-6 py-6 space-y-6">
               <!-- Product Image (centered) -->
               <div class="flex justify-center">
                 <div class="size-40 sm:size-44 rounded-2xl overflow-hidden flex items-center justify-center border border-gray-100 bg-gray-50 shrink-0">
@@ -346,7 +333,6 @@ const handleAddToCart = () => {
                   }"
                 />
               </div>
-            </div>
           </main>
 
           <!-- Footer (flex-none) -->

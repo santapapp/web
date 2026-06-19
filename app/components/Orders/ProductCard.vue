@@ -107,15 +107,15 @@ const handleAction = () => {
 
         <!-- Action Buttons -->
         <div v-if="!isUnavailable && !readOnly" class="flex-shrink-0" @click.stop>
-          <!-- Choose variant button (Glass pill button) -->
+          <!-- Choose variant button (Solid gradient button) -->
           <button
             v-if="hasVariants"
             type="button"
-            class="size-8 sm:size-auto sm:px-3 sm:py-1.5 rounded-full bg-orange-500/15 border border-orange-400/35 hover:bg-orange-500/25 text-orange-300 hover:text-orange-200 backdrop-blur-md font-black text-[10px] uppercase tracking-wider flex items-center justify-center sm:justify-start gap-1 transition-all duration-150 cursor-pointer"
+            class="size-8 sm:size-auto sm:px-3.5 sm:py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-black text-[10px] uppercase tracking-wider flex items-center justify-center sm:justify-start gap-1 transition-all duration-150 cursor-pointer shadow-md shadow-orange-950/20"
             @click="handleAction"
           >
             <span class="hidden sm:inline">Pilih</span>
-            <UIcon name="i-lucide-chevron-right" class="size-4 sm:size-3.5" />
+            <UIcon name="i-lucide-chevron-right" class="size-4 sm:size-3.5 text-white" />
           </button>
 
           <!-- Stepper for non-variant products (Glass stepper) -->
@@ -146,15 +146,15 @@ const handleAction = () => {
             </button>
           </div>
 
-          <!-- Add to cart direct button (Glass circular button) -->
+          <!-- Add to cart direct button (Solid gradient button) -->
           <button
             v-else
             type="button"
-            class="size-8 rounded-full bg-orange-500/15 border border-orange-400/35 hover:bg-orange-500/25 text-orange-400 hover:text-orange-300 backdrop-blur-md flex items-center justify-center transition-all duration-150 cursor-pointer"
+            class="size-8 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white flex items-center justify-center transition-all duration-150 cursor-pointer shadow-md shadow-orange-950/20"
             :aria-label="`Tambah ${product.name}`"
             @click="handleAction"
           >
-            <UIcon name="i-lucide-plus" class="size-4" />
+            <UIcon name="i-lucide-plus" class="size-4 text-white" />
           </button>
         </div>
       </div>

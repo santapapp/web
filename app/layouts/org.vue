@@ -21,7 +21,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="org-shell">
+  <div class="org-shell customer-ordering-layout">
     <!-- Header -->
     <OrgHeader />
 

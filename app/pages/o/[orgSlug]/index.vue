@@ -30,6 +30,7 @@ const {
   loadForOrgSlug
 } = useOrderMenu()
 
+const pageLoading = computed(() => isLoading.value || menuPending.value)
 const loadedMenuSlug = ref('')
 
 watch(
@@ -55,7 +56,7 @@ useOutletSeo(orgSlug, {
 <template>
   <div class="min-h-dvh bg-gray-50">
     <!-- Loading skeleton -->
-    <div v-if="isLoading" class="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
+    <div v-if="pageLoading" class="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
       <USkeleton class="h-64 w-full rounded-lg" />
       <div class="mt-5 grid gap-3 sm:grid-cols-3">
         <USkeleton v-for="n in 3" :key="n" class="h-28 rounded-lg" />

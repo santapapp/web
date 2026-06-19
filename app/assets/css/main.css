@@ -577,3 +577,25 @@ p {
   z-index: 45 !important; /* Di atas header (z-40) tetapi di bawah panel (z-50) */
 }
 
+/* ── Customer Ordering Layout Overrides ─────────────────── */
+.customer-ordering-layout h1,
+.customer-ordering-layout h2,
+.customer-ordering-layout h3,
+.customer-ordering-layout h4,
+.customer-ordering-layout h5,
+.customer-ordering-layout h6,
+[role="dialog"] h1,
+[role="dialog"] h2,
+[role="dialog"] h3,
+[role="dialog"] h4,
+[role="dialog"] h5,
+[role="dialog"] h6,
+[role="alertdialog"] h1,
+[role="alertdialog"] h2,
+[role="alertdialog"] h3,
+[role="alertdialog"] h4,
+[role="alertdialog"] h5,
+[role="alertdialog"] h6 {
+  font-family: var(--font-body) !important;
+}
+

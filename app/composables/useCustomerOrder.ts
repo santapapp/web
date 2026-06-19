@@ -325,7 +325,7 @@ function mapOrderResponse(raw: any): CustomerOrderDetail {
 /**
  * Memetakan item dari OrderItemResource ke CustomerOrderItem.
  */
-function mapOrderItem(raw: any): CustomerOrderItem {
+export function mapOrderItem(raw: any): CustomerOrderItem {
   return {
     id: raw.id,
     parent_item_id: raw.parent_item_id ?? null,

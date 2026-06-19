@@ -14,7 +14,7 @@ defineProps<{
 </script>
 
 <template>
-  <section class="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8 pt-5">
+  <section v-if="org.tax_enabled || org.service_charge_enabled" class="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8 pt-5">
     <!-- Transaction info card -->
     <div class="rounded-2xl border border-stone-200/60 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-300">
       <div class="flex items-start gap-4">
@@ -24,11 +24,10 @@ defineProps<{
         </div>
         <div>
           <p class="text-sm font-bold text-stone-900">Informasi Transaksi</p>
-          <p class="mt-1.5 text-xs sm:text-sm leading-relaxed text-stone-600 font-semibold">
-            Mata Uang: <span class="text-stone-950 font-bold">{{ org.currency || 'IDR' }}</span>
-            <span v-if="org.tax_enabled" class="block mt-0.5 text-stone-500 font-normal">Pajak Restoran: <strong class="text-stone-950 font-bold">{{ org.tax_rate }}%</strong></span>
-            <span v-if="org.service_charge_enabled" class="block mt-0.5 text-stone-500 font-normal">Biaya Layanan: <strong class="text-stone-950 font-bold">{{ org.service_charge_rate }}%</strong></span>
-          </p>
+          <div class="mt-1.5 text-xs sm:text-sm leading-relaxed text-stone-500 font-normal space-y-0.5">
+            <span v-if="org.tax_enabled" class="block">Pajak Restoran: <strong class="text-stone-950 font-bold">{{ org.tax_rate }}%</strong></span>
+            <span v-if="org.service_charge_enabled" class="block">Biaya Layanan: <strong class="text-stone-950 font-bold">{{ org.service_charge_rate }}%</strong></span>
+          </div>
         </div>
       </div>
     </div>

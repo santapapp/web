@@ -62,55 +62,41 @@ const isSelected = (variantId: number) => props.selectedIds.includes(variantId)
     </div>
 
     <!-- Options -->
-    <ul class="space-y-0.5">
+    <ul class="space-y-2">
       <li v-for="variant in group.variants" :key="variant.id">
         <button
           type="button"
-          class="w-full flex items-center justify-between gap-3 px-2 py-2.5 rounded-xl text-left transition-colors duration-150"
+          class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl text-left border transition-all duration-150"
           :class="[
             variant.is_available
-              ? 'hover:bg-orange-50/50 cursor-pointer'
-              : 'opacity-40 cursor-not-allowed'
+              ? (isSelected(variant.id)
+                  ? 'border-orange-500 bg-orange-50/50 text-orange-950 font-bold shadow-xs'
+                  : 'border-stone-200 bg-white text-stone-700 font-medium hover:bg-stone-50')
+              : 'opacity-40 cursor-not-allowed border-stone-100 bg-stone-50'
           ]"
           :disabled="!variant.is_available"
           @click="variant.is_available && emit('toggle', variant.id)"
         >
-          <!-- Left: name + extra price badge -->
-          <span class="flex items-center gap-2 min-w-0">
-            <span
-              class="text-sm truncate"
-              :class="isSelected(variant.id) ? 'font-bold text-gray-900' : 'font-medium text-gray-700'"
-            >
-              {{ variant.name }}
-            </span>
+          <!-- Left: name -->
+          <span class="text-sm truncate">
+            {{ variant.name }}
+          </span>
+
+          <!-- Right: price -->
+          <div class="flex items-center gap-2 shrink-0">
             <span
               v-if="variant.price > 0"
-              class="text-[11px] font-bold text-orange-600 bg-orange-50/70 border border-orange-100/80 px-2 py-0.5 rounded-lg whitespace-nowrap"
+              class="text-xs font-bold"
+              :class="isSelected(variant.id) ? 'text-orange-600' : 'text-stone-500'"
             >
               + {{ formatPrice(variant.price) }}
             </span>
-          </span>
-
-          <!-- Right: circular radio / checkbox indicator -->
-          <span
-            class="flex-shrink-0 size-5 flex items-center justify-center border transition-all duration-150"
-            :class="[
-              isRadio ? 'rounded-full' : 'rounded-md',
-              isSelected(variant.id)
-                ? 'border-orange-600 bg-orange-600 text-white'
-                : 'border-gray-300 bg-white'
-            ]"
-          >
-            <span
-              v-if="isSelected(variant.id) && isRadio"
-              class="size-1.5 rounded-full bg-white"
-            />
             <UIcon
-              v-else-if="isSelected(variant.id) && !isRadio"
+              v-if="isSelected(variant.id)"
               name="i-lucide-check"
-              class="size-3.5 text-white"
+              class="size-4 text-orange-600"
             />
-          </span>
+          </div>
         </button>
       </li>
     </ul>

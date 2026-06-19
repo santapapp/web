@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import type { CartMode } from '~/stores/cart.store'
 import { parseQrInput } from '~/composables/useCustomerSession'
+import { mapOrderItem } from '~/composables/useCustomerOrder'
+import { useEcho } from '~/composables/useEcho'
 
 definePageMeta({
   layout: 'order',
@@ -233,9 +235,10 @@ const startOpenBillPoll = () => {
 onUnmounted(() => {
   stopTrackingPoll()
   stopOpenBillPoll()
+  disconnectEcho()
 })
 
-const loadOrderingUi = async () => {
+const loadOrderingUi = async (isNewSession = false) => {
   isSessionReady.value = true
   sessionError.value = null
 
@@ -264,9 +267,11 @@ const loadOrderingUi = async () => {
   if (isOpenBill.value) {
     startOpenBillPoll()
   }
+
+  triggerWelcome(isNewSession)
 }
 
-const startSessionFromToken = async (token: string, shouldClearQuery = false) => {
+const startSessionFromToken = async (token: string, shouldClearQuery = false, isNewSession = false) => {
   sessionLoading.value = true
   sessionError.value = null
   isSessionReady.value = false
@@ -286,7 +291,7 @@ const startSessionFromToken = async (token: string, shouldClearQuery = false) =>
     return
   }
 
-  await loadOrderingUi()
+  await loadOrderingUi(isNewSession)
   sessionLoading.value = false
 
   if (shouldClearQuery) {
@@ -404,7 +409,7 @@ watch(
 )
 
 const handleManualSubmit = (code: string) => {
-  startSessionFromToken(code)
+  startSessionFromToken(code, false, true)
 }
 
 const handleScanToken = async (rawInput: string) => {
@@ -440,7 +445,7 @@ const handleScanToken = async (rawInput: string) => {
       return
     }
 
-    await loadOrderingUi()
+    await loadOrderingUi(true)
     sessionLoading.value = false
     return
   }
@@ -452,7 +457,7 @@ const handleScanToken = async (rawInput: string) => {
   }
 
   // Table order QR — flow lama
-  startSessionFromToken(rawInput)
+  startSessionFromToken(rawInput, false, true)
 }
 
 const handleIncrease = (product: any) => {
@@ -469,6 +474,98 @@ const handleDecrease = (product: any) => {
   } else {
     cart.updateQuantityById(item.id, item.quantity - 1)
   }
+}
+
+// ── Real-Time Echo Integration ──
+const { initEcho, disconnectEcho } = useEcho()
+
+watch(
+  [() => isOpenBill.value, () => order.value?.id],
+  ([isBill, id]) => {
+    if (!import.meta.client) return
+
+    // Clean up any existing Echo connection
+    disconnectEcho()
+
+    if (isBill && id) {
+      const publicToken = customerSession.sessionToken.value || order.value?.public_token
+      if (!publicToken) return
+
+      const billId = order.value?.order_id || id
+
+      // Initialize Echo with the current customer's public token
+      const echo = initEcho(publicToken)
+      if (!echo) return
+
+      // Subscribe to private channel and listen for repeat orders
+      echo.private(`open-bill.${billId}`)
+        .listen('.repeat-order-created', (payload: any) => {
+          console.log('Real-time Open Bill Repeat Order Created:', payload)
+          if (!order.value) return
+
+          // Update total amount and bill status
+          if (payload.orderTotal !== undefined || payload.order_total !== undefined) {
+            order.value.total_amount = Number(payload.orderTotal ?? payload.order_total)
+          }
+          if (payload.billStatus || payload.bill_status) {
+            order.value.bill_status = payload.billStatus || payload.bill_status
+          }
+
+          // Append items from the new batch (mapping them appropriately)
+          if (Array.isArray(payload.items) && payload.items.length > 0) {
+            const mappedItems = payload.items.map(mapOrderItem)
+
+            // Avoid adding duplicates (just in case)
+            const existingIds = new Set(order.value.items.map(i => i.id))
+            const newItems = mappedItems.filter((item: any) => !existingIds.has(item.id))
+            
+            order.value.items = [...order.value.items, ...newItems]
+
+            // Recalculate subtotal amount based on all items
+            order.value.subtotal_amount = order.value.items.reduce((sum: number, item: any) => sum + item.subtotal, 0)
+          }
+
+          // Sync the updated bill details to the customer session store
+          const sessionStore = useCustomerSessionStore()
+          if (sessionStore.sessionType === 'open_bill' && sessionStore.openBill) {
+            const rawStatus = order.value.bill_status as string
+            const status: 'open' | 'closed' | 'locked' =
+              rawStatus === 'locked' ? 'locked' :
+              (['closed', 'cancelled', 'failed', 'paid', 'expired'].includes(rawStatus) ? 'closed' : 'open')
+
+            sessionStore.setOpenBill({
+              id: String(order.value.id ?? order.value.public_token ?? sessionStore.sessionToken ?? ''),
+              bill_number: String(order.value.order_number ?? '-'),
+              status,
+              total_amount: Number(order.value.total_amount ?? 0)
+            })
+          }
+        })
+    }
+  },
+  { immediate: true }
+)
+
+// ── Welcome Screen Handlers ──
+const showWelcomeModal = ref(false)
+const sessionToken = computed(() => customerSession.sessionToken.value || '')
+const welcomeShownKey = computed(() => `welcome_shown_${orgSlug.value}_${sessionToken.value}`)
+
+const triggerWelcome = (force = false) => {
+  if (!import.meta.client) return
+  if (force && sessionToken.value) {
+    sessionStorage.removeItem(welcomeShownKey.value)
+  }
+  if (sessionToken.value && !sessionStorage.getItem(welcomeShownKey.value)) {
+    showWelcomeModal.value = true
+  }
+}
+
+const handleWelcomeConfirm = () => {
+  if (import.meta.client) {
+    sessionStorage.setItem(welcomeShownKey.value, 'true')
+  }
+  showWelcomeModal.value = false
 }
 
 // ── Sesi Exit Handlers ──
@@ -581,31 +678,35 @@ const handleCancelExit = () => {
             <!-- Banner table session: ganti meja & keluar sesi -->
             <div
               v-else-if="tableLabel"
-              class="px-4 py-3 bg-stone-50 border-b border-stone-200/60 flex items-center justify-between gap-3 shadow-none"
+              class="px-4 py-3 bg-gradient-to-r from-orange-600 to-orange-500 border-b border-orange-600/30 flex items-center justify-between gap-3 shadow-xs"
             >
-              <div class="flex items-center gap-2 min-w-0">
-                <span class="size-6 rounded-full bg-stone-100 border border-stone-200 flex items-center justify-center shrink-0">
-                  <UIcon name="i-lucide-armchair" class="size-3.5 text-stone-600" />
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="size-6 rounded-full bg-white/15 border border-white/10 flex items-center justify-center shrink-0">
+                  <UIcon name="i-lucide-armchair" class="size-3.5 text-white" />
                 </span>
-                <span class="text-xs font-extrabold text-stone-800 truncate">
+                <span class="text-xs font-black text-white truncate drop-shadow-xs">
                   {{ tableLabel.toLowerCase().includes('meja') ? tableLabel : 'Meja ' + tableLabel }}
                 </span>
               </div>
-              <div class="flex items-center gap-3 shrink-0">
+              <div class="flex items-center gap-1.5 shrink-0">
                 <button
                   type="button"
-                  class="text-xs font-bold text-stone-600 hover:text-stone-850 underline underline-offset-2 cursor-pointer"
+                  class="size-8 rounded-full flex items-center justify-center text-white hover:bg-white/15 active:scale-95 transition-all duration-150 cursor-pointer"
+                  aria-label="Ganti Meja"
+                  title="Ganti Meja"
                   @click="overlay.open('scanner')"
                 >
-                  Ganti Meja
+                  <UIcon name="i-lucide-qr-code" class="size-4.5 text-white" />
                 </button>
-                <span class="h-3 w-px bg-stone-300" />
+                <span class="h-4 w-px bg-white/20" />
                 <button
                   type="button"
-                  class="text-xs font-bold text-rose-600 hover:text-rose-800 underline underline-offset-2 cursor-pointer"
+                  class="size-8 rounded-full flex items-center justify-center text-white hover:bg-white/15 hover:text-rose-200 active:scale-95 transition-all duration-150 cursor-pointer"
+                  aria-label="Keluar Sesi"
+                  title="Keluar Sesi"
                   @click="handleExitSession"
                 >
-                  Keluar Sesi
+                  <UIcon name="i-lucide-log-out" class="size-4.5" />
                 </button>
               </div>
             </div>
@@ -682,5 +783,16 @@ const handleCancelExit = () => {
       @confirm="handleConfirmExit"
       @cancel="handleCancelExit"
     />
+
+    <Teleport to="body">
+      <OrdersWelcomeModal
+        :open="showWelcomeModal"
+        :org-name="org?.name || ''"
+        :org-logo="org?.logo"
+        :table-name="tableLabel"
+        :session-type="isOpenBill ? 'open_bill' : 'table_order'"
+        @confirm="handleWelcomeConfirm"
+      />
+    </Teleport>
   </div>
 </template>

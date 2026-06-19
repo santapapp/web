@@ -220,89 +220,90 @@ const billStatusConfigClass = computed(() => {
           </div>
 
           <!-- ─── Body ──────────────────────────────────────── -->
-          <div class="flex-1 p-4 overflow-y-auto flex flex-col">
+          <div class="flex-1 flex flex-col overflow-hidden bg-white">
             <!-- Active Session Area -->
             <template v-if="session.hasSession.value">
-              <div class="flex-1 flex flex-col justify-between min-h-0">
-                <div class="space-y-3">
-                  <!-- Session Info Card (only for Table Order) -->
-                  <SessionInfoCard v-if="!isOpenBill" />
+              <div class="flex-1 flex flex-col min-h-0">
+                <!-- Scrolling unified flat menu list -->
+                <div class="flex-1 overflow-y-auto divide-y divide-gray-100 border-b border-gray-100 bg-white">
+                  <!-- Row 1: Session Info / Table Number (Static Row) -->
+                  <div class="flex items-center gap-3.5 px-5 py-4 bg-gray-50/30">
+                    <div class="size-8 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center shrink-0">
+                      <UIcon
+                        :name="isOpenBill ? 'i-lucide-receipt' : 'i-lucide-armchair'"
+                        class="size-4 text-orange-600"
+                      />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-[10px] text-gray-400 font-extrabold uppercase tracking-wider leading-none mb-1">
+                        {{ isOpenBill ? 'Nomor Bill' : 'Nomor Meja' }}
+                      </p>
+                      <p class="text-sm font-black text-gray-900 leading-tight">
+                        {{ session.sessionLabel.value }}
+                      </p>
+                    </div>
+                    <!-- Status Badge -->
+                    <div class="shrink-0">
+                      <span class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-100">
+                        Aktif
+                      </span>
+                    </div>
+                  </div>
 
-                  <!-- Lihat Keranjang (Solid Light Neutral) -->
+                  <!-- Row 2: Lihat Keranjang (Clickable Row) -->
                   <button
-                    class="motion-btn w-full bg-stone-100 rounded-xl px-3.5 py-3 text-[13px] font-semibold text-stone-800 cursor-pointer flex items-center justify-between gap-3 hover:bg-stone-200/85 transition-all duration-150"
-                    aria-label="Lihat keranjang belanja"
+                    type="button"
+                    class="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-gray-50 active:bg-gray-100 transition-colors duration-150 cursor-pointer"
                     @click="handleOpenCart"
                   >
-                    <div class="flex items-center gap-3">
-                      <span class="size-8 rounded-lg bg-orange-100 flex items-center justify-center flex-shrink-0">
-                        <UIcon name="i-lucide-shopping-bag" class="size-4 text-orange-600" />
-                      </span>
-                      <span>Lihat Keranjang</span>
+                    <div class="flex items-center gap-3.5">
+                      <UIcon name="i-lucide-shopping-bag" class="size-5 text-gray-400" />
+                      <span class="text-sm font-extrabold text-gray-800">Lihat Keranjang</span>
                     </div>
-                    <UIcon name="i-lucide-chevron-right" class="size-4 text-stone-400 flex-shrink-0" />
+                    <UIcon name="i-lucide-chevron-right" class="size-4.5 text-gray-300" />
                   </button>
 
-                  <!-- Buka Pesanan Saya (Primary Action - Solid Orange) -->
+                  <!-- Row 3: Buka Pesanan Saya (Clickable Row) -->
                   <button
                     v-if="shouldShowOrdersBtn"
-                    class="motion-btn w-full bg-orange-600 border border-orange-600 rounded-xl px-3.5 py-2.5 text-[13px] font-semibold text-white cursor-pointer flex items-center justify-between gap-3 hover:bg-orange-700 active:scale-[0.98] transition-all duration-150 shadow-sm"
-                    aria-label="Buka pesanan saya"
+                    type="button"
+                    class="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-gray-50 active:bg-gray-100 transition-colors duration-150 cursor-pointer"
                     @click="openOrders"
                   >
-                    <div class="flex items-center gap-3">
-                      <span class="size-8 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
-                        <UIcon name="i-lucide-clipboard-list" class="size-4 text-white" />
-                      </span>
-                      <span>Buka Pesanan Saya</span>
+                    <div class="flex items-center gap-3.5">
+                      <UIcon name="i-lucide-clipboard-list" class="size-5 text-gray-400" />
+                      <span class="text-sm font-extrabold text-gray-800">Buka Pesanan Saya</span>
                     </div>
-                    <UIcon name="i-lucide-chevron-right" class="size-4 text-white/70 flex-shrink-0" />
+                    <UIcon name="i-lucide-chevron-right" class="size-4.5 text-gray-300" />
                   </button>
 
-                  <!-- Ganti Meja (Table order only - Solid Light Neutral) -->
+                  <!-- Row 4: Ganti Meja (Clickable Row, Table Order only) -->
                   <button
                     v-if="session.sessionMode.value === 'table'"
-                    class="motion-btn w-full bg-stone-100 rounded-xl px-3.5 py-3 text-[13px] font-semibold text-stone-800 cursor-pointer flex items-center justify-between gap-3 hover:bg-stone-200/85 transition-all duration-150"
-                    aria-label="Ganti meja dengan scan QR baru"
+                    type="button"
+                    class="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-gray-50 active:bg-gray-100 transition-colors duration-150 cursor-pointer"
                     @click="handleScanCode"
                   >
-                    <div class="flex items-center gap-3">
-                      <span class="size-8 rounded-lg bg-slate-200 flex items-center justify-center flex-shrink-0">
-                        <UIcon name="i-lucide-scan-line" class="size-4 text-slate-600" />
-                      </span>
-                      <span>Ganti Meja</span>
+                    <div class="flex items-center gap-3.5">
+                      <UIcon name="i-lucide-scan-line" class="size-5 text-gray-400" />
+                      <span class="text-sm font-extrabold text-gray-800">Ganti Meja</span>
                     </div>
-                    <UIcon name="i-lucide-chevron-right" class="size-4 text-stone-400 flex-shrink-0" />
+                    <UIcon name="i-lucide-chevron-right" class="size-4.5 text-gray-300" />
                   </button>
-
-                  <!-- Informasi sesi Open Bill -->
-                  <div
-                    v-if="isOpenBill"
-                    class="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl p-3.5"
-                  >
-                    <span class="size-8 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <UIcon name="i-lucide-info" class="size-4.5 text-blue-500" />
-                    </span>
-                    <p class="text-xs text-blue-600 leading-relaxed font-semibold">
-                      Sesi Open Bill hanya dapat diakhiri saat pembayaran selesai atau oleh kasir &amp; admin.
-                    </p>
-                  </div>
                 </div>
 
-                <!-- Bottom Leave Session Action (Solid Soft Rose) -->
-                <div class="mt-auto pt-8 pb-2">
+                <!-- Pinned Bottom Exit Row (Sticky) -->
+                <div class="flex-shrink-0 border-t border-gray-100 bg-white">
                   <button
-                    class="motion-btn w-full bg-rose-600 rounded-xl px-3.5 py-3 text-[13px] font-bold text-white cursor-pointer flex items-center justify-between gap-3 hover:bg-rose-700 active:scale-[0.98] transition-all duration-150"
-                    :aria-label="isOpenBill ? 'Keluar dari sesi open bill ini' : 'Keluar dari sesi meja ini'"
+                    type="button"
+                    class="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-rose-50/45 active:bg-rose-100/45 transition-colors duration-150 cursor-pointer"
                     @click="handleExitSession"
                   >
-                    <div class="flex items-center gap-3">
-                      <span class="size-8 rounded-lg bg-white/15 flex items-center justify-center flex-shrink-0">
-                        <UIcon name="i-lucide-log-out" class="size-4 text-white" />
-                      </span>
-                      <span>Keluar Sesi</span>
+                    <div class="flex items-center gap-3.5">
+                      <UIcon name="i-lucide-log-out" class="size-5 text-rose-500" />
+                      <span class="text-sm font-extrabold text-rose-600">Keluar Sesi</span>
                     </div>
-                    <UIcon name="i-lucide-chevron-right" class="size-4 text-rose-200 flex-shrink-0" />
+                    <UIcon name="i-lucide-chevron-right" class="size-4.5 text-rose-300" />
                   </button>
                 </div>
               </div>
@@ -310,29 +311,32 @@ const billStatusConfigClass = computed(() => {
 
             <!-- No Session Area -->
             <template v-else>
-              <div class="space-y-3">
-                <div class="rounded-xl border border-gray-100 bg-white p-4 flex flex-col gap-3 shadow-sm">
-                  <div class="flex items-center gap-2.5">
-                    <div class="size-9 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
-                      <UIcon name="i-lucide-circle-off" class="size-4 text-gray-400" />
-                    </div>
-                    <div>
-                      <p class="text-[13px] font-extrabold text-gray-700 leading-tight">Belum ada sesi aktif</p>
-                      <p class="text-[11px] text-gray-400 font-medium mt-0.5 leading-snug">
-                        Scan QR meja atau masukkan kode untuk mulai memesan.
-                      </p>
-                    </div>
+              <div class="flex-1 overflow-y-auto divide-y divide-gray-100 border-b border-gray-100 bg-white">
+                <!-- Static Status Row -->
+                <div class="flex items-center gap-3.5 px-5 py-4">
+                  <div class="size-8 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center shrink-0">
+                    <UIcon name="i-lucide-circle-off" class="size-4.5 text-gray-400" />
                   </div>
-                  <div class="flex flex-col gap-1.5">
-                    <button
-                      class="motion-btn w-full bg-gray-900 rounded-lg px-3 py-2.5 text-[12px] font-bold text-white cursor-pointer flex items-center gap-2.5 hover:bg-gray-800 active:scale-[0.98] transition-all duration-150"
-                      @click="handleInlineScan"
-                    >
-                      <UIcon name="i-lucide-scan-line" class="size-3.5 text-orange-400 shrink-0" />
-                      <span>Scan QR Meja</span>
-                    </button>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-extrabold text-gray-700 leading-tight">Belum ada sesi aktif</p>
+                    <p class="text-[11px] text-gray-400 font-medium mt-0.5 leading-snug">
+                      Scan QR meja atau masukkan kode untuk mulai memesan.
+                    </p>
                   </div>
                 </div>
+
+                <!-- Scan QR Row (Clickable Row) -->
+                <button
+                  type="button"
+                  class="w-full flex items-center justify-between gap-3 px-5 py-4 text-left hover:bg-gray-50 active:bg-gray-100 transition-colors duration-150 cursor-pointer"
+                  @click="handleInlineScan"
+                >
+                  <div class="flex items-center gap-3.5">
+                    <UIcon name="i-lucide-scan-line" class="size-5 text-orange-500" />
+                    <span class="text-sm font-extrabold text-gray-800">Scan QR Meja</span>
+                  </div>
+                  <UIcon name="i-lucide-chevron-right" class="size-4.5 text-gray-300" />
+                </button>
               </div>
             </template>
           </div>
