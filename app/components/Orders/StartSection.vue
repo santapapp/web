@@ -99,9 +99,9 @@ const submitManualCode = () => {
 
           <!-- Text content -->
           <div class="flex-1 py-5 pr-4 text-left">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-orange-400 mb-1">Cara cepat</p>
-            <p class="text-[16px] font-extrabold text-white leading-tight mb-1">Scan QR Meja</p>
-            <p class="text-[12px] text-gray-400 font-medium">Arahkan kamera ke QR di meja Anda</p>
+            <p class="text-[10px] font-semibold uppercase tracking-widest text-orange-400 mb-1">Cara cepat</p>
+            <p class="text-base font-bold text-white leading-tight mb-1">Scan QR Meja</p>
+            <p class="text-xs text-gray-400 font-normal">Arahkan kamera ke QR di meja Anda</p>
           </div>
 
           <!-- Arrow indicator -->
@@ -126,8 +126,8 @@ const submitManualCode = () => {
               <UIcon name="i-lucide-keyboard" class="size-4 text-slate-500" />
             </div>
             <div>
-              <p class="text-[13px] font-extrabold text-gray-800 leading-tight">Masukkan Kode Manual</p>
-              <p class="text-[11px] text-gray-400 font-medium">Dari struk kasir atau QR code di meja</p>
+              <p class="text-sm font-bold text-gray-800 leading-tight">Masukkan Kode Manual</p>
+              <p class="text-xs text-gray-400 font-normal">Dari struk kasir atau QR code di meja</p>
             </div>
           </div>
 

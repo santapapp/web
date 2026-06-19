@@ -294,7 +294,7 @@ const handleAddToCart = () => {
                 </p>
                 <p
                   v-if="product.description"
-                  class="text-sm text-gray-500 leading-relaxed mt-2 max-w-sm mx-auto"
+                  class="text-sm text-gray-500 font-normal leading-relaxed mt-2 max-w-sm mx-auto"
                 >
                   {{ product.description }}
                 </p>
@@ -314,7 +314,7 @@ const handleAddToCart = () => {
               <!-- Note per item -->
               <div v-if="!readOnly" class="border-t border-gray-100 pt-5 mt-5">
                 <label
-                  class="block text-xs font-extrabold uppercase tracking-wide text-gray-700 mb-2 px-1"
+                  class="block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-2 px-1"
                   for="product-note"
                 >
                   Catatan (opsional)

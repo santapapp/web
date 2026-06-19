@@ -164,7 +164,7 @@ const billStatusConfigClass = computed(() => {
 
                 <!-- Name only -->
                 <div class="flex-1 min-w-0">
-                  <p class="text-[13.5px] font-extrabold text-gray-900 leading-tight line-clamp-2">
+                  <p class="text-sm font-bold text-gray-900 leading-tight line-clamp-2">
                     {{ session.orgName.value || org?.name || 'Restoran' }}
                   </p>
                 </div>
@@ -188,7 +188,7 @@ const billStatusConfigClass = computed(() => {
           >
             <!-- Top line: Label Open Bill + status singkat -->
             <div class="flex items-center justify-between">
-              <span class="text-[10px] font-extrabold uppercase tracking-widest text-emerald-800/80">Open Bill</span>
+              <span class="text-[10px] font-semibold uppercase tracking-widest text-emerald-800/80">Open Bill</span>
               <span
                 class="px-2 py-0.5 rounded-full text-[9px] font-bold"
                 :class="billStatusConfigClass"
@@ -227,20 +227,15 @@ const billStatusConfigClass = computed(() => {
                 <!-- Scrolling unified flat menu list -->
                 <div class="flex-1 overflow-y-auto divide-y divide-gray-100 border-b border-gray-100 bg-white">
                   <!-- Row 1: Session Info / Table Number (Static Row) -->
-                  <div class="flex items-center gap-3.5 px-5 py-4 bg-gray-50/30">
-                    <div class="size-8 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center shrink-0">
+                  <div class="flex items-center justify-between gap-3 px-5 py-4 bg-gray-50/30">
+                    <div class="flex items-center gap-3.5 min-w-0">
                       <UIcon
                         :name="isOpenBill ? 'i-lucide-receipt' : 'i-lucide-armchair'"
-                        class="size-4 text-orange-600"
+                        class="size-5 text-gray-400"
                       />
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <p class="text-[10px] text-gray-400 font-extrabold uppercase tracking-wider leading-none mb-1">
-                        {{ isOpenBill ? 'Nomor Bill' : 'Nomor Meja' }}
-                      </p>
-                      <p class="text-sm font-black text-gray-900 leading-tight">
+                      <span class="text-sm font-semibold text-gray-800 truncate">
                         {{ session.sessionLabel.value }}
-                      </p>
+                      </span>
                     </div>
                     <!-- Status Badge -->
                     <div class="shrink-0">
@@ -258,7 +253,7 @@ const billStatusConfigClass = computed(() => {
                   >
                     <div class="flex items-center gap-3.5">
                       <UIcon name="i-lucide-shopping-bag" class="size-5 text-gray-400" />
-                      <span class="text-sm font-extrabold text-gray-800">Lihat Keranjang</span>
+                      <span class="text-sm font-semibold text-gray-800">Lihat Keranjang</span>
                     </div>
                     <UIcon name="i-lucide-chevron-right" class="size-4.5 text-gray-300" />
                   </button>
@@ -272,7 +267,7 @@ const billStatusConfigClass = computed(() => {
                   >
                     <div class="flex items-center gap-3.5">
                       <UIcon name="i-lucide-clipboard-list" class="size-5 text-gray-400" />
-                      <span class="text-sm font-extrabold text-gray-800">Buka Pesanan Saya</span>
+                      <span class="text-sm font-semibold text-gray-800">Buka Pesanan Saya</span>
                     </div>
                     <UIcon name="i-lucide-chevron-right" class="size-4.5 text-gray-300" />
                   </button>
@@ -286,7 +281,7 @@ const billStatusConfigClass = computed(() => {
                   >
                     <div class="flex items-center gap-3.5">
                       <UIcon name="i-lucide-scan-line" class="size-5 text-gray-400" />
-                      <span class="text-sm font-extrabold text-gray-800">Ganti Meja</span>
+                      <span class="text-sm font-semibold text-gray-800">Ganti Meja</span>
                     </div>
                     <UIcon name="i-lucide-chevron-right" class="size-4.5 text-gray-300" />
                   </button>
@@ -301,7 +296,7 @@ const billStatusConfigClass = computed(() => {
                   >
                     <div class="flex items-center gap-3.5">
                       <UIcon name="i-lucide-log-out" class="size-5 text-rose-500" />
-                      <span class="text-sm font-extrabold text-rose-600">Keluar Sesi</span>
+                      <span class="text-sm font-semibold text-rose-600">Keluar Sesi</span>
                     </div>
                     <UIcon name="i-lucide-chevron-right" class="size-4.5 text-rose-300" />
                   </button>
@@ -318,8 +313,8 @@ const billStatusConfigClass = computed(() => {
                     <UIcon name="i-lucide-circle-off" class="size-4.5 text-gray-400" />
                   </div>
                   <div class="flex-1 min-w-0">
-                    <p class="text-sm font-extrabold text-gray-700 leading-tight">Belum ada sesi aktif</p>
-                    <p class="text-[11px] text-gray-400 font-medium mt-0.5 leading-snug">
+                    <p class="text-sm font-semibold text-gray-700 leading-tight">Belum ada sesi aktif</p>
+                    <p class="text-xs text-gray-400 font-normal mt-0.5 leading-snug">
                       Scan QR meja atau masukkan kode untuk mulai memesan.
                     </p>
                   </div>
@@ -333,7 +328,7 @@ const billStatusConfigClass = computed(() => {
                 >
                   <div class="flex items-center gap-3.5">
                     <UIcon name="i-lucide-scan-line" class="size-5 text-orange-500" />
-                    <span class="text-sm font-extrabold text-gray-800">Scan QR Meja</span>
+                    <span class="text-sm font-semibold text-gray-800">Scan QR Meja</span>
                   </div>
                   <UIcon name="i-lucide-chevron-right" class="size-4.5 text-gray-300" />
                 </button>

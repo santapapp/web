@@ -217,8 +217,8 @@ onUnmounted(() => {
               <UIcon name="i-lucide-clock" class="size-4.5 text-amber-700" />
             </div>
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-extrabold text-amber-900">Pembayaran Sedang Berlangsung</p>
-              <p class="text-xs text-amber-700 font-medium mt-0.5 leading-relaxed">
+              <p class="text-sm font-bold text-amber-900">Pembayaran Sedang Berlangsung</p>
+              <p class="text-xs text-amber-700 font-normal mt-0.5 leading-relaxed">
                 Selesaikan atau batalkan pembayaran sebelum menambah pesanan baru.
               </p>
               <button
@@ -240,8 +240,8 @@ onUnmounted(() => {
               <UIcon name="i-lucide-check-circle-2" class="size-4.5 text-emerald-700" />
             </div>
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-extrabold text-emerald-900">Sesi Open Bill Selesai</p>
-              <p class="text-xs text-emerald-700 font-medium mt-0.5 leading-relaxed">
+              <p class="text-sm font-bold text-emerald-900">Sesi Open Bill Selesai</p>
+              <p class="text-xs text-emerald-700 font-normal mt-0.5 leading-relaxed">
                 Tagihan sudah dibayar. Terima kasih sudah memesan! ❤️
               </p>
             </div>
@@ -256,8 +256,8 @@ onUnmounted(() => {
               <UIcon name="i-lucide-receipt" class="size-4.5 text-orange-600" />
             </div>
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-extrabold text-orange-900">Belum Ada Pesanan</p>
-              <p class="text-xs text-orange-700/80 font-medium mt-0.5 leading-relaxed">
+              <p class="text-sm font-bold text-orange-900">Belum Ada Pesanan</p>
+              <p class="text-xs text-orange-700/80 font-normal mt-0.5 leading-relaxed">
                 Tambahkan menu untuk mulai memesan di sesi open bill ini.
               </p>
             </div>
@@ -277,7 +277,7 @@ onUnmounted(() => {
           <!-- ── Item List ── -->
           <div v-if="rootItems.length > 0" class="bg-white rounded-3xl border border-stone-200/60 shadow-sm overflow-hidden">
             <div class="flex items-center justify-between px-5 py-4 border-b border-stone-100">
-              <h3 class="text-sm font-extrabold text-stone-900 flex items-center gap-2">
+              <h3 class="text-sm font-bold text-stone-900 flex items-center gap-2">
                 <UIcon name="i-lucide-utensils" class="size-4 text-orange-500" />
                 Item Pesanan
               </h3>
@@ -300,7 +300,7 @@ onUnmounted(() => {
                 <div class="flex-1 min-w-0">
                   <div class="flex items-start justify-between gap-2">
                     <div class="min-w-0">
-                      <p class="text-sm font-extrabold text-stone-900 leading-snug truncate">{{ item.name }}</p>
+                      <p class="text-sm font-semibold text-stone-900 leading-snug truncate">{{ item.name }}</p>
                       <!-- Children (variants/addons) -->
                       <div v-if="item.children?.length" class="mt-0.5 flex flex-wrap gap-1">
                         <span
@@ -338,7 +338,7 @@ onUnmounted(() => {
 
           <!-- ── Financial Summary ── -->
           <div v-if="order" class="bg-white rounded-3xl border border-stone-200/60 shadow-sm p-5 space-y-3">
-            <h3 class="text-xs font-extrabold uppercase tracking-wider text-stone-900 pb-2 border-b border-stone-100">
+            <h3 class="text-xs font-semibold uppercase tracking-wider text-stone-500 pb-2 border-b border-stone-100">
               Ringkasan Tagihan
             </h3>
             <div class="space-y-2 text-sm">
@@ -359,7 +359,7 @@ onUnmounted(() => {
                 <span class="font-bold text-stone-700">{{ formatCurrency(order.tax_amount) }}</span>
               </div>
               <div class="border-t border-dashed border-stone-200 pt-2.5 flex justify-between items-baseline">
-                <span class="text-sm font-extrabold text-stone-900 uppercase tracking-wide">Total</span>
+                <span class="text-sm font-bold text-stone-900 uppercase tracking-wide">Total</span>
                 <span class="text-xl font-black text-orange-600 tracking-tight">{{ formatCurrency(order.total_amount) }}</span>
               </div>
             </div>
@@ -372,7 +372,7 @@ onUnmounted(() => {
               v-if="!isBillClosed && !isPaid && !isPaymentPending && rootItems.length > 0"
               type="button"
               :disabled="payPending"
-              class="w-full min-h-[56px] rounded-2xl bg-orange-600 text-white font-extrabold hover:bg-orange-700 active:scale-[0.98] transition-all duration-150 shadow-lg shadow-orange-600/25 flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full min-h-[56px] rounded-2xl bg-orange-600 text-white font-bold hover:bg-orange-700 active:scale-[0.98] transition-all duration-150 shadow-lg shadow-orange-600/25 flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               @click="handlePayNow"
             >
               <UIcon v-if="payPending" name="i-lucide-loader-2" class="size-5 animate-spin" />
@@ -386,7 +386,7 @@ onUnmounted(() => {
             <button
               v-if="!isBillClosed && !isPaid && !isPaymentPending"
               type="button"
-              class="w-full min-h-[52px] rounded-2xl bg-stone-900 text-white font-extrabold hover:bg-stone-850 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2.5 cursor-pointer shadow-md shadow-stone-900/10"
+              class="w-full min-h-[52px] rounded-2xl bg-stone-900 text-white font-bold hover:bg-stone-850 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2.5 cursor-pointer shadow-md shadow-stone-900/10"
               @click="emit('add-more')"
             >
               <UIcon name="i-lucide-plus" class="size-5" />

@@ -32,7 +32,7 @@ const increase = () => {
 
 <template>
   <div class="flex items-center justify-between gap-4 max-w-[240px] mx-auto w-full py-0.5">
-    <span class="text-xs font-bold uppercase tracking-wider text-gray-500 select-none">
+    <span class="text-xs font-extrabold uppercase tracking-wide text-gray-700 select-none">
       Jumlah
     </span>
 

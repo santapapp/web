@@ -164,7 +164,7 @@ onUnmounted(() => {
             </button>
 
             <div class="flex flex-col items-center text-center">
-              <h2 class="text-base font-extrabold text-gray-900 leading-none">Keranjang saat ini</h2>
+              <h2 class="text-base font-bold text-gray-900 leading-none">Keranjang saat ini</h2>
               <span v-if="tableLabel" class="text-xs text-orange-600 font-semibold mt-1">{{ tableLabel.toLowerCase().includes('meja') ? tableLabel : 'Meja ' + tableLabel }}</span>
             </div>
 
@@ -201,7 +201,7 @@ onUnmounted(() => {
                       <!-- Name + remove -->
                       <div class="flex items-start justify-between gap-2">
                         <div>
-                          <p class="text-sm font-extrabold text-gray-900 leading-snug">{{ item.name }}</p>
+                          <p class="text-sm font-semibold text-gray-900 leading-snug">{{ item.name }}</p>
                           <p class="text-xs text-gray-500 font-medium mt-0.5">
                             {{ formatPrice(item.preview_subtotal / item.quantity) }}
                           </p>
@@ -254,7 +254,7 @@ onUnmounted(() => {
                       </button>
                     </div>
 
-                    <span class="text-sm font-extrabold text-gray-900">
+                    <span class="text-sm font-bold text-gray-900">
                       {{ formatPrice(item.preview_subtotal) }}
                     </span>
                   </div>
@@ -301,12 +301,12 @@ onUnmounted(() => {
               <!-- Customer Info & Global Order Notes -->
               <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-5">
                 <div class="border-b border-gray-100 pb-3">
-                  <h3 class="text-sm font-extrabold text-gray-900">Informasi Pesanan</h3>
+                  <h3 class="text-sm font-bold text-gray-900">Informasi Pesanan</h3>
                 </div>
                 
                 <div class="space-y-4">
                   <div class="space-y-1.5">
-                    <label for="customer-name" class="block text-xs font-extrabold text-gray-700 uppercase tracking-wide px-1">
+                    <label for="customer-name" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide px-1">
                       Nama Customer <span class="text-gray-400 font-semibold normal-case">(Opsional)</span>
                     </label>
                     <UInput
@@ -327,7 +327,7 @@ onUnmounted(() => {
                   </div>
 
                   <div class="space-y-1.5">
-                    <label for="order-note" class="block text-xs font-extrabold text-gray-700 uppercase tracking-wide px-1">
+                    <label for="order-note" class="block text-xs font-semibold text-gray-500 uppercase tracking-wide px-1">
                       Catatan Pesanan <span class="text-gray-400 font-semibold normal-case">(Opsional)</span>
                     </label>
                     <UTextarea
@@ -349,7 +349,7 @@ onUnmounted(() => {
 
               <!-- Payment summary -->
               <div class="mt-6">
-                <h3 class="text-sm font-extrabold text-gray-900 mb-4 px-1">Ringkasan Pembayaran</h3>
+                <h3 class="text-sm font-bold text-gray-900 mb-4 px-1">Ringkasan Pembayaran</h3>
                 <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
                   <div class="flex items-center justify-between text-sm">
                     <span class="text-gray-500 font-semibold">Subtotal</span>
@@ -364,11 +364,11 @@ onUnmounted(() => {
                     <span class="font-bold text-gray-700">{{ formatPrice(serviceChargeAmount) }}</span>
                   </div>
                   <div class="border-t border-dashed border-gray-200 pt-2.5 flex items-center justify-between">
-                    <span class="text-sm font-extrabold text-gray-900">Total Bayar</span>
-                    <span class="text-base font-extrabold text-orange-600">{{ formatPrice(total) }}</span>
+                    <span class="text-sm font-bold text-gray-900">Total Bayar</span>
+                    <span class="text-base font-black text-orange-600">{{ formatPrice(total) }}</span>
                   </div>
                 </div>
-                <p class="text-[11px] text-gray-400 font-semibold leading-normal mt-3 px-1">
+                <p class="text-xs text-gray-400 font-normal leading-normal mt-3 px-1">
                   Estimasi. Harga akhir akan disesuaikan pada struk pembayaran kasir.
                 </p>
               </div>
@@ -387,8 +387,8 @@ onUnmounted(() => {
             >
               <UIcon name="i-lucide-lock" class="size-4.5 text-amber-700 shrink-0 mt-0.5" />
               <div>
-                <p class="text-sm font-extrabold text-amber-900">Pesanan Terkunci</p>
-                <p class="text-xs text-amber-700 font-medium mt-0.5 leading-relaxed">
+                <p class="text-sm font-bold text-amber-900">Pesanan Terkunci</p>
+                <p class="text-xs text-amber-700 font-normal mt-0.5 leading-relaxed">
                   Pembayaran sedang menunggu konfirmasi. Selesaikan atau batalkan pembayaran terlebih dahulu.
                 </p>
               </div>
@@ -421,15 +421,15 @@ onUnmounted(() => {
               @click="emit('submit')"
             >
               <span class="flex items-center gap-2.5">
-                <span class="size-7 rounded-xl bg-white/15 text-white text-xs font-black flex items-center justify-center flex-shrink-0">
+                <span class="size-7 rounded-xl bg-white/15 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
                   {{ totalQty }}
                 </span>
-                <span class="text-[15px] font-extrabold tracking-wide">
+                <span class="text-sm font-bold tracking-wide">
                   {{ checkoutLabel }}
                 </span>
               </span>
               <span class="flex items-center gap-2">
-                <span class="text-[15px] font-extrabold tracking-wide">{{ formatPrice(total) }}</span>
+                <span class="text-sm font-bold tracking-wide">{{ formatPrice(total) }}</span>
                 <UIcon v-if="submitting" name="i-lucide-loader-2" class="size-5 animate-spin" />
                 <UIcon v-else name="i-lucide-shopping-bag" class="size-5" />
               </span>

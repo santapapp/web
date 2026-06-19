@@ -201,7 +201,7 @@ const downloadReceipt = async () => {
             <h1 class="text-xl lg:text-3xl font-extrabold tracking-tight text-stone-900 transition-all duration-200">
               {{ header.title }}
             </h1>
-            <p class="text-sm text-stone-500 mt-1">{{ header.subtitle }}</p>
+            <p class="text-sm text-stone-500 font-normal mt-1">{{ header.subtitle }}</p>
 
             <!-- Order code badge -->
             <span
@@ -222,7 +222,7 @@ const downloadReceipt = async () => {
                 class="bg-white rounded-3xl shadow-sm border border-stone-200/70 p-5 motion-card hover:shadow-md transition-all duration-200"
               >
                 <div class="flex items-center justify-between gap-2 mb-4">
-                  <h2 class="text-xs font-extrabold uppercase tracking-wide text-stone-800">
+                  <h2 class="text-xs font-semibold uppercase tracking-wide text-stone-500">
                     Status Pesanan
                   </h2>
                   <UBadge :label="orderDisplayStatus.label" :color="orderDisplayStatus.color" variant="soft" size="sm" />
@@ -250,10 +250,10 @@ const downloadReceipt = async () => {
                   <UIcon name="i-lucide-circle-x" class="size-6" />
                 </div>
                 <div>
-                  <h2 class="text-xs font-extrabold uppercase tracking-wide text-stone-800 mb-1">
+                   <h2 class="text-xs font-semibold uppercase tracking-wide text-stone-500 mb-1">
                     Status Pesanan
                   </h2>
-                  <p class="text-xs text-stone-500 mt-1 leading-relaxed">{{ order.cancel_reason || 'Pesanan ini telah dibatalkan' }}</p>
+                   <p class="text-xs text-stone-400 font-normal mt-1 leading-relaxed">{{ order.cancel_reason || 'Pesanan ini telah dibatalkan' }}</p>
                 </div>
                 <UBadge :label="orderDisplayStatus.label" :color="orderDisplayStatus.color" variant="soft" size="sm" />
               </div>

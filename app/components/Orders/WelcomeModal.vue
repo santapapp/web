@@ -52,103 +52,102 @@ const initials = computed(() => {
             preserveAspectRatio="none"
             class="absolute inset-0 w-full h-[52%] sm:h-[55%]"
           >
-            <!-- Rust-Orange Gradient Path -->
             <path
               d="M 0 0 L 375 0 L 375 440 C 280 430 100 380 0 220 Z"
               fill="url(#rust-orange-welcome-grad)"
             />
-
             <defs>
               <linearGradient id="rust-orange-welcome-grad" x1="0" y1="0" x2="0" y2="440" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#a23f15" />
-                <stop offset="100%" stop-color="#782506" />
+                <stop offset="0%" stop-color="#ea580c" />
+                <stop offset="100%" stop-color="#f97316" />
               </linearGradient>
             </defs>
           </svg>
         </div>
 
-        <!-- Standalone Fork & Spoon Watermark (UIcon) -->
+        <!-- Watermark -->
         <div class="absolute top-[8%] right-[8%] opacity-[0.06] text-white pointer-events-none select-none">
           <UIcon name="i-lucide-utensils" class="size-24 sm:size-28" />
         </div>
 
-      <!-- Main Scrollable/Flex container -->
-      <div class="relative flex-1 flex flex-col justify-between px-6 py-10 z-10">
-        <!-- Spacer at top for status bar space -->
-        <div class="h-6"></div>
+        <!-- Main Flex Container -->
+        <div class="relative flex-1 flex flex-col justify-between px-6 pt-14 pb-8 z-10">
 
-        <!-- Center Brand & Welcoming Section -->
-        <div class="flex-1 flex flex-col items-center justify-center text-center">
-          <!-- Logo container -->
-          <div class="size-24 rounded-3xl bg-white border border-white/20 flex items-center justify-center shadow-xl mb-6 overflow-hidden transform hover:scale-105 transition-transform duration-300 shrink-0">
-            <img
-              v-if="orgLogo"
-              :src="orgLogo"
-              :alt="orgName"
-              class="w-full h-full object-cover"
-            />
-            <span v-else class="text-3xl font-black text-orange-600">{{ initials }}</span>
-          </div>
+          <!-- Brand & Welcome Section -->
+          <div class="flex-1 flex flex-col items-center justify-center text-center gap-0">
 
-          <!-- Restaurant Name & Slogan -->
-          <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-wide mb-2 drop-shadow-xs">
-            {{ orgName.toUpperCase() }}
-          </h1>
-          <p class="text-[10px] sm:text-xs font-bold uppercase tracking-[0.25em] text-white/90 mb-14 drop-shadow-xs">
-            PESAN, SANTAP, BAHAGIA
-          </p>
+            <!-- Logo -->
+            <div class="size-20 rounded-2xl bg-white border border-white/20 flex items-center justify-center shadow-xl mb-4 overflow-hidden transform hover:scale-105 transition-transform duration-300 shrink-0">
+              <img
+                v-if="orgLogo"
+                :src="orgLogo"
+                :alt="orgName"
+                class="w-full h-full object-cover"
+              />
+              <span v-else class="text-2xl font-black text-orange-600">{{ initials }}</span>
+            </div>
 
-          <!-- Table/Bill Badge -->
-          <div
-            v-if="tableName"
-            class="mb-6 px-5 py-2.5 rounded-full bg-[#FFEAE2] text-[#7C2D12] font-extrabold text-sm flex items-center justify-center gap-2"
-          >
-            <UIcon name="i-lucide-armchair" class="size-4.5 text-[#7C2D12]" />
-            <span>{{ tableName.toLowerCase().includes('meja') ? tableName : 'Meja ' + tableName }}</span>
-          </div>
-          <div
-            v-else-if="sessionType === 'open_bill'"
-            class="mb-6 px-5 py-2.5 rounded-full bg-[#FFEAE2] text-[#7C2D12] font-extrabold text-sm flex items-center justify-center gap-2"
-          >
-            <UIcon name="i-lucide-receipt-text" class="size-4.5 text-[#7C2D12]" />
-            <span>Sesi Open Bill Aktif</span>
-          </div>
+            <!-- Org Name -->
+            <h1 class="text-2xl font-black text-white tracking-wide mb-1 drop-shadow-xs leading-tight">
+              {{ orgName.toUpperCase() }}
+            </h1>
 
-          <!-- Welcome Texts -->
-          <h2 class="text-2xl font-extrabold text-stone-900 mb-3">
-            Selamat Datang!
-          </h2>
-          
-          <div class="max-w-xs text-sm leading-relaxed text-stone-600 font-medium">
-            <p class="mb-3">
-              <template v-if="tableName">
-                Kamu duduk di <strong class="text-[#9A3412] font-extrabold">{{ tableName.toLowerCase().includes('meja') ? tableName : 'Meja ' + tableName }}</strong>.
-              </template>
-              <template v-else-if="sessionType === 'open_bill'">
-                Sesi Open Bill kamu telah aktif.
-              </template>
-              <template v-else>
-                Sesi pemesanan kamu telah aktif.
-              </template>
+            <!-- Tagline -->
+            <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-white/75 mb-10">
+              PESAN, SANTAP, BAHAGIA
             </p>
-            <p>
-              Yuk pilih menu favorit mu dan kami akan segera menyiapkan pesananmu!
-            </p>
-          </div>
-        </div>
 
-        <!-- Action Button & Footer Security -->
-        <div class="flex flex-col items-center mt-auto shrink-0 w-full max-w-sm mx-auto">
-          <!-- Button -->
-          <button
-            type="button"
-            class="w-full py-4 px-6 rounded-2xl bg-[#9A3412] hover:bg-[#7C2D12] text-white font-extrabold tracking-wide text-sm active:scale-[0.98] transition-all duration-150 cursor-pointer flex items-center justify-center gap-2 shadow-md shadow-orange-950/20"
-            @click="emit('confirm')"
-          >
-            <span>Lihat Menu & Pesan</span>
-            <UIcon name="i-lucide-arrow-right" class="size-4 stroke-[3]" />
-          </button>
-        </div>
+            <!-- Table/Bill Badge -->
+            <div
+              v-if="tableName"
+              class="mb-5 px-4 py-2 rounded-full bg-[#FFEAE2] text-[#7C2D12] font-bold text-xs flex items-center justify-center gap-1.5"
+            >
+              <UIcon name="i-lucide-armchair" class="size-3.5" />
+              <span>{{ tableName.toLowerCase().includes('meja') ? tableName : 'Meja ' + tableName }}</span>
+            </div>
+            <div
+              v-else-if="sessionType === 'open_bill'"
+              class="mb-5 px-4 py-2 rounded-full bg-[#FFEAE2] text-[#7C2D12] font-bold text-xs flex items-center justify-center gap-1.5"
+            >
+              <UIcon name="i-lucide-receipt-text" class="size-3.5" />
+              <span>Sesi Open Bill Aktif</span>
+            </div>
+
+            <!-- Welcome Heading -->
+            <h2 class="text-xl font-bold text-stone-900 mb-2 leading-snug">
+              Selamat Datang!
+            </h2>
+
+            <!-- Description -->
+            <div class="max-w-[260px] text-sm leading-relaxed text-stone-500 font-normal space-y-1.5">
+              <p>
+                <template v-if="tableName">
+                  Kamu duduk di <strong class="text-[#9A3412] font-semibold">{{ tableName.toLowerCase().includes('meja') ? tableName : 'Meja ' + tableName }}</strong>.
+                </template>
+                <template v-else-if="sessionType === 'open_bill'">
+                  Sesi Open Bill kamu telah aktif.
+                </template>
+                <template v-else>
+                  Sesi pemesanan kamu telah aktif.
+                </template>
+              </p>
+              <p>
+                Yuk pilih menu favorit mu dan kami akan segera menyiapkan pesananmu!
+              </p>
+            </div>
+          </div>
+
+          <!-- CTA Button -->
+          <div class="shrink-0 w-full max-w-sm mx-auto mt-8">
+            <button
+              type="button"
+              class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold tracking-wide text-sm active:scale-[0.98] transition-all duration-150 cursor-pointer flex items-center justify-center gap-2 shadow-md shadow-orange-500/20"
+              @click="emit('confirm')"
+            >
+              <span>Lihat Menu &amp; Pesan</span>
+              <UIcon name="i-lucide-arrow-right" class="size-4 stroke-[2.5]" />
+            </button>
+          </div>
         </div>
       </div>
     </div>
