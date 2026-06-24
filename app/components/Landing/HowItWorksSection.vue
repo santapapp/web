@@ -48,8 +48,13 @@
 
       <!-- CTA -->
       <div ref="ctaRef" class="how-cta" :class="{ 'is-visible': ctaVisible }">
-        <NuxtLink class="btn btn-primary btn-lg" to="/#">
-          Daftar Gratis Sekarang
+        <NuxtLink
+          class="btn btn-primary btn-lg"
+          to="https://play.google.com/store/apps/details?id=com.santap.pos"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Coba Gratis Sekarang
         </NuxtLink>
         <p class="cta-note">Tidak perlu kartu kredit &bull; Batalkan kapan saja</p>
       </div>

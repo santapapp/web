@@ -42,7 +42,9 @@
       <div class="w-px h-4 mx-1 flex-shrink-0 bg-black/10" />
 
       <NuxtLink
-        to="/#"
+        to="https://play.google.com/store/apps/details?id=com.santap.pos"
+        target="_blank"
+        rel="noopener noreferrer"
         class="motion-btn inline-flex items-center justify-center px-6 py-2 rounded-md
                text-[11px] font-bold no-underline uppercase tracking-[0.06em]
                bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)]"
@@ -105,28 +107,21 @@
     <div
       class="motion-nav-glass absolute top-4 left-4 right-4 sm:top-5 sm:left-5 sm:right-5 z-20
              flex items-center justify-between px-2 py-2 rounded-md pointer-events-auto"
-      :class="[
-        mobileOpen
-          ? 'bg-white/10 border border-white/15 shadow-lg motion-nav-glass--scrolled'
-          : 'bg-[#F4EDE4] border border-transparent shadow-md',
-        isScrolled && !mobileOpen && 'motion-nav-glass--scrolled',
-      ]"
+      :class="mobileNavClass"
     >
       <NuxtLink class="inline-flex items-center gap-2 no-underline px-2" to="/" @click="mobileOpen && (mobileOpen = false)">
         <img src="~/assets/icons/brand.svg" alt="" class="h-[26px] w-[26px]" aria-hidden="true">
         <span
           class="text-[16px] font-bold tracking-tight transition-colors duration-[var(--motion-micro)]"
-          :class="mobileOpen ? '!text-white' : '!text-[#1A1512]'"
+          :class="mobileLogoColor"
         >
           Santap
         </span>
       </NuxtLink>
 
       <button
-        class="motion-btn flex items-center justify-center w-10 h-10 rounded-md border-none cursor-pointer"
-        :class="mobileOpen
-          ? 'bg-transparent text-white hover:bg-white/10'
-          : 'bg-[#1A1512] text-white hover:bg-[#2a2420] shadow-sm'"
+        class="motion-btn flex items-center justify-center w-10 h-10 rounded-md cursor-pointer"
+        :class="mobileButtonClass"
         :aria-expanded="mobileOpen"
         :aria-label="mobileOpen ? 'Tutup menu' : 'Buka menu navigasi'"
         @click="toggleMobile"
@@ -169,6 +164,37 @@ const desktopNavGlass = computed(() => {
 })
 
 const mobileOpen = ref(false)
+const isMobileScrolled = computed(() => scrollY.value > 300)
+
+const mobileNavClass = computed(() => {
+  if (mobileOpen.value) {
+    return 'bg-white/10 border border-white/15 shadow-lg motion-nav-glass--scrolled'
+  }
+  if (isMobileScrolled.value) {
+    return 'bg-[#F4EDE4] border border-transparent shadow-md motion-nav-glass--scrolled'
+  }
+  return 'bg-transparent border border-transparent shadow-none'
+})
+
+const mobileLogoColor = computed(() => {
+  if (mobileOpen.value) {
+    return '!text-white'
+  }
+  if (!isMobileScrolled.value && isHeroPage.value) {
+    return '!text-white'
+  }
+  return '!text-[#1A1512]'
+})
+
+const mobileButtonClass = computed(() => {
+  if (mobileOpen.value) {
+    return 'bg-transparent text-white hover:bg-white/10 border border-transparent'
+  }
+  if (!isMobileScrolled.value && isHeroPage.value) {
+    return 'bg-white/10 text-white hover:bg-white/20 border border-white/10 shadow-none'
+  }
+  return 'bg-[#1A1512] text-white hover:bg-[#2a2420] shadow-sm border border-transparent'
+})
 
 function toggleMobile() {
   mobileOpen.value = !mobileOpen.value

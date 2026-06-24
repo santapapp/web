@@ -413,7 +413,9 @@
                   </p>
                 </div>
                 <NuxtLink
-                  to="/#"
+                  to="https://play.google.com/store/apps/details?id=com.santap.pos"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full text-[11px] font-bold uppercase tracking-[0.08em] no-underline transition-all hover:-translate-y-px flex-shrink-0 relative z-10 bg-white text-[#111009] hover:bg-white/95"
                 >
                   Mulai Gratis

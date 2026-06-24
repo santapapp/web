@@ -31,8 +31,13 @@
 
         <!-- CTA -->
         <div class="btn-row cta-actions">
-          <NuxtLink class="btn btn-white btn-lg" to="/#">
-            Daftar Gratis
+          <NuxtLink
+            class="btn btn-white btn-lg"
+            to="https://play.google.com/store/apps/details?id=com.santap.pos"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Coba Gratis Sekarang
           </NuxtLink>
           <NuxtLink class="btn btn-outline-white" to="/features">
             Pelajari Fitur

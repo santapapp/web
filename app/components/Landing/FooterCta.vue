@@ -63,16 +63,20 @@
           <!-- CTA Buttons -->
           <div class="footer-cta-btns flex items-center gap-3">
             <NuxtLink
-              to="/#"
+              to="https://play.google.com/store/apps/details?id=com.santap.pos"
+              target="_blank"
+              rel="noopener noreferrer"
               class="motion-btn inline-flex items-center gap-2 rounded-full
                      text-[11px] font-bold uppercase tracking-[0.1em]
                      no-underline"
               style="background-color: #FFFFFF; color: #0F0C09; padding: 14px 28px;"
             >
-              Daftar Sekarang
+              Coba Gratis Sekarang
             </NuxtLink>
             <NuxtLink
-              to="/#"
+              to="https://play.google.com/store/apps/details?id=com.santap.pos"
+              target="_blank"
+              rel="noopener noreferrer"
               class="motion-btn inline-flex items-center justify-center rounded-full
                      no-underline flex-shrink-0"
               style="width: 48px; height: 48px; background-color: var(--color-primary); color: #FFFFFF;"

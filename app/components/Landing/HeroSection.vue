@@ -94,9 +94,11 @@
                      no-underline rounded-full
                      text-[11px] font-bold uppercase tracking-[0.09em]
                      hover:bg-[#221C15] shadow-lg"
-              to="/#"
+              to="https://play.google.com/store/apps/details?id=com.santap.pos"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Segera Hadir
+              Unduh di Play Store
             </NuxtLink>
 
             <NuxtLink
@@ -117,7 +119,7 @@
               <rect x="5" y="2" width="14" height="20" rx="3" stroke="currentColor" stroke-width="1.8"/>
               <circle cx="12" cy="18" r="1" fill="currentColor"/>
             </svg>
-            Android &amp; iOS — segera hadir
+            Tersedia di Android | iOS segera hadir
           </p>
         </div>
 
