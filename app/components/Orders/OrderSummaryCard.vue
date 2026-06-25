@@ -24,10 +24,10 @@ const formatPrice = (v: number) =>
 </script>
 
 <template>
-  <div class="bg-white rounded-3xl shadow-sm border border-stone-200/70 p-5">
-    <h2 class="text-xs font-extrabold uppercase tracking-wide text-stone-800 mb-3">
+  <div class="bg-white rounded-xl shadow-xs border border-stone-200/60 p-3">
+    <div class="text-xs font-extrabold uppercase tracking-wide text-stone-800 mb-3">
       Ringkasan Pembayaran
-    </h2>
+    </div>
 
     <!-- Breakdown -->
     <dl class="flex flex-col gap-2 text-sm">

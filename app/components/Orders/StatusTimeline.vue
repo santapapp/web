@@ -88,19 +88,19 @@ const createdTime = computed(() => {
     <li
       v-for="(step, index) in steps"
       :key="step.label"
-      class="relative flex gap-3.5 pb-5 last:pb-0"
+      class="relative flex gap-2.5 pb-4 last:pb-0"
     >
       <!-- Connector line -->
       <span
         v-if="index < steps.length - 1"
-        class="absolute left-[15px] top-8 bottom-0 w-0.5"
+        class="absolute left-[11px] top-6 bottom-0 w-0.5"
         :class="stepState(step.threshold, index) === 'done' ? 'bg-green-500' : 'bg-stone-200'"
         aria-hidden="true"
       />
 
       <!-- Node -->
       <span
-        class="relative z-10 flex-shrink-0 size-8 rounded-full flex items-center justify-center transition-colors duration-200"
+        class="relative z-10 flex-shrink-0 size-6 rounded-full flex items-center justify-center transition-colors duration-200"
         :class="{
           'bg-green-500 text-white': stepState(step.threshold, index) === 'done',
           'bg-amber-600 text-white ring-4 ring-amber-100': stepState(step.threshold, index) === 'active',
@@ -110,12 +110,12 @@ const createdTime = computed(() => {
         <UIcon
           v-if="stepState(step.threshold, index) === 'done'"
           name="i-lucide-check"
-          class="size-4"
+          class="size-3"
         />
         <UIcon
           v-else
           :name="step.icon"
-          class="size-4"
+          class="size-3"
           :class="{ 'animate-pulse': stepState(step.threshold, index) === 'active' }"
         />
       </span>
@@ -123,14 +123,14 @@ const createdTime = computed(() => {
       <!-- Label -->
       <div class="min-w-0 pt-0.5">
         <p
-          class="text-sm font-bold leading-tight"
+          class="text-xs font-semibold leading-tight"
           :class="stepState(step.threshold, index) === 'pending' ? 'text-stone-400' : 'text-stone-900'"
         >
           {{ step.label }}
         </p>
 
         <!-- Waktu hanya bila tersedia (langkah pertama = created_at), aktif = 'Sekarang' -->
-        <p class="text-xs mt-0.5 leading-snug" :class="stepState(step.threshold, index) === 'pending' ? 'text-stone-300' : 'text-stone-500'">
+        <p class="text-[10px] mt-0.5 leading-snug" :class="stepState(step.threshold, index) === 'pending' ? 'text-stone-300' : 'text-stone-500'">
           <template v-if="stepState(step.threshold, index) === 'active'">
             Sekarang
           </template>
@@ -141,7 +141,7 @@ const createdTime = computed(() => {
 
         <p
           v-if="stepState(step.threshold, index) === 'active'"
-          class="text-xs text-stone-500 mt-0.5 leading-snug"
+          class="text-[10px] text-stone-400 mt-0.5 leading-snug"
         >
           {{ step.desc }}
         </p>

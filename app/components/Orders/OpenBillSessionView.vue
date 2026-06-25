@@ -147,55 +147,57 @@ onUnmounted(() => {
     <!-- Main scroll container -->
     <div class="flex-1 overflow-y-auto" @scroll="handleScroll">
       <!-- Header Banner -->
-      <header class="flex-shrink-0 flex items-center justify-between gap-4 px-4 py-4 sm:px-6 md:px-8 bg-emerald-50/50 border-b border-emerald-100 shadow-none">
-      <div class="flex flex-col min-w-0">
-        <h2 class="text-base sm:text-lg font-black text-emerald-950 leading-tight">Pesanan Open Bill</h2>
-        <p v-if="order?.order_number" class="text-xs sm:text-sm text-emerald-700/95 font-bold font-mono mt-0.5">
-          #{{ order.order_number }}
-        </p>
-      </div>
+      <header class="flex-shrink-0 bg-emerald-50/50 border-b border-emerald-100 shadow-none">
+        <div class="w-full max-w-5xl mx-auto flex items-center justify-between gap-4 px-4 py-4 sm:px-6 md:px-8">
+          <div class="flex flex-col min-w-0">
+            <div class="text-base sm:text-lg font-black text-emerald-950 leading-tight">Pesanan Open Bill</div>
+            <p v-if="order?.order_number" class="text-xs sm:text-sm text-emerald-700/95 font-bold font-mono mt-0.5">
+              #{{ order.order_number }}
+            </p>
+          </div>
 
-      <!-- Badge status sesi & Aksi Cepat -->
-      <div class="flex items-center gap-2 shrink-0">
-        <div
-          v-if="isBillClosed || isPaid"
-          class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-stone-100 text-stone-500 border border-stone-200"
-        >
-          <span class="size-1.5 rounded-full bg-stone-400" />
-          Sesi Selesai
+          <!-- Badge status sesi & Aksi Cepat -->
+          <div class="flex items-center gap-2 shrink-0">
+            <div
+              v-if="isBillClosed || isPaid"
+              class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-stone-100 text-stone-500 border border-stone-200"
+            >
+              <span class="size-1.5 rounded-full bg-stone-400" />
+              Sesi Selesai
+            </div>
+            <div
+              v-else-if="isPaymentPending"
+              class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-750 border border-amber-200 animate-pulse"
+            >
+              <span class="size-1.5 rounded-full bg-amber-500" />
+              Menunggu Bayar
+            </div>
+
+            <!-- Share QR Button -->
+            <button
+              type="button"
+              class="size-9 rounded-xl flex items-center justify-center text-emerald-800 hover:bg-emerald-100 hover:text-emerald-900 border border-emerald-200 bg-white/80 active:scale-95 transition-all duration-150 cursor-pointer shadow-xs"
+              title="Bagikan QR Sesi"
+              @click="showQrModal = true"
+            >
+              <UIcon name="i-lucide-qr-code" class="size-4.5" />
+            </button>
+
+            <!-- Keluar Sesi Button -->
+            <button
+              type="button"
+              class="size-9 rounded-xl flex items-center justify-center text-rose-600 hover:bg-rose-100 hover:text-rose-700 border border-rose-200 bg-white/80 active:scale-95 transition-all duration-150 cursor-pointer shadow-xs"
+              title="Keluar Sesi"
+              @click="emit('exit-session')"
+            >
+              <UIcon name="i-lucide-log-out" class="size-4.5" />
+            </button>
+          </div>
         </div>
-        <div
-          v-else-if="isPaymentPending"
-          class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-750 border border-amber-200 animate-pulse"
-        >
-          <span class="size-1.5 rounded-full bg-amber-500" />
-          Menunggu Bayar
-        </div>
-
-        <!-- Share QR Button -->
-        <button
-          type="button"
-          class="size-9 rounded-xl flex items-center justify-center text-emerald-800 hover:bg-emerald-100 hover:text-emerald-900 border border-emerald-200 bg-white/80 active:scale-95 transition-all duration-150 cursor-pointer shadow-xs"
-          title="Bagikan QR Sesi"
-          @click="showQrModal = true"
-        >
-          <UIcon name="i-lucide-qr-code" class="size-4.5" />
-        </button>
-
-        <!-- Keluar Sesi Button -->
-        <button
-          type="button"
-          class="size-9 rounded-xl flex items-center justify-center text-rose-600 hover:bg-rose-100 hover:text-rose-700 border border-rose-200 bg-white/80 active:scale-95 transition-all duration-150 cursor-pointer shadow-xs"
-          title="Keluar Sesi"
-          @click="emit('exit-session')"
-        >
-          <UIcon name="i-lucide-log-out" class="size-4.5" />
-        </button>
-      </div>
-    </header>
+      </header>
 
     <!-- Content -->
-    <div class="w-full max-w-lg lg:max-w-4xl mx-auto px-4 py-5 space-y-4 lg:space-y-5">
+    <div class="w-full max-w-lg lg:max-w-5xl mx-auto px-4 py-5 space-y-4 lg:space-y-5">
 
         <!-- Loading skeleton -->
         <template v-if="loading">
@@ -265,48 +267,49 @@ onUnmounted(() => {
 
           <!-- ── Info Banner sesi aktif dengan item ── -->
           <div
+            <div
             v-else
-            class="bg-blue-50/60 border border-blue-200/50 rounded-2xl px-4 py-3 flex items-center gap-3"
+            class="bg-blue-50/60 border border-blue-200/50 rounded-xl px-3 py-2 flex items-center gap-2.5"
           >
-            <UIcon name="i-lucide-info" class="size-4.5 text-blue-600 shrink-0" />
-            <p class="text-xs text-blue-800 font-semibold leading-relaxed">
+            <UIcon name="i-lucide-info" class="size-4 text-blue-600 shrink-0" />
+            <p class="text-[10px] text-blue-800 font-semibold leading-relaxed">
               Pembayaran dilakukan di akhir. Anda bisa menambah pesanan berkali-kali.
             </p>
           </div>
 
           <!-- ── Item List ── -->
-          <div v-if="rootItems.length > 0" class="bg-white rounded-3xl border border-stone-200/60 shadow-sm overflow-hidden">
-            <div class="flex items-center justify-between px-5 py-4 border-b border-stone-100">
-              <h3 class="text-sm font-bold text-stone-900 flex items-center gap-2">
-                <UIcon name="i-lucide-utensils" class="size-4 text-orange-500" />
+          <div v-if="rootItems.length > 0" class="bg-white rounded-xl border border-stone-200/60 shadow-sm overflow-hidden">
+            <div class="flex items-center justify-between px-3 py-2.5 border-b border-stone-100">
+              <div class="text-xs font-semibold text-stone-900 flex items-center gap-2">
+                <UIcon name="i-lucide-utensils" class="size-3.5 text-orange-500" />
                 Item Pesanan
-              </h3>
-              <span class="text-xs font-bold text-stone-400">{{ rootItems.length }} item</span>
+              </div>
+              <span class="text-[10px] font-bold text-stone-400">{{ rootItems.length }} item</span>
             </div>
 
             <div class="divide-y divide-stone-50">
               <div
                 v-for="item in rootItems"
                 :key="item.id"
-                class="flex gap-3.5 px-5 py-4"
+                class="flex gap-2.5 px-3 py-2.5"
               >
                 <!-- Thumbnail -->
-                <div class="size-12 rounded-xl overflow-hidden bg-gradient-to-br from-orange-50 to-stone-100 flex items-center justify-center shrink-0 border border-stone-100">
+                <div class="size-10 rounded-lg overflow-hidden bg-gradient-to-br from-orange-50 to-stone-100 flex items-center justify-center shrink-0 border border-stone-100">
                   <img v-if="item.image" :src="item.image" :alt="item.name" class="w-full h-full object-cover" />
-                  <UIcon v-else name="i-lucide-utensils" class="size-5 text-stone-300" />
+                  <UIcon v-else name="i-lucide-utensils" class="size-4 text-stone-300" />
                 </div>
 
                 <!-- Info -->
                 <div class="flex-1 min-w-0">
                   <div class="flex items-start justify-between gap-2">
                     <div class="min-w-0">
-                      <p class="text-sm font-semibold text-stone-900 leading-snug truncate">{{ item.name }}</p>
+                      <p class="text-xs font-semibold text-stone-900 leading-snug truncate">{{ item.name }}</p>
                       <!-- Children (variants/addons) -->
                       <div v-if="item.children?.length" class="mt-0.5 flex flex-wrap gap-1">
                         <span
                           v-for="child in item.children"
                           :key="child.id"
-                          class="text-[10px] text-stone-500 bg-stone-50 border border-stone-200/60 font-semibold px-1.5 py-0.5 rounded-md"
+                          class="text-[9px] text-stone-500 bg-stone-50 border border-stone-200/60 font-medium px-1.5 py-0.5 rounded"
                         >
                           {{ child.name }}
                         </span>
@@ -315,20 +318,20 @@ onUnmounted(() => {
                     <!-- Status badge -->
                     <span
                       v-if="item.item_status"
-                      class="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full border"
+                      class="shrink-0 text-[9px] font-bold px-1.5 py-0.2 rounded-full border"
                       :class="itemStatusColor(item.item_status)"
                     >
                       {{ itemStatusLabel(item.item_status) }}
                     </span>
                   </div>
 
-                  <div class="flex items-center justify-between mt-2">
-                    <span class="text-xs text-stone-400 font-semibold">× {{ item.quantity }}</span>
-                    <span class="text-sm font-extrabold text-stone-800">{{ formatCurrency(item.subtotal) }}</span>
+                  <div class="flex items-center justify-between mt-1.5">
+                    <span class="text-[10px] text-stone-404 font-semibold">× {{ item.quantity }}</span>
+                    <span class="text-xs font-bold text-stone-800">{{ formatCurrency(item.subtotal) }}</span>
                   </div>
 
                   <!-- Item note -->
-                  <p v-if="item.note" class="text-xs text-stone-400 font-medium mt-1 italic">
+                  <p v-if="item.note" class="text-[10px] text-stone-400 font-medium mt-0.5 italic">
                     "{{ item.note }}"
                   </p>
                 </div>
@@ -337,46 +340,46 @@ onUnmounted(() => {
           </div>
 
           <!-- ── Financial Summary ── -->
-          <div v-if="order" class="bg-white rounded-3xl border border-stone-200/60 shadow-sm p-5 space-y-3">
-            <h3 class="text-xs font-semibold uppercase tracking-wider text-stone-500 pb-2 border-b border-stone-100">
+          <div v-if="order" class="bg-white rounded-xl border border-stone-200/60 shadow-sm p-3 space-y-3">
+            <div class="text-[10px] font-bold uppercase tracking-wider text-stone-500 pb-2 border-b border-stone-100">
               Ringkasan Tagihan
-            </h3>
-            <div class="space-y-2 text-sm">
+            </div>
+            <div class="space-y-2 text-xs">
               <div class="flex justify-between">
                 <span class="text-stone-500 font-semibold">Subtotal</span>
-                <span class="font-bold text-stone-700">{{ formatCurrency(order.subtotal_amount) }}</span>
+                <span class="font-semibold text-stone-700">{{ formatCurrency(order.subtotal_amount) }}</span>
               </div>
               <div v-if="order.discount_amount > 0" class="flex justify-between text-emerald-600">
                 <span class="font-semibold">Diskon</span>
-                <span class="font-bold">-{{ formatCurrency(order.discount_amount) }}</span>
+                <span class="font-semibold">-{{ formatCurrency(order.discount_amount) }}</span>
               </div>
               <div v-if="order.service_charge_amount > 0" class="flex justify-between">
                 <span class="text-stone-500 font-semibold">Biaya Layanan</span>
-                <span class="font-bold text-stone-700">{{ formatCurrency(order.service_charge_amount) }}</span>
+                <span class="font-semibold text-stone-700">{{ formatCurrency(order.service_charge_amount) }}</span>
               </div>
               <div v-if="order.tax_amount > 0" class="flex justify-between">
                 <span class="text-stone-500 font-semibold">Pajak</span>
-                <span class="font-bold text-stone-700">{{ formatCurrency(order.tax_amount) }}</span>
+                <span class="font-semibold text-stone-700">{{ formatCurrency(order.tax_amount) }}</span>
               </div>
-              <div class="border-t border-dashed border-stone-200 pt-2.5 flex justify-between items-baseline">
-                <span class="text-sm font-bold text-stone-900 uppercase tracking-wide">Total</span>
-                <span class="text-xl font-black text-orange-600 tracking-tight">{{ formatCurrency(order.total_amount) }}</span>
+              <div class="border-t border-dashed border-stone-200 pt-2 flex justify-between items-baseline">
+                <span class="text-xs font-bold text-stone-900 uppercase tracking-wide">Total</span>
+                <span class="text-sm font-black text-orange-600 tracking-tight">{{ formatCurrency(order.total_amount) }}</span>
               </div>
             </div>
           </div>
 
           <!-- ── CTA Actions ── -->
-          <div class="space-y-3 pb-6">
+          <div class="space-y-2 pb-6">
             <!-- Bayar Total (hanya saat sesi aktif dan ada item dan payment bukan pending/paid) -->
             <button
               v-if="!isBillClosed && !isPaid && !isPaymentPending && rootItems.length > 0"
               type="button"
               :disabled="payPending"
-              class="w-full min-h-[56px] rounded-2xl bg-orange-600 text-white font-bold hover:bg-orange-700 active:scale-[0.98] transition-all duration-150 shadow-lg shadow-orange-600/25 flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              class="w-full min-h-[38px] rounded-lg bg-orange-600 text-white font-bold hover:bg-orange-700 active:scale-[0.98] transition-all duration-150 shadow-md shadow-orange-600/25 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-xs"
               @click="handlePayNow"
             >
-              <UIcon v-if="payPending" name="i-lucide-loader-2" class="size-5 animate-spin" />
-              <UIcon v-else name="i-lucide-credit-card" class="size-5" />
+              <UIcon v-if="payPending" name="i-lucide-loader-2" class="size-4 animate-spin" />
+              <UIcon v-else name="i-lucide-credit-card" class="size-4" />
               <span>{{ payPending ? 'Mempersiapkan...' : `Bayar Total — ${formatCurrency(order?.total_amount ?? 0)}` }}</span>
             </button>
 
@@ -386,10 +389,10 @@ onUnmounted(() => {
             <button
               v-if="!isBillClosed && !isPaid && !isPaymentPending"
               type="button"
-              class="w-full min-h-[52px] rounded-2xl bg-stone-900 text-white font-bold hover:bg-stone-850 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2.5 cursor-pointer shadow-md shadow-stone-900/10"
+              class="w-full min-h-[38px] rounded-lg bg-stone-900 text-white font-bold hover:bg-stone-850 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-stone-900/10 text-xs"
               @click="emit('add-more')"
             >
-              <UIcon name="i-lucide-plus" class="size-5" />
+              <UIcon name="i-lucide-plus" class="size-4" />
               <span>Tambah Pesanan</span>
             </button>
 
@@ -397,10 +400,10 @@ onUnmounted(() => {
             <button
               v-if="isBillClosed || isPaid"
               type="button"
-              class="w-full min-h-[52px] rounded-2xl bg-orange-600 text-white font-extrabold hover:bg-orange-700 active:scale-[0.98] transition-all duration-150 shadow-lg shadow-orange-600/25 flex items-center justify-center gap-2.5 cursor-pointer"
+              class="w-full min-h-[38px] rounded-lg bg-orange-600 text-white font-bold hover:bg-orange-700 active:scale-[0.98] transition-all duration-150 shadow-md shadow-orange-600/25 flex items-center justify-center gap-1.5 cursor-pointer text-xs"
               @click="router.push(`/o/${orgSlug}/orders`)"
             >
-              <UIcon name="i-lucide-refresh-ccw" class="size-5" />
+              <UIcon name="i-lucide-refresh-ccw" class="size-4" />
               <span>Pesan Lagi</span>
             </button>
 
@@ -408,20 +411,20 @@ onUnmounted(() => {
             <button
               v-if="!isBillClosed && !isPaid"
               type="button"
-              class="w-full min-h-[48px] rounded-2xl bg-stone-100 text-stone-700 font-bold hover:bg-stone-200/80 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer text-sm"
+              class="w-full min-h-[34px] rounded-lg bg-stone-100 text-stone-700 font-bold hover:bg-stone-200/80 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer text-[11px]"
               @click="showQrModal = true"
             >
-              <UIcon name="i-lucide-share-2" class="size-4.5" />
+              <UIcon name="i-lucide-share-2" class="size-3.5" />
               <span>Bagikan Sesi ke Teman</span>
             </button>
 
             <!-- Keluar Sesi Button (selalu ada) -->
             <button
               type="button"
-              class="w-full min-h-[48px] rounded-2xl bg-rose-50 text-rose-600 font-bold hover:bg-rose-100 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer text-sm"
+              class="w-full min-h-[34px] rounded-lg bg-rose-50 text-rose-600 font-bold hover:bg-rose-100 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer text-[11px]"
               @click="emit('exit-session')"
             >
-              <UIcon name="i-lucide-log-out" class="size-4.5" />
+              <UIcon name="i-lucide-log-out" class="size-3.5" />
               <span>Keluar dari Sesi Ini</span>
             </button>
           </div>
@@ -456,7 +459,7 @@ onUnmounted(() => {
           >
             <div
               v-if="showQrModal"
-              class="bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden"
+              class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden"
             >
               <!-- Modal header -->
               <div class="relative px-5 pt-5 pb-3.5 text-center border-b border-stone-100">
@@ -471,7 +474,7 @@ onUnmounted(() => {
                 <div class="size-10 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center mx-auto mb-2.5">
                   <UIcon name="i-lucide-qr-code" class="size-5 text-orange-600" />
                 </div>
-                <h3 class="text-sm font-bold text-stone-900">Bagikan Sesi Open Bill</h3>
+                <div class="text-sm font-bold text-stone-900">Bagikan Sesi Open Bill</div>
                 <p class="text-xs text-stone-400 mt-1 leading-relaxed">
                   Scan QR ini untuk bergabung dan memesan bersama.
                 </p>

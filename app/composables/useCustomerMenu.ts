@@ -190,14 +190,14 @@ export function normalizeMenus(rawMenus: RawMenu[]): MenuProduct[] {
   })
 }
 
+const products = ref<MenuProduct[]>([])
+const searchQuery = ref('')
+const activeCategory = ref('all')
+const pending = ref(false)
+const error = ref<CustomerApiError | null>(null)
+
 export const useCustomerMenu = () => {
   const api = useCustomerApi()
-
-  const products = ref<MenuProduct[]>([])
-  const searchQuery = ref('')
-  const activeCategory = ref('all')
-  const pending = ref(false)
-  const error = ref<CustomerApiError | null>(null)
 
   const categories = computed<CustomerMenuCategoryGroup[]>(() => {
     const grouped = new Map<string, CustomerMenuCategoryGroup>()

@@ -149,7 +149,7 @@ onUnmounted(() => {
     >
       <div
         v-if="open"
-        class="fixed inset-0 z-50 flex justify-center bg-black/45 backdrop-blur-xs w-full h-dvh min-h-screen overflow-hidden"
+        class="fixed inset-0 z-50 flex justify-center bg-black/45 backdrop-blur-xs w-full h-dvh min-h-screen overflow-hidden customer-ordering-layout"
       >
         <div class="bg-gray-50 flex flex-col w-full max-w-lg md:max-w-xl h-full shadow-2xl relative outline-none">
           <!-- Header (Sticky) -->
@@ -164,7 +164,7 @@ onUnmounted(() => {
             </button>
 
             <div class="flex flex-col items-center text-center">
-              <h2 class="text-base font-bold text-gray-900 leading-none">Keranjang saat ini</h2>
+              <div class="text-base font-bold text-gray-900 leading-none">Keranjang saat ini</div>
               <span v-if="tableLabel" class="text-xs text-orange-600 font-semibold mt-1">{{ tableLabel.toLowerCase().includes('meja') ? tableLabel : 'Meja ' + tableLabel }}</span>
             </div>
 
@@ -273,7 +273,7 @@ onUnmounted(() => {
                       color="neutral"
                       variant="outline"
                       :ui="{
-                        base: 'rounded-xl border border-orange-200/80 bg-orange-50/10 ring-0 focus:bg-white focus:ring-2 focus:ring-orange-100 focus:border-orange-400 placeholder:text-slate-400 transition-all duration-200 h-9 text-xs pl-9 pr-3 shadow-xs',
+                        base: 'rounded-xl border border-orange-200/80 bg-orange-50/10 ring-0 focus:bg-white focus:ring-2 focus:ring-orange-100 focus:border-orange-400 placeholder:text-[10px] sm:placeholder:text-[11px] placeholder:text-slate-400 transition-all duration-200 h-9 text-xs pl-9 pr-3 shadow-xs',
                         leading: 'absolute inset-y-0 left-0 flex items-center justify-center pl-3 pointer-events-none',
                         leadingIcon: 'size-3.5 text-slate-400 shrink-0'
                       }"
@@ -301,7 +301,7 @@ onUnmounted(() => {
               <!-- Customer Info & Global Order Notes -->
               <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-5">
                 <div class="border-b border-gray-100 pb-3">
-                  <h3 class="text-sm font-bold text-gray-900">Informasi Pesanan</h3>
+                  <div class="text-sm font-bold text-gray-900">Informasi Pesanan</div>
                 </div>
                 
                 <div class="space-y-4">
@@ -319,7 +319,7 @@ onUnmounted(() => {
                       color="neutral"
                       variant="outline"
                       :ui="{
-                        base: 'rounded-2xl border border-orange-200 bg-white ring-0 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 placeholder:text-slate-400 transition-all duration-200 h-12 text-sm pl-11 pr-4 shadow-xs',
+                        base: 'rounded-2xl border border-orange-200 bg-white ring-0 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 placeholder:text-xs placeholder:text-slate-400 transition-all duration-200 h-12 text-sm pl-11 pr-4 shadow-xs',
                         leading: 'absolute inset-y-0 left-0 flex items-center justify-center pl-4 pointer-events-none',
                         leadingIcon: 'size-4.5 text-slate-400 shrink-0'
                       }"
@@ -340,7 +340,7 @@ onUnmounted(() => {
                       color="neutral"
                       variant="outline"
                       :ui="{
-                        base: 'rounded-2xl border border-orange-200 bg-white ring-0 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 placeholder:text-slate-400 transition-all duration-200 px-4 py-3 text-sm min-h-[80px] shadow-xs resize-none'
+                        base: 'rounded-2xl border border-orange-200 bg-white ring-0 focus:ring-2 focus:ring-orange-100 focus:border-orange-400 placeholder:text-xs placeholder:text-slate-400 transition-all duration-200 px-4 py-3 text-sm min-h-[80px] shadow-xs resize-none'
                       }"
                     />
                   </div>
@@ -348,9 +348,12 @@ onUnmounted(() => {
               </div>
 
               <!-- Payment summary -->
-              <div class="mt-6">
-                <h3 class="text-sm font-bold text-gray-900 mb-4 px-1">Ringkasan Pembayaran</h3>
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-3">
+              <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-5">
+                <div class="border-b border-gray-100 pb-3">
+                  <div class="text-sm font-bold text-gray-900">Ringkasan Pembayaran</div>
+                </div>
+
+                <div class="space-y-3">
                   <div class="flex items-center justify-between text-sm">
                     <span class="text-gray-500 font-semibold">Subtotal</span>
                     <span class="font-bold text-gray-700">{{ formatPrice(subtotal) }}</span>
@@ -368,9 +371,6 @@ onUnmounted(() => {
                     <span class="text-base font-black text-orange-600">{{ formatPrice(total) }}</span>
                   </div>
                 </div>
-                <p class="text-xs text-gray-400 font-normal leading-normal mt-3 px-1">
-                  Estimasi. Harga akhir akan disesuaikan pada struk pembayaran kasir.
-                </p>
               </div>
             </template>
           </div>
@@ -417,21 +417,21 @@ onUnmounted(() => {
             <button
               type="button"
               :disabled="isSubmitDisabled"
-              class="w-full min-h-[56px] px-6 py-3.5 rounded-full bg-orange-600 text-white hover:bg-orange-700 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none shadow-lg shadow-orange-500/20 font-bold flex items-center justify-between gap-3 transition-all duration-150 cursor-pointer"
+              class="w-full min-h-[38px] px-3 py-1.5 rounded-lg bg-orange-600 text-white hover:bg-orange-700 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none shadow-md shadow-orange-500/15 font-bold flex items-center justify-between gap-3 transition-all duration-150 cursor-pointer"
               @click="emit('submit')"
             >
-              <span class="flex items-center gap-2.5">
-                <span class="size-7 rounded-xl bg-white/15 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
+              <span class="flex items-center gap-1.5">
+                <span class="size-5 rounded bg-white/15 text-white text-xs font-bold flex items-center justify-center flex-shrink-0">
                   {{ totalQty }}
                 </span>
-                <span class="text-sm font-bold tracking-wide">
+                <span class="text-xs font-bold tracking-wide">
                   {{ checkoutLabel }}
                 </span>
               </span>
-              <span class="flex items-center gap-2">
-                <span class="text-sm font-bold tracking-wide">{{ formatPrice(total) }}</span>
-                <UIcon v-if="submitting" name="i-lucide-loader-2" class="size-5 animate-spin" />
-                <UIcon v-else name="i-lucide-shopping-bag" class="size-5" />
+              <span class="flex items-center gap-1">
+                <span class="text-xs font-bold tracking-wide">{{ formatPrice(total) }}</span>
+                <UIcon v-if="submitting" name="i-lucide-loader-2" class="size-4 animate-spin" />
+                <UIcon v-else name="i-lucide-shopping-bag" class="size-4" />
               </span>
             </button>
           </div>

@@ -238,9 +238,9 @@ const handleAddToCart = () => {
           <header class="flex-none bg-white border-b border-gray-100 flex items-center justify-center gap-2 px-4 py-3">
             <!-- Title & Subtitle -->
             <div class="flex flex-col items-center text-center min-w-0">
-              <h2 class="text-sm font-bold text-gray-900 leading-none truncate max-w-[220px]">
+              <div class="text-sm font-bold text-gray-900 leading-none truncate max-w-[220px]">
                 {{ product.name }}
-              </h2>
+              </div>
               <span class="text-xs text-orange-600 font-semibold mt-1">
                 {{ formatPrice(product.price) }}
               </span>
@@ -286,9 +286,9 @@ const handleAddToCart = () => {
                     class="rounded-full font-bold"
                   />
                 </div>
-                <h1 class="text-base font-bold text-gray-900 leading-snug">
+                <div class="text-base font-bold text-gray-900 leading-snug">
                   {{ product.name }}
-                </h1>
+                </div>
                 <p class="text-base font-bold text-orange-600 mt-1">
                   {{ formatPrice(product.price) }}
                 </p>

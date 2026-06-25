@@ -80,7 +80,7 @@ const handleBlur = (event: Event) => {
   <aside class="hidden lg:flex flex-col w-80 xl:w-96 bg-white border-l border-gray-100 h-[calc(100dvh-56px)] lg:h-[calc(100dvh-64px)] sticky top-14 lg:top-16 shadow-sm">
     <!-- Header -->
     <div class="px-5 py-4 border-b border-gray-100">
-      <h2 class="text-sm font-extrabold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
+      <div class="text-sm font-extrabold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
         <UIcon name="i-lucide-shopping-bag" class="size-4.5 text-orange-600 shrink-0" />
         <span>Keranjang Belanja</span>
         <span
@@ -89,7 +89,7 @@ const handleBlur = (event: Event) => {
         >
           {{ totalQty }} Items
         </span>
-      </h2>
+      </div>
     </div>
 
     <!-- Empty State -->

@@ -22,6 +22,8 @@ interface UiOverlayState {
   active: OverlayKey
   isSwitching: boolean
   openBillHeaderPassed: boolean
+  isSearchSticky: boolean
+  showNavbarSearchInput: boolean
 }
 
 // Helper to wait for a browser animation frame to complete DOM rendering
@@ -38,7 +40,9 @@ export const useUiOverlayStore = defineStore('ui-overlay', {
   state: (): UiOverlayState => ({
     active: 'none',
     isSwitching: false,
-    openBillHeaderPassed: false
+    openBillHeaderPassed: false,
+    isSearchSticky: false,
+    showNavbarSearchInput: false
   }),
 
   getters: {

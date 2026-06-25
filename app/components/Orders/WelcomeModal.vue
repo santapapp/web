@@ -114,9 +114,9 @@ const initials = computed(() => {
             </div>
 
             <!-- Welcome Heading -->
-            <h2 class="text-xl font-bold text-stone-900 mb-2 leading-snug">
+            <div class="text-xl font-bold text-stone-900 mb-2 leading-snug">
               Selamat Datang!
-            </h2>
+            </div>
 
             <!-- Description -->
             <div class="max-w-[260px] text-sm leading-relaxed text-stone-500 font-normal space-y-1.5">

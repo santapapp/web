@@ -311,7 +311,7 @@ onUnmounted(() => {
     <!-- ── Permission denied ──────────────────────────────── -->
     <div v-else-if="phase === 'denied'" class="scanner-state">
       <div class="state-icon-lg">🔒</div>
-      <h3>Izin kamera diperlukan</h3>
+      <div class="text-[15px] font-bold text-white uppercase tracking-wider">Izin kamera diperlukan</div>
       <p>
         Anda perlu mengizinkan akses kamera agar bisa scan QR meja.
         Buka pengaturan browser dan izinkan kamera untuk situs ini.
@@ -344,7 +344,7 @@ onUnmounted(() => {
     <!-- ── Unsupported browser ────────────────────────────── -->
     <div v-else-if="phase === 'unsupported'" class="scanner-state">
       <div class="state-icon-lg">📱</div>
-      <h3>Kamera tidak didukung</h3>
+      <div class="text-[15px] font-bold text-white uppercase tracking-wider">Kamera tidak didukung</div>
       <p>
         Browser Anda tidak mendukung akses kamera untuk memindai QR.
         Gunakan Chrome/Safari/Edge terbaru, atau masukkan URL QR secara manual.
@@ -360,7 +360,7 @@ onUnmounted(() => {
     <!-- ── Error lain ─────────────────────────────────────── -->
     <div v-else-if="phase === 'error'" class="scanner-state">
       <div class="state-icon-lg">⚠️</div>
-      <h3>Gagal membuka kamera</h3>
+      <div class="text-[15px] font-bold text-white uppercase tracking-wider">Gagal membuka kamera</div>
       <p>{{ errorMsg }}</p>
 
       <div class="scanner-actions">
@@ -372,7 +372,7 @@ onUnmounted(() => {
     <!-- ── Fallback: manual URL ───────────────────────────── -->
     <div v-else-if="phase === 'fallback'" class="scanner-state">
       <div class="state-icon-lg">🔗</div>
-      <h3>Masukkan URL QR</h3>
+      <div class="text-[15px] font-bold text-white uppercase tracking-wider">Masukkan URL QR</div>
       <p>
         Salin URL dari QR meja menggunakan kamera HP, lalu tempel di sini.
       </p>

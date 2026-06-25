@@ -37,10 +37,10 @@ const isSelected = (variantId: number) => props.selectedIds.includes(variantId)
   <section class="py-4">
     <!-- Group header -->
     <div class="flex items-center justify-between gap-2 mb-2.5 px-1">
-      <h3 class="text-xs font-extrabold uppercase tracking-wide text-gray-700">
+      <div class="text-xs font-extrabold uppercase tracking-wide text-gray-700">
         {{ group.name }}
         <span v-if="group.is_required" class="text-orange-500 align-super text-sm">*</span>
-      </h3>
+      </div>
 
       <div class="flex shrink-0 items-center gap-1.5">
         <span class="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-gray-500">

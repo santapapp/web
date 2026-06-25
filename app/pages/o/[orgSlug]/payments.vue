@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  layout: 'org',
+  layout: 'blank',
   middleware: ['org-exists']
 })
 
@@ -375,7 +375,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-dvh bg-gray-50 flex flex-col">
+  <div class="min-h-dvh bg-gray-50 flex flex-col customer-ordering-layout">
 
     <!-- Cancel Confirmation Modal -->
     <UModal v-model:open="showCancelModal" :ui="{ footer: 'justify-end' }">
@@ -440,36 +440,38 @@ onMounted(async () => {
 
       <template v-else>
         <!-- Header -->
-        <header class="sticky top-0 z-20 flex-shrink-0 flex items-center justify-between gap-2 px-4 py-3 bg-white/90 backdrop-blur-md border-b border-stone-100">
-          <button
-            type="button"
-            class="size-9 rounded-xl flex items-center justify-center text-stone-600 hover:bg-stone-100 active:scale-95 transition-all duration-150 cursor-pointer"
-            aria-label="Kembali ke pesanan"
-            @click="router.push(`/o/${orgSlug}/orders`)"
-          >
-            <UIcon name="i-lucide-arrow-left" class="size-5" />
-          </button>
-          <div class="flex flex-col items-center text-center">
-            <h1 class="text-sm font-bold text-stone-900 leading-none">Detail Pembayaran</h1>
-            <span v-if="openBill" class="text-[11px] text-stone-400 font-medium mt-0.5">{{ openBill.order_number }}</span>
+        <header class="sticky top-0 z-20 flex-shrink-0 bg-white/90 backdrop-blur-md border-b border-stone-100">
+          <div class="w-full max-w-5xl mx-auto flex items-center justify-between gap-2 px-4 py-3">
+            <button
+              type="button"
+              class="size-9 rounded-xl flex items-center justify-center text-stone-600 hover:bg-stone-100 active:scale-95 transition-all duration-150 cursor-pointer"
+              aria-label="Kembali ke pesanan"
+              @click="router.push(`/o/${orgSlug}/orders`)"
+            >
+              <UIcon name="i-lucide-arrow-left" class="size-5" />
+            </button>
+            <div class="flex flex-col items-center text-center">
+              <div class="text-sm font-bold text-stone-900 leading-none">Detail Pembayaran</div>
+              <span v-if="openBill" class="text-[11px] text-stone-400 font-medium mt-0.5">{{ openBill.order_number }}</span>
+            </div>
+            <span class="size-9 flex-shrink-0" aria-hidden="true" />
           </div>
-          <span class="size-9 flex-shrink-0" aria-hidden="true" />
         </header>
 
         <!-- Main Layout -->
-        <div class="w-full max-w-lg lg:max-w-4xl mx-auto px-4 py-5">
+        <div class="w-full max-w-lg lg:max-w-5xl mx-auto px-4 py-5">
 
           <!-- ── Payment Sukses ── -->
-          <div v-if="isPaid" class="max-w-sm mx-auto bg-white rounded-2xl border border-stone-200/60 p-7 text-center space-y-5 shadow-sm animate-in fade-in zoom-in-95 duration-200">
-            <div class="relative size-16 mx-auto">
-              <div class="absolute inset-0 rounded-2xl bg-emerald-100/60 animate-ping opacity-70" />
-              <div class="relative size-16 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
-                <UIcon name="i-lucide-check-circle-2" class="size-9" />
+          <div v-if="isPaid" class="max-w-sm mx-auto bg-white rounded-xl border border-stone-200/60 p-5 text-center space-y-4 shadow-sm animate-in fade-in zoom-in-95 duration-200">
+            <div class="relative size-12 mx-auto">
+              <div class="absolute inset-0 rounded-xl bg-emerald-100/60 animate-ping opacity-70" />
+              <div class="relative size-12 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                <UIcon name="i-lucide-check-circle-2" class="size-6" />
               </div>
             </div>
-            <div class="space-y-1.5">
-              <h2 class="text-lg font-bold text-stone-900">Pembayaran Berhasil!</h2>
-              <p class="text-sm text-stone-500 leading-relaxed">Terima kasih. Pesanan Anda sedang diproses oleh kasir & dapur kami.</p>
+            <div class="space-y-1">
+              <div class="text-base font-bold text-stone-900">Pembayaran Berhasil!</div>
+              <p class="text-xs text-stone-500 leading-relaxed">Terima kasih. Pesanan Anda sedang diproses oleh kasir & dapur kami.</p>
             </div>
             <div v-if="payment" class="bg-stone-50 border border-stone-100 rounded-xl p-3.5 text-left space-y-1.5">
               <div class="flex items-center justify-between text-[10px] text-stone-400 font-bold uppercase tracking-wider">
@@ -491,13 +493,13 @@ onMounted(async () => {
           </div>
 
           <!-- ── Payment Expired ── -->
-          <div v-else-if="isExpired" class="max-w-sm mx-auto bg-white rounded-2xl border border-stone-200/60 p-7 text-center space-y-5 shadow-sm animate-in fade-in zoom-in-95 duration-200">
-            <div class="size-14 mx-auto rounded-2xl bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center">
-              <UIcon name="i-lucide-timer" class="size-8" />
+          <div v-else-if="isExpired" class="max-w-sm mx-auto bg-white rounded-xl border border-stone-200/60 p-5 text-center space-y-4 shadow-sm animate-in fade-in zoom-in-95 duration-200">
+            <div class="size-12 mx-auto rounded-xl bg-amber-50 border border-amber-100 text-amber-600 flex items-center justify-center">
+              <UIcon name="i-lucide-timer" class="size-6" />
             </div>
-            <div class="space-y-1.5">
-              <h2 class="text-base font-bold text-stone-900">Waktu Pembayaran Habis</h2>
-              <p class="text-sm text-stone-500 leading-relaxed">Pesanan belum diproses karena pembayaran tidak diselesaikan tepat waktu. Silakan coba bayar kembali atau buat pesanan baru.</p>
+            <div class="space-y-1">
+              <div class="text-base font-bold text-stone-900">Waktu Pembayaran Habis</div>
+              <p class="text-xs text-stone-500 leading-relaxed">Pesanan belum diproses karena pembayaran tidak diselesaikan tepat waktu. Silakan coba bayar kembali atau buat pesanan baru.</p>
             </div>
             <UButton
               label="Kembali ke Menu"
@@ -509,13 +511,13 @@ onMounted(async () => {
           </div>
 
           <!-- ── Payment Dibatalkan ── -->
-          <div v-else-if="isFailed" class="max-w-sm mx-auto bg-white rounded-2xl border border-stone-200/60 p-7 text-center space-y-5 shadow-sm animate-in fade-in zoom-in-95 duration-200">
-            <div class="size-14 mx-auto rounded-2xl bg-rose-50 border border-rose-100 text-rose-500 flex items-center justify-center">
-              <UIcon name="i-lucide-x-circle" class="size-8" />
+          <div v-else-if="isFailed" class="max-w-sm mx-auto bg-white rounded-xl border border-stone-200/60 p-5 text-center space-y-4 shadow-sm animate-in fade-in zoom-in-95 duration-200">
+            <div class="size-12 mx-auto rounded-xl bg-rose-50 border border-rose-100 text-rose-500 flex items-center justify-center">
+              <UIcon name="i-lucide-x-circle" class="size-6" />
             </div>
-            <div class="space-y-1.5">
-              <h2 class="text-base font-bold text-stone-900">Pembayaran Dibatalkan</h2>
-              <p class="text-sm text-stone-500 leading-relaxed">Transaksi QRIS dibatalkan. Silakan coba lagi jika ingin melanjutkan pembayaran.</p>
+            <div class="space-y-1">
+              <div class="text-base font-bold text-stone-900">Pembayaran Dibatalkan</div>
+              <p class="text-xs text-stone-500 leading-relaxed">Transaksi QRIS dibatalkan. Silakan coba lagi jika ingin melanjutkan pembayaran.</p>
             </div>
             <UButton
               label="Coba Lagi"
@@ -531,12 +533,12 @@ onMounted(async () => {
           <div v-else-if="openBill" class="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
 
             <!-- ── Kolom Kiri: Detail Tagihan ── -->
-            <div class="bg-white rounded-2xl border border-stone-200/60 shadow-sm overflow-hidden">
+            <div class="bg-white rounded-xl border border-stone-200/60 shadow-sm overflow-hidden">
               <!-- Card Header -->
-              <div class="flex items-center justify-between px-5 py-4 border-b border-stone-100">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-stone-100">
                 <div class="flex items-center gap-2">
                   <UIcon name="i-lucide-receipt" class="size-4 text-orange-500 shrink-0" />
-                  <h2 class="text-sm font-bold text-stone-900">Detail Tagihan</h2>
+                  <div class="text-sm font-bold text-stone-900">Detail Tagihan</div>
                 </div>
                 <UBadge
                   :label="openBill.payment_status === 'paid' ? 'Lunas' : openBill.payment_status === 'pending' ? 'Pending' : 'Belum Lunas'"
@@ -548,70 +550,70 @@ onMounted(async () => {
               </div>
 
               <!-- Info Rows -->
-              <div class="px-5 py-4 space-y-3">
+              <div class="px-4 py-3.5 space-y-3">
                 <div class="flex items-center justify-between gap-3">
-                  <span class="text-xs text-stone-400 font-medium shrink-0">No. Tagihan</span>
-                  <span class="text-sm font-mono font-bold text-stone-900 text-right truncate">{{ openBill.order_number }}</span>
+                  <span class="text-xs text-stone-500 font-medium shrink-0">No. Tagihan</span>
+                  <span class="text-xs font-mono font-bold text-stone-900 text-right truncate">{{ openBill.order_number }}</span>
                 </div>
                 <div v-if="openBill.order_id" class="flex items-center justify-between gap-3">
-                  <span class="text-xs text-stone-400 font-medium shrink-0">ID Order</span>
-                  <span class="text-xs font-mono font-semibold text-stone-700 text-right">{{ openBill.order_id }}</span>
+                  <span class="text-xs text-stone-500 font-medium shrink-0">ID Order</span>
+                  <span class="text-xs font-mono font-semibold text-stone-800 text-right">{{ openBill.order_id }}</span>
                 </div>
                 <div class="flex items-center justify-between gap-3">
-                  <span class="text-xs text-stone-400 font-medium shrink-0">Meja / Area</span>
-                  <span class="text-sm font-semibold text-stone-800 text-right">{{ openBill.dining_table?.name || openBill.dining_table?.code || '-' }}</span>
+                  <span class="text-xs text-stone-500 font-medium shrink-0">Meja / Area</span>
+                  <span class="text-xs font-semibold text-stone-800 text-right">{{ openBill.dining_table?.name || openBill.dining_table?.code || '-' }}</span>
                 </div>
                 <div v-if="customerName" class="flex items-center justify-between gap-3">
-                  <span class="text-xs text-stone-400 font-medium shrink-0">Pelanggan</span>
-                  <span class="text-sm font-semibold text-stone-800 text-right capitalize">{{ customerName }}</span>
+                  <span class="text-xs text-stone-500 font-medium shrink-0">Pelanggan</span>
+                  <span class="text-xs font-semibold text-stone-800 text-right capitalize">{{ customerName }}</span>
                 </div>
                 <div class="flex items-center justify-between gap-3">
-                  <span class="text-xs text-stone-400 font-medium shrink-0">Metode</span>
-                  <span class="text-sm font-semibold text-stone-800 flex items-center gap-1.5">
+                  <span class="text-xs text-stone-500 font-medium shrink-0">Metode</span>
+                  <span class="text-xs font-semibold text-stone-800 flex items-center gap-1.5">
                     <UIcon name="i-lucide-qr-code" class="size-3.5 text-orange-500 shrink-0" />
                     QRIS
                   </span>
                 </div>
                 <div class="flex items-center justify-between gap-3">
-                  <span class="text-xs text-stone-400 font-medium shrink-0">Mitra Gateway</span>
-                  <span class="text-xs font-semibold text-stone-700 text-right">Sekeco Payment</span>
+                  <span class="text-xs text-stone-500 font-medium shrink-0">Mitra Gateway</span>
+                  <span class="text-xs font-semibold text-stone-800 text-right">Sekeco Payment</span>
                 </div>
               </div>
 
               <!-- Financial Breakdown -->
-              <div class="border-t border-dashed border-stone-200 px-5 py-4 space-y-2.5">
+              <div class="border-t border-dashed border-stone-200 px-4 py-3.5 space-y-2.5">
                 <div class="flex items-center justify-between">
-                  <span class="text-xs text-stone-400 font-medium">Subtotal</span>
-                  <span class="text-sm font-semibold text-stone-700">{{ formatCurrency(openBill.subtotal_amount) }}</span>
+                  <span class="text-xs text-stone-500 font-medium">Subtotal</span>
+                  <span class="text-xs font-semibold text-stone-800">{{ formatCurrency(openBill.subtotal_amount) }}</span>
                 </div>
                 <div v-if="openBill.discount_amount > 0" class="flex items-center justify-between">
                   <span class="text-xs text-emerald-600 font-medium">Diskon</span>
-                  <span class="text-sm font-semibold text-emerald-600">-{{ formatCurrency(openBill.discount_amount) }}</span>
+                  <span class="text-xs font-semibold text-emerald-600">-{{ formatCurrency(openBill.discount_amount) }}</span>
                 </div>
                 <div v-if="openBill.service_charge_amount > 0" class="flex items-center justify-between">
-                  <span class="text-xs text-stone-400 font-medium">Biaya Layanan</span>
-                  <span class="text-sm font-semibold text-stone-700">{{ formatCurrency(openBill.service_charge_amount) }}</span>
+                  <span class="text-xs text-stone-500 font-medium">Biaya Layanan</span>
+                  <span class="text-xs font-semibold text-stone-800">{{ formatCurrency(openBill.service_charge_amount) }}</span>
                 </div>
                 <div v-if="openBill.tax_amount > 0" class="flex items-center justify-between">
-                  <span class="text-xs text-stone-400 font-medium">Pajak</span>
-                  <span class="text-sm font-semibold text-stone-700">{{ formatCurrency(openBill.tax_amount) }}</span>
+                  <span class="text-xs text-stone-500 font-medium">Pajak</span>
+                  <span class="text-xs font-semibold text-stone-800">{{ formatCurrency(openBill.tax_amount) }}</span>
                 </div>
                 <!-- Total -->
                 <div class="pt-2 border-t border-stone-200 flex items-center justify-between">
-                  <span class="text-sm font-bold text-stone-900">Total Bayar</span>
-                  <span class="text-base font-black text-orange-600 tracking-tight">{{ formatCurrency(openBill.total_amount) }}</span>
+                  <span class="text-[13px] font-bold text-stone-900">Total Bayar</span>
+                  <span class="text-sm font-extrabold text-orange-600 tracking-tight">{{ formatCurrency(openBill.total_amount) }}</span>
                 </div>
               </div>
             </div>
 
             <!-- ── Kolom Kanan: Pembayaran QRIS ── -->
-            <div v-if="openBill.total_amount > 0" class="bg-white rounded-2xl border border-stone-200/60 shadow-sm overflow-hidden">
+            <div v-if="openBill.total_amount > 0" class="bg-white rounded-xl border border-stone-200/60 shadow-sm overflow-hidden">
 
               <!-- Card Header -->
-              <div class="flex items-center justify-between px-5 py-4 border-b border-stone-100">
+              <div class="flex items-center justify-between px-4 py-3 border-b border-stone-100">
                 <div class="flex items-center gap-2">
                   <UIcon name="i-lucide-qr-code" class="size-4 text-orange-500 shrink-0" />
-                  <h2 class="text-sm font-bold text-stone-900">Pembayaran QRIS</h2>
+                  <div class="text-sm font-bold text-stone-900">Pembayaran QRIS</div>
                 </div>
                 <!-- Polling status indicator -->
                 <div v-if="isPolling" class="flex items-center gap-1.5 text-[11px] text-emerald-700 font-semibold bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-full">
@@ -621,7 +623,7 @@ onMounted(async () => {
               </div>
 
               <!-- QR Code Section: active state -->
-              <div v-if="qrDataUrl && !isPaid && !isFailed && !isExpired" class="px-5 py-5 flex flex-col items-center gap-4">
+              <div v-if="qrDataUrl && !isPaid && !isFailed && !isExpired" class="px-4 py-4 flex flex-col items-center gap-4">
 
                 <!-- QR Code container -->
                 <div class="bg-white border border-stone-200 rounded-2xl p-3 inline-flex items-center justify-center shadow-xs">
@@ -693,15 +695,15 @@ onMounted(async () => {
               </div>
 
               <!-- Initiate Payment State — open bill, no QR yet -->
-              <div v-else-if="!isTableOrderPage && !qrDataUrl && !isPaid && !isFailed && !isExpired" class="px-5 py-8 text-center">
-                <div class="relative size-16 mx-auto mb-5">
-                  <div class="absolute inset-0 bg-gradient-to-tr from-orange-400 via-pink-500 to-purple-600 rounded-2xl blur-md opacity-40 animate-pulse" />
-                  <div class="relative size-16 rounded-2xl bg-gradient-to-tr from-orange-500 via-pink-500 to-purple-600 text-white flex items-center justify-center font-black text-lg shadow-md">
+              <div v-else-if="!isTableOrderPage && !qrDataUrl && !isPaid && !isFailed && !isExpired" class="px-4 py-6 text-center">
+                <div class="relative size-12 mx-auto mb-4">
+                  <div class="absolute inset-0 bg-gradient-to-tr from-orange-400 via-pink-500 to-purple-600 rounded-xl blur-md opacity-40 animate-pulse" />
+                  <div class="relative size-12 rounded-xl bg-gradient-to-tr from-orange-500 via-pink-500 to-purple-600 text-white flex items-center justify-center font-black text-sm shadow-md">
                     QRIS
                   </div>
                 </div>
-                <div class="space-y-1.5 mb-5">
-                  <h3 class="text-sm font-bold text-stone-900">Pembayaran Online QRIS</h3>
+                <div class="space-y-1 mb-4">
+                  <div class="text-sm font-bold text-stone-900">Pembayaran Online QRIS</div>
                   <p class="text-xs text-stone-500 leading-relaxed max-w-[240px] mx-auto">
                     Bayar pesanan Anda secara instan menggunakan QRIS. Mendukung semua aplikasi e-wallet dan mobile banking.
                   </p>
@@ -719,17 +721,17 @@ onMounted(async () => {
               </div>
 
               <!-- Pembayaran di Kasir State — table order, no QR -->
-              <div v-else-if="isTableOrderPage && !qrDataUrl && !isPaid && !isFailed && !isExpired" class="px-5 py-8 text-center">
-                <div class="size-14 mx-auto mb-5 rounded-2xl bg-stone-50 border border-stone-200 text-3xl flex items-center justify-center">
+              <div v-else-if="isTableOrderPage && !qrDataUrl && !isPaid && !isFailed && !isExpired" class="px-4 py-6 text-center">
+                <div class="size-10 mx-auto mb-4 rounded-xl bg-stone-50 border border-stone-200 text-2xl flex items-center justify-center">
                   🏪
                 </div>
-                <div class="space-y-1.5 mb-5">
-                  <h3 class="text-sm font-bold text-stone-900">Pembayaran di Kasir</h3>
+                <div class="space-y-1 mb-4">
+                  <div class="text-sm font-bold text-stone-900">Pembayaran di Kasir</div>
                   <p class="text-xs text-stone-500 leading-relaxed max-w-[240px] mx-auto">
                     Pesanan Anda telah tercatat di kasir. Silakan lakukan pembayaran langsung di kasir restoran atau tunggu staf kami melayani Anda di meja.
                   </p>
                 </div>
-                <div v-if="countdown > 0" class="inline-flex items-center gap-1.5 text-xs font-semibold text-orange-600 bg-orange-50 border border-orange-100 py-2 px-4 rounded-xl mb-4">
+                <div v-if="countdown > 0" class="inline-flex items-center gap-1.5 text-xs font-semibold text-orange-600 bg-orange-50 border border-orange-100 py-1.5 px-3 rounded-xl mb-4">
                   <UIcon name="i-lucide-timer" class="size-4 shrink-0" />
                   <span>Batas Waktu: {{ formatCountdown(countdown) }}</span>
                 </div>
@@ -744,11 +746,11 @@ onMounted(async () => {
           <!-- Payment Instructions — shown below the grid when QR is active -->
           <div v-if="openBill && qrDataUrl && !isPaid && !isFailed && !isExpired" class="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-5">
             <!-- Steps -->
-            <div class="bg-white rounded-2xl border border-stone-200/60 shadow-sm px-5 py-4">
-              <h3 class="text-xs font-bold text-stone-900 flex items-center gap-1.5 mb-3.5">
+            <div class="bg-white rounded-xl border border-stone-200/60 shadow-sm px-4 py-3.5">
+              <div class="text-xs font-bold text-stone-900 flex items-center gap-1.5 mb-3.5">
                 <UIcon name="i-lucide-info" class="size-4 text-orange-500" />
                 Petunjuk Pembayaran
-              </h3>
+              </div>
               <ol class="space-y-3">
                 <li class="flex items-start gap-2.5">
                   <span class="size-5 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600 font-bold shrink-0 text-[10px]">1</span>
@@ -770,7 +772,7 @@ onMounted(async () => {
             </div>
 
             <!-- Gateway Info -->
-            <div class="bg-orange-50/30 rounded-2xl border border-orange-100/60 px-5 py-4">
+            <div class="bg-orange-50/30 rounded-xl border border-orange-100/60 px-4 py-3.5">
               <div class="flex items-center gap-1.5 mb-3">
                 <UIcon name="i-lucide-shield-check" class="size-4 text-orange-500 shrink-0" />
                 <span class="text-xs font-bold text-orange-800">Informasi Gerbang Pembayaran</span>

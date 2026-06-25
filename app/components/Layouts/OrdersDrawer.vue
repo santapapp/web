@@ -113,11 +113,11 @@ onUnmounted(() => {
           </header>
 
           <!-- Scrollable body -->
-          <div class="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+          <div class="flex-1 overflow-y-auto px-4 py-4 space-y-6">
 
             <!-- Active orders section -->
             <div>
-              <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 px-1">Pesanan Aktif</h3>
+              <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 px-1">Sesi Aktif</h3>
 
               <OrdersActiveOrderCard
                 :order="activeOrder.order.value"
@@ -135,6 +135,16 @@ onUnmounted(() => {
                   Scan QR meja untuk melihat pesanan aktif
                 </p>
               </div>
+            </div>
+
+            <!-- History Section -->
+            <div v-if="history.items.value.length > 0" class="border-t border-gray-100 pt-5">
+              <OrdersRecentHistory
+                :items="history.items.value"
+                :org-slug="orgSlug"
+                :step="5"
+                :refreshing="history.isRefreshing.value"
+              />
             </div>
 
           </div>

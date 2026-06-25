@@ -29,14 +29,14 @@ const formatPrice = (v: number) =>
   <button
     type="button"
     :disabled="disabled"
-    class="w-full min-h-[52px] px-5 py-3 rounded-2xl bg-orange-600 text-white hover:bg-orange-700 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none shadow-md shadow-orange-500/15 font-bold flex items-center justify-between transition-all duration-150 cursor-pointer whitespace-nowrap"
+    class="w-full min-h-[38px] px-3 py-1.5 rounded-lg bg-orange-600 text-white hover:bg-orange-700 active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none shadow-sm shadow-orange-500/10 font-bold flex items-center justify-between transition-all duration-150 cursor-pointer whitespace-nowrap"
     @click="emit('click')"
   >
-    <div class="flex items-center gap-2.5 min-w-0">
-      <UIcon name="i-lucide-shopping-bag" class="size-5 shrink-0 text-orange-100" />
-      <span class="text-[15px] font-extrabold tracking-wide truncate">{{ label }}</span>
+    <div class="flex items-center gap-1.5 min-w-0">
+      <UIcon name="i-lucide-shopping-bag" class="size-4 shrink-0 text-orange-100" />
+      <span class="text-xs font-bold tracking-wide truncate">{{ label }}</span>
     </div>
-    <span class="text-[15px] font-extrabold tracking-wide shrink-0 bg-white/12 px-3 py-1 rounded-xl border border-white/10">
+    <span class="text-xs font-bold tracking-wide shrink-0 bg-white/12 px-2 py-0.5 rounded border border-white/10">
       {{ formatPrice(total) }}
     </span>
   </button>

@@ -23,7 +23,7 @@ onMounted(() => {
 <template>
   <div class="org-shell customer-ordering-layout">
     <!-- Header -->
-    <OrgHeader />
+    <OrgHeader max-width-class="max-w-5xl" />
 
     <!-- Slideover kiri: Menu Sesi -->
     <SessionDrawer />

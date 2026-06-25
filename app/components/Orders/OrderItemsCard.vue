@@ -60,11 +60,11 @@ const orderCancelled = computed(() =>
 </script>
 
 <template>
-  <div class="bg-white rounded-3xl shadow-sm border border-stone-200/70 p-5">
+  <div class="bg-white rounded-xl shadow-xs border border-stone-200/60 p-3">
     <div class="flex items-center justify-between gap-2 mb-1">
-      <h2 class="text-xs font-extrabold uppercase tracking-wide text-stone-800">
+      <div class="text-xs font-extrabold uppercase tracking-wide text-stone-800">
         Detail Pesanan
-      </h2>
+      </div>
       <span v-if="totalItems > 0" class="text-xs font-bold text-stone-400">
         {{ totalItems }} item
       </span>

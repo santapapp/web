@@ -5,8 +5,10 @@
  * active session status banner, and the modular product grids.
  */
 
+import { ref, onMounted, onUnmounted } from 'vue'
 import type { MenuProduct } from '~/types/menu'
 import type { CustomerMenuCategoryGroup } from '~/types/customer-menu'
+import { useUiOverlayStore } from '~/stores/ui-overlay.store'
 
 defineProps<{
   products: MenuProduct[]
@@ -19,6 +21,7 @@ defineProps<{
 }>()
 
 const searchQuery = defineModel<string>('searchQuery', { default: '' })
+const overlay = useUiOverlayStore()
 
 const emit = defineEmits<{
   add: [product: MenuProduct]
@@ -27,13 +30,50 @@ const emit = defineEmits<{
   decrease: [product: MenuProduct]
   increase: [product: MenuProduct]
 }>()
+
+const sentinelRef = ref<HTMLElement | null>(null)
+let handleScroll: () => void
+
+onMounted(() => {
+  overlay.isSearchSticky = false
+  overlay.showNavbarSearchInput = false
+
+  handleScroll = () => {
+    if (!sentinelRef.value) return
+    const rect = sentinelRef.value.getBoundingClientRect()
+    // top-14 is 56px, lg:top-16 is 64px
+    const headerHeight = window.innerWidth >= 1024 ? 64 : 56
+    const isSticky = rect.top <= headerHeight
+    overlay.isSearchSticky = isSticky
+    if (!isSticky) {
+      overlay.showNavbarSearchInput = false
+    }
+  }
+
+  window.addEventListener('scroll', handleScroll, { capture: true, passive: true })
+  // Initial check
+  handleScroll()
+})
+
+onUnmounted(() => {
+  if (handleScroll) {
+    window.removeEventListener('scroll', handleScroll, { capture: true })
+  }
+  overlay.isSearchSticky = false
+  overlay.showNavbarSearchInput = false
+})
 </script>
 
 <template>
-  <section class="mx-auto w-full max-w-4xl px-4 py-5 pb-32 lg:px-6 lg:pb-8">
-    <div class="sticky top-0 z-10 bg-gray-50/95 backdrop-blur-md py-3 -mx-4 px-4 mb-4 flex flex-col gap-3.5 border-b border-stone-250/10">
+  <section class="mx-auto w-full max-w-5xl px-4 py-5 pb-32 lg:px-6 lg:pb-8">
+    <div ref="sentinelRef" class="h-0 w-full pointer-events-none"></div>
+
+    <div
+      v-if="!overlay.isSearchSticky || (categories && categories.length > 1)"
+      class="sticky top-0 z-10 bg-gray-50/95 backdrop-blur-md py-3 -mx-4 px-4 mb-4 flex flex-col gap-3.5 border-b border-stone-250/10"
+    >
       <!-- Search field input -->
-      <OrdersMenuSearchBar v-model="searchQuery" />
+      <OrdersMenuSearchBar v-show="!overlay.isSearchSticky" v-model="searchQuery" />
 
       <!-- Category selection tabs -->
       <OrdersCategoryTabs

@@ -17,7 +17,7 @@ defineProps<{
     <div class="size-12 rounded-2xl bg-amber-50 border border-amber-100/50 flex items-center justify-center text-amber-700 shrink-0 mb-4 shadow-sm">
       <UIcon :name="icon || 'i-lucide-inbox'" class="size-5.5" />
     </div>
-    <h3 class="text-base font-extrabold text-stone-900 leading-snug">{{ title }}</h3>
+    <div class="text-base font-extrabold text-stone-900 leading-snug">{{ title }}</div>
     <p class="mt-2 max-w-sm text-xs sm:text-sm leading-relaxed text-stone-500 font-semibold">{{ description }}</p>
     <slot />
   </div>

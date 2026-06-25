@@ -124,9 +124,9 @@ const orderDetailRoute = (item: OrderHistoryItem) => ({
         <span class="size-8 rounded-xl bg-amber-100 border border-amber-200/60 flex items-center justify-center text-amber-700 shrink-0">
           <UIcon name="i-lucide-clock" class="size-4" />
         </span>
-        <h2 class="text-sm font-extrabold uppercase tracking-wide text-stone-800">
+        <div class="text-sm font-extrabold uppercase tracking-wide text-stone-800">
           Pesanan Terbaru
-        </h2>
+        </div>
       </div>
       <span class="text-xs font-bold text-stone-400 tabular-nums">
         {{ sortedItems.length }}

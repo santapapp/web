@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed, ref, watch } from 'vue'
 import OrgHeroSection from '~/components/org/OrgHeroSection.vue'
 import OrgTransactionInfoCard from '~/components/org/OrgTransactionInfoCard.vue'
 import OrgStartOrderCard from '~/components/org/OrgStartOrderCard.vue'
@@ -12,7 +13,9 @@ definePageMeta({
 const route = useRoute()
 const orgSlug = computed(() => String(route.params.orgSlug || ''))
 const orderPath = computed(() => `/o/${orgSlug.value}/orders`)
-const menuPath = computed(() => `/o/${orgSlug.value}/menu`)
+
+const overlay = useUiOverlayStore()
+const customerSession = useCustomerSession()
 
 const {
   org,
@@ -26,8 +29,14 @@ const {
 
 const {
   products,
+  filteredProducts,
+  searchQuery,
   pending: menuPending,
-  loadForOrgSlug
+  error: menuError,
+  loadForOrgSlug,
+  categories,
+  activeCategory,
+  setCategory
 } = useOrderMenu()
 
 const pageLoading = computed(() => isLoading.value || menuPending.value)
@@ -42,6 +51,45 @@ watch(
     await loadForOrgSlug(slug)
   },
   { immediate: true }
+)
+
+const sameSlug = (left?: string | null, right?: string | null) =>
+  String(left || '').trim().toLowerCase() === String(right || '').trim().toLowerCase()
+
+const isSessionForThisOrg = computed(() =>
+  sameSlug(customerSession.orgSlug.value, orgSlug.value)
+)
+
+const cartMode = computed(() =>
+  isSessionForThisOrg.value && customerSession.sessionMode.value === 'open_bill'
+    ? 'open_bill'
+    : 'table_order'
+)
+
+const cart = useOrderCart(cartMode)
+const productDetailCtaDisabled = computed(() => overlay.anyOpen && !overlay.isProduct)
+
+const realCategories = computed(() =>
+  categories.value.filter((category) => category.id !== 'all')
+)
+
+const filteredCategoryGroups = computed(() => {
+  const visibleProductIds = new Set(filteredProducts.value.map((product) => product.id))
+
+  return realCategories.value
+    .map((category) => ({
+      ...category,
+      menus: category.menus.filter((product) => visibleProductIds.has(product.id))
+    }))
+    .filter((category) => category.menus.length > 0)
+})
+
+const shouldGroupByCategory = computed(() =>
+  activeCategory.value === 'all' && filteredCategoryGroups.value.length > 1
+)
+
+const menuErrorMessage = computed(() =>
+  menuError.value?.message ?? 'Menu gagal dimuat. Coba lagi sebentar.'
 )
 
 useOutletSeo(orgSlug, {
@@ -90,12 +138,31 @@ useOutletSeo(orgSlug, {
       <div class="space-y-5 pb-10">
         <OrgTransactionInfoCard :org="org" :full-address="fullAddress" />
         <OrgStartOrderCard :order-to="orderPath" />
+        
         <OrgMenuPreviewSection
-          :products="products"
+          v-model:search-query="searchQuery"
+          :products="filteredProducts"
           :loading="menuPending"
-          :menu-to="menuPath"
+          :categories="categories"
+          :active-category="activeCategory"
+          :should-group-by-category="shouldGroupByCategory"
+          :filtered-category-groups="filteredCategoryGroups"
+          :menu-error="menuError"
+          :menu-error-message="menuErrorMessage"
+          @open-detail="cart.openProductDetail"
+          @change-category="setCategory"
+          @retry="loadForOrgSlug(org?.slug || orgSlug)"
         />
       </div>
     </template>
+
+    <!-- Product detail modal/sheet -->
+    <OrdersProductDetailSheet
+      :product="cart.selectedProduct.value"
+      :open="cart.showProductDetail.value"
+      :cta-disabled="productDetailCtaDisabled"
+      :read-only="true"
+      @close="cart.closeProductDetail"
+    />
   </div>
 </template>

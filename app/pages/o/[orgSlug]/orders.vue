@@ -653,61 +653,65 @@ const handleCancelExit = () => {
             <!-- Banner open bill: pesan lagi -->
             <div
               v-if="isOpenBill"
-              class="px-4 py-3 bg-emerald-50/50 border-b border-emerald-100 flex items-center justify-between gap-3 shadow-none"
+              class="bg-emerald-50/50 border-b border-emerald-100 shadow-none"
             >
-              <div class="flex items-center gap-2.5 min-w-0">
-                <button
-                  type="button"
-                  class="size-8 rounded-full flex items-center justify-center text-emerald-700 hover:bg-emerald-100 hover:text-emerald-950 bg-white border border-emerald-200 active:scale-95 transition-all duration-150 cursor-pointer shadow-xs shrink-0"
-                  title="Kembali ke Sesi"
-                  @click="showMenuForAddMore = false"
-                >
-                  <UIcon name="i-lucide-arrow-left" class="size-4" />
-                </button>
-                <span class="text-xs font-black text-emerald-900 truncate">
-                  Tambah Pesanan
-                </span>
-              </div>
-              <div v-if="order?.order_number" class="text-right shrink-0">
-                <span class="text-[10px] sm:text-xs font-bold font-mono text-emerald-800 bg-emerald-100/60 border border-emerald-200/50 px-2 py-0.5 rounded-lg">
-                  #{{ order.order_number }}
-                </span>
+              <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <button
+                    type="button"
+                    class="size-8 rounded-full flex items-center justify-center text-emerald-700 hover:bg-emerald-100 hover:text-emerald-950 bg-white border border-emerald-200 active:scale-95 transition-all duration-150 cursor-pointer shadow-xs shrink-0"
+                    title="Kembali ke Sesi"
+                    @click="showMenuForAddMore = false"
+                  >
+                    <UIcon name="i-lucide-arrow-left" class="size-4" />
+                  </button>
+                  <span class="text-xs font-black text-emerald-900 truncate">
+                    Tambah Pesanan
+                  </span>
+                </div>
+                <div v-if="order?.order_number" class="text-right shrink-0">
+                  <span class="text-[10px] sm:text-xs font-bold font-mono text-emerald-800 bg-emerald-100/60 border border-emerald-200/50 px-2 py-0.5 rounded-lg">
+                    #{{ order.order_number }}
+                  </span>
+                </div>
               </div>
             </div>
 
             <!-- Banner table session: ganti meja & keluar sesi -->
             <div
               v-else-if="tableLabel"
-              class="px-4 py-3 bg-gradient-to-r from-orange-600 to-orange-500 border-b border-orange-600/30 flex items-center justify-between gap-3 shadow-xs"
+              class="bg-gradient-to-r from-orange-600 to-orange-500 border-b border-orange-600/30 shadow-xs"
             >
-              <div class="flex items-center gap-2.5 min-w-0">
-                <span class="size-6 rounded-full bg-white/15 border border-white/10 flex items-center justify-center shrink-0">
-                  <UIcon name="i-lucide-armchair" class="size-3.5 text-white" />
-                </span>
-                <span class="text-xs font-black text-white truncate drop-shadow-xs">
-                  {{ tableLabel.toLowerCase().includes('meja') ? tableLabel : 'Meja ' + tableLabel }}
-                </span>
-              </div>
-              <div class="flex items-center gap-1.5 shrink-0">
-                <button
-                  type="button"
-                  class="size-8 rounded-full flex items-center justify-center text-white hover:bg-white/15 active:scale-95 transition-all duration-150 cursor-pointer"
-                  aria-label="Ganti Meja"
-                  title="Ganti Meja"
-                  @click="overlay.open('scanner')"
-                >
-                  <UIcon name="i-lucide-qr-code" class="size-4.5 text-white" />
-                </button>
-                <span class="h-4 w-px bg-white/20" />
-                <button
-                  type="button"
-                  class="size-8 rounded-full flex items-center justify-center text-white hover:bg-white/15 hover:text-rose-200 active:scale-95 transition-all duration-150 cursor-pointer"
-                  aria-label="Keluar Sesi"
-                  title="Keluar Sesi"
-                  @click="handleExitSession"
-                >
-                  <UIcon name="i-lucide-log-out" class="size-4.5" />
-                </button>
+              <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <span class="size-6 rounded-full bg-white/15 border border-white/10 flex items-center justify-center shrink-0">
+                    <UIcon name="i-lucide-armchair" class="size-3.5 text-white" />
+                  </span>
+                  <span class="text-xs font-black text-white truncate drop-shadow-xs">
+                    {{ tableLabel.toLowerCase().includes('meja') ? tableLabel : 'Meja ' + tableLabel }}
+                  </span>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    class="size-8 rounded-full flex items-center justify-center text-white hover:bg-white/15 active:scale-95 transition-all duration-150 cursor-pointer"
+                    aria-label="Ganti Meja"
+                    title="Ganti Meja"
+                    @click="overlay.open('scanner')"
+                  >
+                    <UIcon name="i-lucide-qr-code" class="size-4.5 text-white" />
+                  </button>
+                  <span class="h-4 w-px bg-white/20" />
+                  <button
+                    type="button"
+                    class="size-8 rounded-full flex items-center justify-center text-white hover:bg-white/15 hover:text-rose-200 active:scale-95 transition-all duration-150 cursor-pointer"
+                    aria-label="Keluar Sesi"
+                    title="Keluar Sesi"
+                    @click="handleExitSession"
+                  >
+                    <UIcon name="i-lucide-log-out" class="size-4.5" />
+                  </button>
+                </div>
               </div>
             </div>
 

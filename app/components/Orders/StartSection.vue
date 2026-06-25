@@ -120,15 +120,16 @@ const submitManualCode = () => {
         </div>
 
         <!-- ── Manual Code Card ───────────────────────────────── -->
-        <div class="motion-card bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-gray-200 p-5 flex flex-col gap-3 transition-all duration-300">
-          <div class="flex items-center gap-2.5">
-            <div class="size-9 rounded-xl bg-slate-100 flex items-center justify-center flex-shrink-0">
-              <UIcon name="i-lucide-keyboard" class="size-4 text-slate-500" />
-            </div>
-            <div>
-              <p class="text-sm font-bold text-gray-800 leading-tight">Masukkan Kode Manual</p>
-              <p class="text-xs text-gray-400 font-normal">Dari struk kasir atau QR code di meja</p>
-            </div>
+        <div class="motion-card bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-gray-200 p-5 flex flex-col gap-3 transition-all duration-300 relative overflow-hidden group">
+          <!-- Background icon watermark -->
+          <UIcon
+            name="i-lucide-keyboard"
+            class="absolute -right-4 -top-4 size-24 text-slate-400 opacity-10 pointer-events-none select-none"
+          />
+
+          <div>
+            <p class="text-sm font-bold text-gray-800 leading-tight">Masukkan Kode Manual</p>
+            <p class="text-xs text-gray-400 font-normal">Dari struk kasir atau QR code di meja</p>
           </div>
 
           <div class="flex flex-col gap-2">

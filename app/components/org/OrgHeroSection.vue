@@ -32,7 +32,7 @@ const statusColor = computed(() => {
 <template>
   <section class="relative overflow-hidden bg-white border-b border-stone-100">
     <!-- Banner Container with Warm Fallback Gradient -->
-    <div class="relative h-48 sm:h-64 lg:h-72 overflow-hidden group">
+    <div class="relative h-32 sm:h-64 lg:h-72 overflow-hidden group">
       <img
         v-if="org.banner"
         :src="org.banner"
@@ -48,15 +48,15 @@ const statusColor = computed(() => {
 
     <!-- Info Section Container -->
     <div class="mx-auto max-w-5xl px-5 pb-6 sm:px-6 lg:px-8 animate-fade-in-up">
-      <div class="-mt-16 flex flex-col gap-4 sm:-mt-14 sm:flex-row sm:items-end relative z-10 w-full">
+      <div class="-mt-7 flex flex-col gap-3 sm:-mt-14 sm:flex-row sm:items-end relative z-10 w-full">
         <!-- Avatar/Logo with high-end delicate shadow & warm border ring -->
         <UAvatar
           :src="org.logo || undefined"
           :text="org.logo ? undefined : initials"
           :alt="org.name"
           size="3xl"
-          class="size-24 sm:size-28 rounded-2xl bg-white shadow-xl ring-4 ring-amber-50/80 border border-amber-200/50 transition-transform duration-300 hover:scale-105 shrink-0"
-          :ui="{ fallback: 'text-2xl font-bold text-amber-800' }"
+          class="size-14 sm:size-28 rounded-xl sm:rounded-2xl bg-white shadow-xl ring-4 ring-amber-50/80 border border-amber-200/50 transition-transform duration-300 hover:scale-105 shrink-0"
+          :ui="{ fallback: 'text-lg sm:text-2xl font-bold text-amber-800' }"
         />
 
         <!-- Title & Context -->
@@ -66,42 +66,42 @@ const statusColor = computed(() => {
             v-if="openingStatus"
             :color="statusColor"
             variant="subtle"
-            class="mb-2 font-bold rounded-full px-2.5 py-0.5 flex items-center gap-1.5 w-fit text-xs"
+            class="mb-1.5 font-bold rounded-full px-2 py-0.5 flex items-center gap-1 w-fit text-[10px] sm:text-xs"
           >
             <span
-              class="size-1.5 rounded-full shrink-0"
+              class="size-1 sm:size-1.5 rounded-full shrink-0"
               :class="openingStatus.open ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'"
             />
             {{ openingStatus.label }}
           </UBadge>
 
-          <!-- Brand Serif Typography -->
-          <h1 class="font-serif text-2xl font-black text-stone-900 tracking-tight sm:text-3xl lg:text-4xl truncate">
+          <!-- Brand Typography -->
+          <h1 class="font-serif text-lg sm:text-3xl lg:text-4xl font-extrabold sm:font-black text-stone-900 tracking-tight truncate">
             {{ org.name }}
           </h1>
 
           <!-- Description -->
           <p
             v-if="org.description"
-            class="mt-2 max-w-2xl text-xs sm:text-sm leading-relaxed text-stone-600 font-medium"
+            class="mt-1.5 max-w-2xl text-xs md:text-sm leading-relaxed text-stone-600 font-medium"
           >
             {{ org.description }}
           </p>
 
           <!-- Contact & Address Bar -->
-          <div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-stone-500">
-            <p v-if="fullAddress" class="flex items-center gap-1.5 max-w-full">
+          <div class="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-stone-500 font-medium">
+            <span v-if="fullAddress" class="flex items-center gap-1.5 max-w-full">
               <UIcon name="i-lucide-map-pin" class="size-3.5 text-amber-700 shrink-0" />
               <span class="truncate">{{ fullAddress }}</span>
-            </p>
+            </span>
             
             <span v-if="fullAddress && (org.phone || org.email)" class="hidden md:inline text-stone-300">•</span>
             
-            <div class="flex flex-wrap items-center gap-3">
+            <div class="flex flex-wrap items-center gap-2.5">
               <a
                 v-if="org.phone"
                 :href="`tel:${org.phone}`"
-                class="flex items-center gap-1.5 hover:text-amber-700 transition-colors duration-200 font-semibold"
+                class="flex items-center gap-1.5 hover:text-amber-700 transition-colors duration-200"
               >
                 <UIcon name="i-lucide-phone" class="size-3.5 text-amber-700 shrink-0" />
                 <span>{{ org.phone }}</span>
@@ -112,7 +112,7 @@ const statusColor = computed(() => {
               <a
                 v-if="org.email"
                 :href="`mailto:${org.email}`"
-                class="flex items-center gap-1.5 hover:text-amber-700 transition-colors duration-200 font-semibold"
+                class="flex items-center gap-1.5 hover:text-amber-700 transition-colors duration-200"
               >
                 <UIcon name="i-lucide-mail" class="size-3.5 text-amber-700 shrink-0" />
                 <span>{{ org.email }}</span>

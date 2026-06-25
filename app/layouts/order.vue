@@ -25,7 +25,7 @@ onMounted(() => {
 
 <template>
   <div class="min-h-dvh bg-gray-50 customer-ordering-layout">
-    <OrgHeader />
+    <OrgHeader max-width-class="max-w-5xl" />
 
     <!-- Slideover kiri: Menu Sesi -->
     <SessionDrawer />

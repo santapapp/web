@@ -15,32 +15,34 @@ defineProps<{
 <template>
   <section class="mx-auto max-w-5xl px-5 pb-5 sm:px-6 lg:px-8">
     <!-- Main glow CTA card with amber border and warm light gradient -->
-    <div class="rounded-2xl border border-amber-200/70 bg-gradient-to-br from-amber-50/40 via-white to-amber-50/20 p-5 shadow-md flex flex-col md:flex-row md:items-center md:justify-between gap-5 relative overflow-hidden group">
+    <div class="rounded-2xl border border-amber-200/70 bg-gradient-to-br from-amber-50/40 via-white to-amber-50/20 p-4 sm:p-5 shadow-md flex flex-col md:flex-row md:items-center md:justify-between gap-4 sm:gap-5 relative overflow-hidden group">
+      <!-- Background icon watermark -->
+      <UIcon
+        name="i-lucide-help-circle"
+        class="absolute -right-4 -top-4 size-24 text-amber-700 opacity-10 pointer-events-none select-none"
+      />
+
       <!-- Corner ambient light glow -->
       <div class="absolute -right-16 -top-16 size-36 bg-amber-200/10 rounded-full blur-2xl group-hover:bg-amber-200/20 transition-all duration-500 pointer-events-none" />
 
       <!-- Text contents -->
       <div class="relative z-10">
-        <h3 class="text-lg font-extrabold text-stone-900 flex items-center gap-2">
-          <UIcon
-            name="i-lucide-help-circle"
-            class="size-5 text-amber-700 shrink-0"
-          />
-          <span>Siap pesan dari meja?</span>
+        <h3 class="text-sm sm:text-lg font-bold sm:font-extrabold text-stone-900">
+          Siap pesan dari meja?
         </h3>
-        <p class="mt-2 text-xs sm:text-sm leading-relaxed text-stone-600 font-semibold max-w-2xl">
+        <p class="mt-1.5 text-xs text-stone-500 font-normal leading-relaxed max-w-2xl">
           Scan QR meja atau masukkan kode dari kasir untuk mulai memesan.
         </p>
       </div>
 
       <!-- Action Button Container -->
-      <div class="relative z-10 mt-2 md:mt-0 w-full md:w-auto shrink-0">
+      <div class="relative z-10 mt-1 md:mt-0 w-full md:w-auto shrink-0">
         <!-- Primary: selalu mulai order baru -->
         <NuxtLink
           :to="orderTo"
-          class="w-full md:w-auto min-h-[44px] px-6 py-3 rounded-xl bg-amber-700 hover:bg-amber-800 active:scale-[0.98] focus:ring-2 focus:ring-amber-500 focus:outline-none shadow-sm font-bold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer text-sm"
+          class="w-full md:w-auto min-h-[38px] sm:min-h-[44px] px-4 py-2 sm:px-6 sm:py-3 rounded-lg sm:rounded-xl bg-amber-700 hover:bg-amber-800 active:scale-[0.98] focus:ring-2 focus:ring-amber-500 focus:outline-none shadow-sm font-bold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer text-xs sm:text-sm"
         >
-          <UIcon name="i-lucide-utensils" class="size-4.5 shrink-0 text-white" />
+          <UIcon name="i-lucide-utensils" class="size-4 sm:size-4.5 shrink-0 text-white" />
           <span class="text-white">Mulai Pesan</span>
         </NuxtLink>
       </div>
