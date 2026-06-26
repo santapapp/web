@@ -23,7 +23,7 @@
     >
       <!-- Background image -->
       <img
-        src="https://images.unsplash.com/photo-1556740734-7f95cb935515?w=1800&q=80&fit=crop"
+        src="/images/contact-hero.png"
         alt="Barista ramah melayani transaksi POS pelanggan di kafe"
         class="absolute inset-0 w-full h-full object-cover object-center"
         loading="eager"
@@ -79,7 +79,7 @@
           >
             Kontak Kami
           </h2>
-          <p class="text-[14.5px] leading-[1.7] text-[var(--color-text-secondary)] mb-12 max-w-sm">
+          <p class="text-[14.5px] leading-[1.7] text-[var(--color-text-secondary)] max-w-sm" style="margin-bottom: 3rem;">
             Hubungi kami melalui WhatsApp atau email. Tim kami siap membantu Anda dalam hitungan menit.
           </p>
         </div>
@@ -91,14 +91,14 @@
 
             <!-- WhatsApp channel -->
             <a 
-              href="https://wa.me/6281234567890" 
+              href="https://wa.me/628986606000?text=Halo%20Santap!%20Saya%20ingin%20konsultasi%20%26%20demo%20produk%20untuk%20restoran%2Fcafe%20saya.%20Terima%20kasih." 
               target="_blank" 
               class="cmp-right-item group flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 no-underline transition-opacity duration-200 hover:opacity-85"
             >
               <div class="flex items-start gap-4">
                 <span class="text-[12px] font-medium tabular-nums text-[var(--color-text-tertiary)] mt-1">01.</span>
                 <div>
-                  <h3 class="text-[18px] font-medium text-[var(--color-text-primary)] mb-1">WhatsApp Support</h3>
+                  <h3 class="text-[18px] font-medium text-[var(--color-text-primary)]" style="margin-bottom: 0.25rem;">WhatsApp Support</h3>
                   <p class="text-[14px] text-[var(--color-text-secondary)] leading-relaxed max-w-lg">
                     Respon cepat (&lt; 15 menit) untuk kendala operasional kasir harian.
                   </p>
@@ -122,7 +122,7 @@
               <div class="flex items-start gap-4">
                 <span class="text-[12px] font-medium tabular-nums text-[var(--color-text-tertiary)] mt-1">02.</span>
                 <div>
-                  <h3 class="text-[18px] font-medium text-[var(--color-text-primary)] mb-1">Kemitraan & Penjualan</h3>
+                  <h3 class="text-[18px] font-medium text-[var(--color-text-primary)]" style="margin-bottom: 0.25rem;">Kemitraan & Penjualan</h3>
                   <p class="text-[14px] text-[var(--color-text-secondary)] leading-relaxed max-w-lg">
                     Hubungi sales kami di halo@santap.id untuk penawaran skala franchise/multi-outlet.
                   </p>
@@ -140,15 +140,26 @@
 
             <!-- Office address -->
             <div class="cmp-right-item flex flex-col sm:flex-row sm:items-start justify-between gap-4 py-4">
-               <div class="flex items-start gap-4">
+               <div class="flex items-start gap-4 w-full">
                  <span class="text-[12px] font-medium tabular-nums text-[var(--color-text-tertiary)] mt-1">03.</span>
-                 <div>
-                   <h3 class="text-[18px] font-medium text-[var(--color-text-primary)] mb-1">Lokasi Kantor</h3>
-                   <p class="text-[14px] text-[var(--color-text-secondary)] leading-relaxed max-w-lg">
-                     PT Santap Teknologi Indonesia<br>
-                     Gedung Graha Kuliner, Lantai 4<br>
-                     Kuningan, Jakarta Selatan 12940
+                 <div class="w-full">
+                   <h3 class="text-[18px] font-medium text-[var(--color-text-primary)]" style="margin-bottom: 0.25rem;">Lokasi Kantor</h3>
+                   <p class="text-[14px] text-[var(--color-text-secondary)] leading-relaxed max-w-lg" style="margin-bottom: 1.25rem;">
+                     PT Sarwa Kalyana Cara (Sekeco)<br>
+                     Sleman, D.I. Yogyakarta<br>
+                     Indonesia
                    </p>
+                   <div class="relative overflow-hidden rounded-xl border border-[var(--color-border)] w-full" style="height: 240px; max-width: 500px;">
+                     <iframe
+                       src="https://maps.google.com/maps?q=Kabupaten%20Sleman%2C%20Daerah%20Istimewa%20Yogyakarta%2C%20Indonesia&z=12&output=embed"
+                       class="absolute inset-0 w-full h-full"
+                       style="border: 0; filter: grayscale(0.1) contrast(1.02);"
+                       loading="lazy"
+                       referrerpolicy="no-referrer-when-downgrade"
+                       title="Lokasi Santap — Kabupaten Sleman, Daerah Istimewa Yogyakarta"
+                       allowfullscreen
+                     ></iframe>
+                   </div>
                  </div>
                </div>
             </div>
@@ -212,7 +223,7 @@
                   "
                 >kebutuhan Anda.</span>
               </h2>
-              <p class="text-[14.5px] leading-[1.75] max-w-sm mb-12" style="color: rgba(255,255,255,0.55);">
+              <p class="text-[14.5px] leading-[1.75] max-w-sm" style="color: rgba(255,255,255,0.55); margin-bottom: 3rem;">
                 Tim kami siap mendampingi digitalisasi restoran Anda dengan solusi yang tepat sasaran.
               </p>
             </div>
@@ -222,14 +233,14 @@
               <div class="h-px" style="background-color: rgba(255,255,255,0.08);"></div>
               <div>
                 <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: rgba(255,255,255,0.35);">Email Penjualan</p>
-                <a href="mailto:halo@santap.id" class="text-[15px] font-medium text-white hover:text-[var(--color-primary)] transition-colors no-underline">
+                <a href="mailto:halo@santap.id" class="text-[15px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
                   halo@santap.id
                 </a>
               </div>
               <div>
                 <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: rgba(255,255,255,0.35);">WhatsApp Support</p>
-                <a href="https://wa.me/6281234567890" target="_blank" class="text-[15px] font-medium text-white hover:text-[var(--color-primary)] transition-colors no-underline">
-                  +62 812-3456-7890
+                <a href="https://wa.me/628986606000?text=Halo%20Santap!%20Saya%20ingin%20konsultasi%20%26%20demo%20produk%20untuk%20restoran%2Fcafe%20saya.%20Terima%20kasih." target="_blank" class="text-[15px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
+                  +62 898-6606-000
                 </a>
               </div>
             </div>
@@ -241,10 +252,10 @@
               class="border rounded-2xl p-6 md:p-10 lg:p-12"
               style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
             >
-              <h3 class="text-xl md:text-2xl font-medium tracking-tight text-white mb-2">
+              <h3 class="text-xl md:text-2xl font-medium tracking-tight mb-2" style="color: #ffffff; margin-bottom: 0.5rem;">
                 Kirim Pesan
               </h3>
-              <p class="text-sm mb-8" style="color: rgba(255,255,255,0.55);">
+              <p class="text-sm" style="color: rgba(255,255,255,0.55); margin-bottom: 2rem;">
                 Isi formulir berikut dan tim kami akan segera menghubungi Anda.
               </p>
 
@@ -374,7 +385,7 @@
                 <!-- Submit Button -->
                 <div class="mt-4 flex items-center justify-between gap-6 flex-wrap">
                   <span class="text-xs leading-relaxed text-white/40 max-w-sm">
-                    Dengan mengirimkan pesan, Anda menyetujui <NuxtLink to="/privacy-policy" class="underline text-white/80 hover:text-white transition-colors">Kebijakan Privasi</NuxtLink> kami.
+                    Dengan mengirimkan pesan, Anda menyetujui <NuxtLink to="/privacy-policy" class="underline hover:text-white transition-colors" style="color: rgba(255, 255, 255, 0.8);">Kebijakan Privasi</NuxtLink> kami.
                   </span>
 
                   <button

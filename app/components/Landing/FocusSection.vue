@@ -19,95 +19,98 @@
     </div>
 
     <div class="relative z-10 px-5 md:px-10 lg:px-16 py-24 md:py-32 max-w-[1400px] mx-auto">
-
-      <!-- ── Header row ─────────────────────────────────────── -->
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 mb-16 md:mb-20">
-
-        <!-- Badge -->
-        <div class="focus-left lg:col-span-4 flex items-start">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        
+        <!-- Left: Sticky Header Column -->
+        <div class="focus-left lg:col-span-5 lg:sticky lg:top-28 self-start flex flex-col gap-6">
+          <!-- Badge -->
           <div
-            class="focus-badge inline-flex items-center gap-3 px-4 py-2 rounded-md border"
+            class="focus-badge inline-flex items-center gap-3 px-4 py-2 rounded-md border w-fit"
             style="background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1);"
           >
             <div class="w-2 h-2 rounded-sm flex-shrink-0" style="background-color: var(--color-primary);"></div>
             <span class="text-[10.5px] font-bold uppercase tracking-[0.16em]" style="color: rgba(255,255,255,0.8);">Fokus Kami</span>
           </div>
-        </div>
 
-        <div class="lg:col-span-8">
-          <AppScrollLineCurtain
-            heading-class="leading-[1.08] tracking-tight"
-            :heading-style="{ fontSize: 'clamp(30px, 4.5vw, 56px)' }"
-            curtain1-class="slc-curtain--dark"
-            curtain2-class="slc-curtain--muted"
-            scroll-start="top 78%"
-          >
-            <template #line1>
-              <span style="color: #ffffff;">Eksklusif untuk</span>
-            </template>
-            <template #line2>
-              <span
-                style="
-                  background: linear-gradient(100deg, #FFFFFF 0%, var(--color-primary) 55%, #FFA550 100%);
-                  -webkit-background-clip: text;
-                  -webkit-text-fill-color: transparent;
-                  background-clip: text;
-                "
-              >bisnis F&B Indonesia.</span>
-            </template>
-          </AppScrollLineCurtain>
-        </div>
-      </div>
-
-      <!-- ── 3 Focus Items — list with dividers ─────────────── -->
-      <div ref="listRef" class="focus-list">
-        <!-- Top border -->
-        <div class="focus-top-border h-px" style="background-color: rgba(255,255,255,0.08); transform-origin: left;"></div>
-
-        <div
-          v-for="(focus, i) in focuses"
-          :key="focus.id"
-          class="focus-row"
-        >
-          <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 py-12 md:py-16 items-start group">
-
-            <!-- Number + Title (left) -->
-            <div class="md:col-span-5 flex items-baseline gap-5">
-              <span
-                class="flex-shrink-0 tabular-nums font-light"
-                style="font-size: 13px; color: rgba(255,255,255,0.25); letter-spacing: 0.04em;"
-              >{{ focus.number }}</span>
-              <h3
-                class="font-medium tracking-tight leading-[1.1]"
-                style="font-size: clamp(24px, 3vw, 38px); color: #FFFFFF;"
-              >{{ focus.title }}</h3>
-            </div>
-
-            <!-- Description (right) -->
-            <div class="md:col-span-7 md:pt-1.5">
-              <p class="text-[14.5px] leading-[1.75] max-w-[560px]" style="color: rgba(255,255,255,0.55);">
-                {{ focus.desc }}
-              </p>
-              <!-- Feature tags -->
-              <div class="flex flex-wrap gap-2 mt-6">
+          <!-- Title -->
+          <div>
+            <AppScrollLineCurtain
+              heading-class="leading-[1.08] tracking-tight"
+              :heading-style="{ fontSize: 'clamp(30px, 4.5vw, 56px)' }"
+              curtain1-class="slc-curtain--dark"
+              curtain2-class="slc-curtain--muted"
+              scroll-start="top 78%"
+            >
+              <template #line1>
+                <span style="color: #ffffff;">Eksklusif untuk</span>
+              </template>
+              <template #line2>
                 <span
-                  v-for="tag in focus.tags"
-                  :key="tag"
-                  class="focus-tag px-3 py-1 rounded-full text-[11px] font-medium uppercase tracking-[0.1em]"
-                  style="background-color: rgba(255,255,255,0.06); color: rgba(255,255,255,0.45); border: 1px solid rgba(255,255,255,0.08);"
-                >{{ tag }}</span>
-              </div>
-            </div>
-
+                  style="
+                    background: linear-gradient(100deg, #FFFFFF 0%, var(--color-primary) 55%, #FFA550 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                  "
+                >bisnis F&B Indonesia.</span>
+              </template>
+            </AppScrollLineCurtain>
           </div>
-          <!-- Divider -->
-          <div
-            class="focus-divider h-px"
-            style="background-color: rgba(255,255,255,0.08); transform-origin: left;"
-          ></div>
         </div>
-      </div>
 
+        <!-- Right: List Column -->
+        <div ref="listRef" class="lg:col-span-7 flex flex-col">
+          <!-- Top border -->
+          <div class="focus-top-border h-px" style="background-color: rgba(255,255,255,0.08); transform-origin: left;"></div>
+
+          <div
+            v-for="(focus, i) in focuses"
+            :key="focus.id"
+            class="focus-row"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 py-12 md:py-16 items-center group">
+              
+              <!-- Col 1: Huge Number -->
+              <div class="md:col-span-3 flex items-baseline justify-start">
+                <span
+                  class="font-extrabold tracking-tighter leading-none select-none pointer-events-none tabular-nums"
+                  style="font-size: clamp(56px, 6.5vw, 84px); color: rgba(255, 255, 255, 0.05); font-family: var(--font-body);"
+                >{{ focus.number }}</span>
+              </div>
+
+              <!-- Col 2: Title & Description & Tags -->
+              <div class="md:col-span-9 flex flex-col items-start gap-4">
+                <div>
+                  <h3
+                    class="font-medium tracking-tight leading-[1.2] mb-3"
+                    style="font-size: clamp(20px, 2.2vw, 26px); color: #FFFFFF;"
+                  >{{ focus.title }}</h3>
+                  <p class="text-[14px] leading-relaxed" style="color: rgba(255,255,255,0.55);">
+                    {{ focus.desc }}
+                  </p>
+                </div>
+
+                <!-- Feature tags -->
+                <div class="flex flex-wrap gap-2 mt-2">
+                  <span
+                    v-for="tag in focus.tags"
+                    :key="tag"
+                    class="focus-tag px-3 py-1 rounded-full text-[11px] font-medium uppercase tracking-[0.1em]"
+                    style="background-color: rgba(255,255,255,0.06); color: rgba(255,255,255,0.45); border: 1px solid rgba(255,255,255,0.08);"
+                  >{{ tag }}</span>
+                </div>
+              </div>
+
+            </div>
+            <!-- Divider -->
+            <div
+              class="focus-divider h-px"
+              style="background-color: rgba(255,255,255,0.08); transform-origin: left;"
+            ></div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </section>
 </template>

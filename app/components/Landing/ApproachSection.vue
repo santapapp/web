@@ -4,107 +4,101 @@
     class="relative bg-[var(--color-bg-page)]"
     aria-label="Pendekatan Kami"
   >
-    <!-- ── Header ──────────────────────────────────────────── -->
-    <div class="px-5 md:px-10 lg:px-16 pt-24 md:pt-32 pb-20 md:pb-24 max-w-[1400px] mx-auto">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8">
-
-        <!-- Badge -->
-        <div class="appr-left lg:col-span-4 flex items-start">
+    <div class="px-5 md:px-10 lg:px-16 py-24 md:py-32 max-w-[1400px] mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        
+        <!-- Left: Sticky Header Column -->
+        <div class="appr-left lg:col-span-5 lg:sticky lg:top-28 self-start flex flex-col gap-6">
+          <!-- Badge -->
           <div
-            class="appr-badge inline-flex items-center gap-3 bg-[var(--color-bg-surface)] px-4 py-2 rounded-md border border-[var(--color-border)]"
+            class="appr-badge inline-flex items-center gap-3 bg-[var(--color-bg-surface)] px-4 py-2 rounded-md border border-[var(--color-border)] w-fit"
           >
             <div class="w-2 h-2 rounded-sm bg-[var(--color-primary)] flex-shrink-0"></div>
             <span class="text-[10.5px] font-bold uppercase tracking-[0.16em]" style="color: var(--color-text-primary);">Pendekatan Kami</span>
           </div>
-        </div>
 
-        <!-- Text -->
-        <div ref="headerRightRef" class="lg:col-span-8">
-          <AppScrollLineCurtain
-            class="mb-5 max-w-[660px]"
-            heading-class="leading-[1.1] tracking-tight"
-            :heading-style="{ fontSize: 'clamp(26px, 3.5vw, 44px)' }"
-            scroll-start="top 78%"
-          >
-            <template #line1>
-              <span style="color: var(--color-text-primary);">Dibangun dengan</span>
-            </template>
-            <template #line2>
-              <span
-                style="
-                  background: linear-gradient(100deg, var(--color-text-primary) 0%, var(--color-primary) 55%, #FFA550 100%);
-                  -webkit-background-clip: text;
-                  -webkit-text-fill-color: transparent;
-                  background-clip: text;
-                "
-              >tiga strategi inti.</span>
-            </template>
-          </AppScrollLineCurtain>
-          <p
-            class="appr-body text-[14.5px] leading-[1.7] max-w-[500px]"
-            style="color: var(--color-text-secondary);"
-          >
-            Dirancang untuk menyederhanakan operasional restoran Anda dengan fondasi teknologi yang solid.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Three Steps ────────────────────────────────────── -->
-    <div ref="stepsRef" class="appr-steps-wrap px-5 md:px-10 lg:px-16 pb-24 md:pb-32 max-w-[1400px] mx-auto">
-
-      <!-- Top border with wipe animation -->
-      <div class="appr-top-border h-px mb-0" style="background-color: var(--color-border); transform-origin: left;"></div>
-
-      <div
-        v-for="(step, i) in steps"
-        :key="step.id"
-        class="appr-step-row"
-      >
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 py-12 md:py-16 items-start">
-
-          <!-- Col 1: Number -->
-          <div class="md:col-span-1">
-            <span
-              class="font-medium tabular-nums"
-              style="font-size: 13px; color: var(--color-text-tertiary); letter-spacing: 0.04em;"
-            >{{ step.number }}</span>
-          </div>
-
-          <!-- Col 2: Title -->
-          <div class="md:col-span-4">
-            <h3
-              class="font-medium tracking-tight leading-[1.1]"
-              style="font-size: clamp(22px, 2.5vw, 32px); color: var(--color-text-primary);"
-            >{{ step.title }}</h3>
-          </div>
-
-          <!-- Col 3: Description -->
-          <div class="md:col-span-4">
-            <p class="text-[14.5px] leading-[1.7]" style="color: var(--color-text-secondary);">
-              {{ step.desc }}
+          <!-- Title & Description -->
+          <div ref="headerRightRef">
+            <AppScrollLineCurtain
+              class="mb-6"
+              heading-class="leading-[1.1] tracking-tight"
+              :heading-style="{ fontSize: 'clamp(26px, 3.5vw, 44px)' }"
+              scroll-start="top 78%"
+            >
+              <template #line1>
+                <span style="color: var(--color-text-primary);">Dibangun dengan</span>
+              </template>
+              <template #line2>
+                <span
+                  style="
+                    background: linear-gradient(100deg, var(--color-text-primary) 0%, var(--color-primary) 55%, #FFA550 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                  "
+                >tiga strategi inti.</span>
+              </template>
+            </AppScrollLineCurtain>
+            <p
+              class="appr-body text-[14.5px] leading-[1.7]"
+              style="color: var(--color-text-secondary);"
+            >
+              Dirancang untuk menyederhanakan operasional restoran Anda dengan fondasi teknologi yang solid.
             </p>
           </div>
-
-          <!-- Col 4: Tag pill -->
-          <div class="md:col-span-3 flex md:justify-end items-start">
-            <span
-              class="appr-tag-pill inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.12em]"
-              style="background-color: var(--color-primary-light); color: var(--color-primary);"
-            >
-              <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background-color: var(--color-primary);"></span>
-              {{ step.tag }}
-            </span>
-          </div>
-
         </div>
-        <!-- Divider -->
-        <div
-          class="appr-divider h-px"
-          style="background-color: var(--color-border); transform-origin: left;"
-        ></div>
-      </div>
 
+        <!-- Right: Steps Column -->
+        <div ref="stepsRef" class="lg:col-span-7 flex flex-col">
+          <!-- Top border -->
+          <div class="appr-top-border h-px" style="background-color: var(--color-border); transform-origin: left;"></div>
+
+          <div
+            v-for="(step, i) in steps"
+            :key="step.id"
+            class="appr-step-row"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 py-12 md:py-16 items-center">
+              
+              <!-- Col 1: Huge Number -->
+              <div class="md:col-span-3 flex items-baseline justify-start">
+                <span
+                  class="font-extrabold tracking-tighter leading-none select-none pointer-events-none tabular-nums"
+                  style="font-size: clamp(56px, 6.5vw, 84px); color: rgba(232, 119, 34, 0.08); font-family: var(--font-body);"
+                >{{ step.number }}</span>
+              </div>
+
+              <!-- Col 2: Title, Desc, and Tag -->
+              <div class="md:col-span-9 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+                <div class="max-w-[420px]">
+                  <h3
+                    class="font-medium tracking-tight leading-[1.2] mb-3"
+                    style="font-size: clamp(20px, 2.2vw, 26px); color: var(--color-text-primary);"
+                  >{{ step.title }}</h3>
+                  <p class="text-[14px] leading-relaxed" style="color: var(--color-text-secondary);">
+                    {{ step.desc }}
+                  </p>
+                </div>
+                
+                <!-- Tag pill -->
+                <span
+                  class="appr-tag-pill inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-[0.12em] flex-shrink-0"
+                  style="background-color: var(--color-primary-light); color: var(--color-primary);"
+                >
+                  <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background-color: var(--color-primary);"></span>
+                  {{ step.tag }}
+                </span>
+              </div>
+
+            </div>
+            <!-- Divider -->
+            <div
+              class="appr-divider h-px"
+              style="background-color: var(--color-border); transform-origin: left;"
+            ></div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </template>

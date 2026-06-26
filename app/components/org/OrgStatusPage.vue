@@ -78,10 +78,10 @@ const handleScanToken = async (token: string) => {
 
 <template>
   <section
-    class="flex min-h-[calc(100dvh-56px)] lg:min-h-[calc(100dvh-64px)] items-center justify-center px-5 py-10 sm:py-14"
+    class="flex min-h-[calc(100dvh-56px)] lg:min-h-[calc(100dvh-64px)] items-center justify-center px-5 py-12 sm:py-16 lg:py-20"
     style="background-color: var(--color-bg-page); font-family: var(--font-body);"
   >
-    <div class="w-full max-w-sm sm:max-w-md lg:max-w-lg">
+    <div class="w-full max-w-5xl">
 
       <!-- Loading view -->
       <OrdersSessionLoading v-if="scanLoading" />
@@ -90,115 +90,138 @@ const handleScanToken = async (token: string) => {
       <template v-else>
 
         <!-- Top divider -->
-        <div class="h-px mb-6 sm:mb-8" style="background-color: var(--color-border);" />
+        <div class="h-px mb-8 sm:mb-12" style="background-color: var(--color-border);" />
 
         <!-- Brand row -->
-        <div class="flex items-center gap-2 mb-5 sm:mb-6">
+        <div class="flex items-center gap-2 mb-8 sm:mb-10">
           <img
             src="~/assets/icons/brand.svg"
             alt="Logo Santap"
             class="h-4 w-4 sm:h-5 sm:w-5"
           />
           <span
-            class="font-black tracking-tight"
-            style="font-size: clamp(12px, 2vw, 14px); color: var(--color-text-primary);"
+            class="text-xs sm:text-sm font-black tracking-tight"
+            style="color: var(--color-text-primary);"
           >Santap</span>
         </div>
 
-        <!-- Badge + heading + description -->
-        <div class="mb-5 sm:mb-6">
-          <span
-            class="inline-block font-bold uppercase tracking-[0.15em] mb-3 sm:mb-4"
-            style="font-size: clamp(9px, 1.5vw, 10px); color: var(--color-primary);"
-          >
-            {{ badge }}
-          </span>
+        <!-- Two-column layout on desktop -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:gap-16 xl:gap-24 mb-8 sm:mb-10">
 
-          <h1
-            class="font-medium tracking-tight leading-[1.08] mb-2.5 sm:mb-3"
-            style="font-size: clamp(22px, 5vw, 36px); color: var(--color-text-primary);"
-          >
-            {{ title }}
-          </h1>
+          <!-- Left: Text content -->
+          <div class="flex-1 min-w-0">
 
-          <p
-            style="font-size: clamp(13px, 1.8vw, 14px); color: var(--color-text-secondary); line-height: 1.75;"
-          >
-            {{ description }}
-          </p>
-        </div>
+            <!-- Badge + heading + description -->
+            <div class="mb-6 sm:mb-8">
+              <span
+                class="inline-block font-bold uppercase tracking-[0.15em] mb-4 sm:mb-5"
+                style="font-size: clamp(9px, 1.5vw, 10px); color: var(--color-primary);"
+              >
+                {{ badge }}
+              </span>
 
-        <!-- Illustration -->
-        <div class="mb-5 sm:mb-7">
-          <NuxtImg
-            :src="illustrationSrc"
-            :alt="illustrationAlt"
-            width="280"
-            height="200"
-            sizes="(max-width: 360px) 180px, (max-width: 480px) 220px, (max-width: 640px) 260px, 280px"
-            class="h-auto object-contain"
-            style="width: clamp(160px, 55vw, 280px);"
-            loading="eager"
-          />
+              <h1
+                class="font-medium tracking-tight leading-[1.08] mb-3 sm:mb-4"
+                style="font-size: clamp(26px, 5vw, 48px); color: var(--color-text-primary);"
+              >
+                {{ title }}
+              </h1>
+
+              <p
+                class="leading-relaxed"
+                style="font-size: clamp(13.5px, 1.8vw, 15px); color: var(--color-text-secondary); line-height: 1.75;"
+              >
+                {{ description }}
+              </p>
+            </div>
+
+            <!-- Illustration — mobile only (between description and buttons) -->
+            <div class="flex justify-start mb-6 lg:hidden">
+              <NuxtImg
+                :src="illustrationSrc"
+                :alt="illustrationAlt"
+                width="400"
+                height="280"
+                sizes="(max-width: 480px) 200px, (max-width: 1024px) 260px"
+                class="h-auto object-contain w-[200px] sm:w-[260px]"
+                loading="eager"
+              />
+            </div>
+
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row gap-3">
+              <NuxtLink
+                to="/"
+                class="inline-flex items-center justify-center gap-2 rounded-full font-bold uppercase tracking-[0.08em] no-underline transition-all hover:-translate-y-px cursor-pointer"
+                style="
+                  padding: clamp(12px, 2vw, 14px) clamp(20px, 3vw, 28px);
+                  font-size: clamp(10px, 1.4vw, 11px);
+                  background-color: var(--color-text-primary);
+                  color: #FFFFFF;
+                "
+              >
+                <UIcon name="i-lucide-house" class="size-3 sm:size-3.5 shrink-0" />
+                Kembali ke Beranda
+              </NuxtLink>
+
+              <button
+                v-if="!isNotFound"
+                type="button"
+                class="inline-flex items-center justify-center gap-2 rounded-full font-bold uppercase tracking-[0.08em] transition-all hover:-translate-y-px cursor-pointer border"
+                style="
+                  padding: clamp(12px, 2vw, 14px) clamp(20px, 3vw, 28px);
+                  font-size: clamp(10px, 1.4vw, 11px);
+                  background-color: transparent;
+                  color: var(--color-text-primary);
+                  border-color: var(--color-border);
+                "
+                @click="emit('retry')"
+              >
+                <UIcon name="i-lucide-refresh-cw" class="size-3 sm:size-3.5 shrink-0" />
+                Coba Lagi
+              </button>
+
+              <button
+                v-if="isNotFound"
+                type="button"
+                class="inline-flex items-center justify-center gap-2 rounded-full font-bold uppercase tracking-[0.08em] transition-all hover:-translate-y-px cursor-pointer border"
+                style="
+                  padding: clamp(12px, 2vw, 14px) clamp(20px, 3vw, 28px);
+                  font-size: clamp(10px, 1.4vw, 11px);
+                  background-color: transparent;
+                  color: var(--color-text-primary);
+                  border-color: var(--color-border);
+                "
+                @click="openScanner"
+              >
+                <UIcon name="i-lucide-scan-line" class="size-3 sm:size-3.5 shrink-0" />
+                Scan QR Ulang
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Right: Illustration — desktop only -->
+          <div class="hidden lg:flex flex-shrink-0 justify-center">
+            <NuxtImg
+              :src="illustrationSrc"
+              :alt="illustrationAlt"
+              width="400"
+              height="280"
+              sizes="(max-width: 1280px) 320px, 380px"
+              class="h-auto object-contain w-[320px] xl:w-[380px]"
+              loading="eager"
+            />
+          </div>
+
         </div>
 
         <!-- Bottom divider -->
-        <div class="h-px mb-5 sm:mb-6" style="background-color: var(--color-border);" />
-
-        <!-- Actions -->
-        <div class="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
-          <NuxtLink
-            to="/"
-            class="inline-flex items-center justify-center gap-2 rounded-full font-bold uppercase tracking-[0.08em] no-underline transition-all hover:-translate-y-px cursor-pointer flex-1"
-            style="
-              padding: clamp(11px, 2vw, 14px) clamp(16px, 3vw, 20px);
-              font-size: clamp(10px, 1.4vw, 11px);
-              background-color: var(--color-text-primary);
-              color: #FFFFFF;
-            "
-          >
-            <UIcon name="i-lucide-house" class="size-3 sm:size-3.5 shrink-0" />
-            Kembali ke Beranda
-          </NuxtLink>
-
-          <button
-            v-if="!isNotFound"
-            type="button"
-            class="inline-flex items-center justify-center gap-2 rounded-full font-bold uppercase tracking-[0.08em] transition-all hover:-translate-y-px cursor-pointer border flex-1"
-            style="
-              padding: clamp(11px, 2vw, 14px) clamp(16px, 3vw, 20px);
-              font-size: clamp(10px, 1.4vw, 11px);
-              background-color: transparent;
-              color: var(--color-text-primary);
-              border-color: var(--color-border);
-            "
-            @click="emit('retry')"
-          >
-            <UIcon name="i-lucide-refresh-cw" class="size-3 sm:size-3.5 shrink-0" />
-            Coba Lagi
-          </button>
-
-          <button
-            v-if="isNotFound"
-            type="button"
-            class="inline-flex items-center justify-center gap-2 rounded-full font-bold uppercase tracking-[0.08em] transition-all hover:-translate-y-px cursor-pointer border flex-1"
-            style="
-              padding: clamp(11px, 2vw, 14px) clamp(16px, 3vw, 20px);
-              font-size: clamp(10px, 1.4vw, 11px);
-              background-color: transparent;
-              color: var(--color-text-primary);
-              border-color: var(--color-border);
-            "
-            @click="openScanner"
-          >
-            <UIcon name="i-lucide-scan-line" class="size-3 sm:size-3.5 shrink-0" />
-            Scan QR Ulang
-          </button>
-        </div>
+        <div class="h-px mb-6 sm:mb-8" style="background-color: var(--color-border);" />
 
         <!-- Footer -->
         <p
-          class="mt-6 sm:mt-8 font-bold uppercase tracking-[0.2em]"
+          class="font-bold uppercase tracking-[0.2em]"
           style="font-size: clamp(9px, 1.5vw, 11px); color: var(--color-text-tertiary);"
         >
           © {{ new Date().getFullYear() }} Santap

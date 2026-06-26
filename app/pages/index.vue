@@ -22,7 +22,7 @@ useSeoMeta({
   ogTitle: 'Santap — Aplikasi Kasir Mobile untuk Restoran & Cafe',
   ogDescription:
     'Aplikasi kasir (POS) berbasis cloud yang dirancang khusus untuk bisnis kuliner Indonesia. Download sekarang dan sederhanakan operasional restoran Anda.',
-  ogImage: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1200&h=630&fit=crop&q=80',
+  ogImage: '/images/og-image.jpg',
   twitterCard: 'summary_large_image',
 })
 

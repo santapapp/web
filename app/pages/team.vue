@@ -23,7 +23,7 @@
     >
       <!-- Background image -->
       <img
-        src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1800&q=80&fit=crop"
+        src="/images/team-hero.jpg"
         alt="Tim Sekeco bekerja di kantor"
         class="absolute inset-0 w-full h-full object-cover object-center"
         loading="eager"
@@ -261,7 +261,7 @@
             Dimana Kami
           </h2>
           <p class="text-[14.5px] leading-[1.7] text-[var(--color-text-secondary)] max-w-sm">
-            Based di Jakarta dengan tim yang distributed dan remote-friendly.
+            Based di Sleman, Yogyakarta dengan tim yang solid dan kolaboratif.
           </p>
         </div>
 
@@ -288,7 +288,7 @@
             <div class="cmp-right-item">
               <h3 class="text-[20px] font-semibold text-[var(--color-text-primary)] mb-4">🤝 Hubungi Kami</h3>
               <p class="text-[15px] leading-[1.8] text-[var(--color-text-secondary)]">
-                Email: hello@santap.id | WhatsApp: +62 812-3456-7890
+                Email: halo@santap.id | WhatsApp: +62 898-6606-000
               </p>
             </div>
           </div>
@@ -351,16 +351,21 @@
                 Tim yang passionate tentang membuat operasional restoran lebih sederhana, lebih cepat, dan lebih menguntungkan.
               </p>
 
-              <!-- Proof stat row skeleton -->
+              <!-- Proof stat row -->
               <div class="flex items-center gap-6 mb-10">
                 <div>
-                  <div class="h-8 w-24 rounded bg-white/15 animate-pulse mb-2"></div>
-                  <div class="h-3 w-32 rounded bg-white/15 animate-pulse"></div>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">10.000+</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Merchant Aktif</p>
                 </div>
-                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.1);"></div>
+                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
                 <div>
-                  <div class="h-8 w-20 rounded bg-white/15 animate-pulse mb-2"></div>
-                  <div class="h-3 w-24 rounded bg-white/15 animate-pulse"></div>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">50+</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Kota di Indonesia</p>
+                </div>
+                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
+                <div>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">99.9%</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Uptime</p>
                 </div>
               </div>
             </div>
@@ -370,15 +375,15 @@
               <div class="h-px" style="background-color: rgba(255,255,255,0.08);"></div>
               <div class="flex items-center gap-8">
                 <div>
-                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255,255,255,0.35);">Email</p>
-                  <a href="mailto:hello@santap.id" class="text-[14px] font-medium text-white hover:text-[var(--color-primary)] transition-colors no-underline">
-                    hello@santap.id
+                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255, 255, 255, 0.5);">Email Kami</p>
+                  <a href="mailto:halo@santap.id" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
+                    halo@santap.id
                   </a>
                 </div>
                 <div>
-                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255,255,255,0.35);">WhatsApp</p>
-                  <a href="https://wa.me/6281234567890" target="_blank" class="text-[14px] font-medium text-white hover:text-[var(--color-primary)] transition-colors no-underline">
-                    +62 812-3456-7890
+                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255, 255, 255, 0.5);">WhatsApp</p>
+                  <a href="https://wa.me/628986606000?text=Halo%20Santap!%20Saya%20ingin%20konsultasi%20%26%20demo%20produk%20untuk%20restoran%2Fcafe%20saya.%20Terima%20kasih." target="_blank" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
+                    +62 898-6606-000
                   </a>
                 </div>
               </div>
@@ -407,8 +412,8 @@
                     </div>
                     <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-primary)]">Gratis 14 Hari</span>
                   </div>
-                  <h3 class="text-[20px] font-medium text-white mb-2 leading-tight">Coba Santap Sekarang</h3>
-                  <p class="text-[13.5px] leading-relaxed text-white/55">
+                  <h3 class="text-[20px] font-medium mb-2 leading-tight" style="color: #ffffff;">Coba Santap Sekarang</h3>
+                  <p class="text-[13.5px] leading-relaxed" style="color: rgba(255, 255, 255, 0.75);">
                     Mulai digitalisasi kasir tanpa komitmen. Dibangun oleh tim yang understand operasional restoran Indonesia.
                   </p>
                 </div>
@@ -442,14 +447,15 @@
                       </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Konsultasi</span>
                     </div>
-                    <h3 class="text-[17px] font-medium text-white mb-2 leading-snug">Hubungi Tim Kami</h3>
-                    <p class="text-[13px] leading-relaxed text-white/50 mb-6">
+                    <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Hubungi Tim Kami</h3>
+                    <p class="text-[13px] leading-relaxed mb-6" style="color: rgba(255, 255, 255, 0.65);">
                       Tanya tentang Santap, workflow Anda, atau butuh bantuan setup khusus.
                     </p>
                   </div>
                   <NuxtLink
                     to="/contact"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 text-white/60 hover:text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Hubungi Kami
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -472,14 +478,15 @@
                       </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Learn</span>
                     </div>
-                    <h3 class="text-[17px] font-medium text-white mb-2 leading-snug">Tentang Santap</h3>
-                    <p class="text-[13px] leading-relaxed text-white/50 mb-6">
+                    <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Tentang Santap</h3>
+                    <p class="text-[13px] leading-relaxed mb-6" style="color: rgba(255, 255, 255, 0.65);">
                       Pelajari fitur, pricing, dan bagaimana Santap membantu ribuan merchant.
                     </p>
                   </div>
                   <NuxtLink
                     to="/features"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 text-white/60 hover:text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Explore Features
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">

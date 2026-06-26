@@ -102,7 +102,7 @@
                   <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Ketentuan Umum</h2>
                 </div>
                 <p>
-                  Syarat ini adalah perjanjian antara Anda sebagai pemilik bisnis kuliner (merchant) dan PT Santap Teknologi Indonesia mengenai penggunaan aplikasi POS, kitchen display system (KDS), dan layanan terkait.
+                  Syarat ini adalah perjanjian antara Anda sebagai pemilik bisnis kuliner (merchant) dan PT Sarwa Kalyana Cara (Sekeco) mengenai penggunaan aplikasi POS, kitchen display system (KDS), dan layanan terkait.
                 </p>
                 <p>
                   Dengan mendaftar atau menggunakan layanan kami, Anda setuju dengan syarat ini. Jika Anda tidak setuju, jangan menggunakan layanan kami.
@@ -189,7 +189,7 @@
                   <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Kepemilikan Kekayaan Intelektual</h2>
                 </div>
                 <p>
-                  Seluruh hak kekayaan intelektual atas logo brand Santap, arsitektur aplikasi, tampilan antarmuka (UI/UX), grafik, ikon, dan dokumen tertulis di situs ini sepenuhnya adalah hak milik eksklusif PT Santap Teknologi Indonesia. 
+                  Seluruh hak kekayaan intelektual atas logo brand Santap, arsitektur aplikasi, tampilan antarmuka (UI/UX), grafik, ikon, dan dokumen tertulis di situs ini sepenuhnya adalah hak milik eksklusif PT Sarwa Kalyana Cara (Sekeco).
                 </p>
                 <p>
                   Anda tetap memiliki hak milik penuh atas data data menu kuliner, nama restoran, data transaksi penjualan, dan database inventaris stok yang Anda masukkan ke platform kami. Kami hanya diberikan hak terbatas untuk menyimpan dan mengolah data tersebut demi berjalannya fungsi sistem cloud POS Anda.
@@ -229,10 +229,10 @@
                   Jika Anda memiliki pertanyaan mengenai implementasi atau persetujuan dokumen Syarat & Ketentuan Penggunaan ini, silakan hubungi tim legal kami:
                 </p>
                 <div class="p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-surface)] mt-2">
-                  <p class="font-semibold text-[var(--color-text-primary)] mb-1">PT Santap Teknologi Indonesia</p>
+                  <p class="font-semibold text-[var(--color-text-primary)] mb-1">PT Sarwa Kalyana Cara (Sekeco)</p>
                   <p class="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-4">
-                    Gedung Graha Kuliner, Lantai 4<br>
-                    Kuningan, Jakarta Selatan 12940
+                    Sleman, D.I. Yogyakarta<br>
+                    Indonesia
                   </p>
                   <p class="text-sm">
                     Email: <a href="mailto:legal@santap.id" class="text-[var(--color-primary)] font-semibold hover:underline">legal@santap.id</a>

@@ -6,5 +6,6 @@
       <slot />
     </main>
     <LandingFooterCta />
+    <AppFloatingWhatsapp />
   </div>
 </template>

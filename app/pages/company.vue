@@ -24,7 +24,7 @@
     >
       <!-- Background image -->
       <img
-        src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?w=1800&q=80&fit=crop"
+        src="/images/company-hero.jpg"
         alt="Barista sedang menyiapkan kopi di cafe modern"
         class="absolute inset-0 w-full h-full object-cover object-center"
         loading="eager"
@@ -244,36 +244,36 @@
               <!-- Proof stat row -->
               <div class="flex items-center gap-6 mb-10">
                 <div>
-                  <p class="text-[28px] font-bold tracking-tight text-white leading-none">10.000+</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255,255,255,0.4);">Merchant Aktif</p>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">10.000+</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Merchant Aktif</p>
                 </div>
-                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.1);"></div>
+                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
                 <div>
-                  <p class="text-[28px] font-bold tracking-tight text-white leading-none">50+</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255,255,255,0.4);">Kota di Indonesia</p>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">50+</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Kota di Indonesia</p>
                 </div>
-                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.1);"></div>
+                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
                 <div>
-                  <p class="text-[28px] font-bold tracking-tight text-white leading-none">99.9%</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255,255,255,0.4);">Uptime</p>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">99.9%</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Uptime</p>
                 </div>
               </div>
             </div>
 
             <!-- Contact info -->
             <div class="hidden lg:flex flex-col gap-5">
-              <div class="h-px" style="background-color: rgba(255,255,255,0.08);"></div>
+              <div class="h-px" style="background-color: rgba(255,255,255,0.1);"></div>
               <div class="flex items-center gap-8">
                 <div>
-                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255,255,255,0.35);">Email Kami</p>
-                  <a href="mailto:halo@santap.id" class="text-[14px] font-medium text-white hover:text-[var(--color-primary)] transition-colors no-underline">
+                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255, 255, 255, 0.5);">Email Kami</p>
+                  <a href="mailto:halo@santap.id" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
                     halo@santap.id
                   </a>
                 </div>
                 <div>
-                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255,255,255,0.35);">WhatsApp</p>
-                  <a href="https://wa.me/6281234567890" target="_blank" class="text-[14px] font-medium text-white hover:text-[var(--color-primary)] transition-colors no-underline">
-                    +62 812-3456-7890
+                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255, 255, 255, 0.5);">WhatsApp</p>
+                  <a href="https://wa.me/628986606000?text=Halo%20Santap!%20Saya%20ingin%20konsultasi%20%26%20demo%20produk%20untuk%20restoran%2Fcafe%20saya.%20Terima%20kasih." target="_blank" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
+                    +62 898-6606-000
                   </a>
                 </div>
               </div>
@@ -302,8 +302,8 @@
                     </div>
                     <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-primary)]">Mitra Merchant</span>
                   </div>
-                  <h3 class="text-[20px] font-medium text-white mb-2 leading-tight">Daftarkan Restoran atau Cafe Anda</h3>
-                  <p class="text-[13.5px] leading-relaxed text-white/55">
+                  <h3 class="text-[20px] font-medium mb-2 leading-tight" style="color: #ffffff;">Daftarkan Restoran atau Cafe Anda</h3>
+                  <p class="text-[13.5px] leading-relaxed" style="color: rgba(255, 255, 255, 0.75);">
                     Mulai perjalanan digitalisasi kasir Anda — gratis 14 hari, tanpa kartu kredit, tanpa kontrak mengikat.
                   </p>
                 </div>
@@ -337,14 +337,15 @@
                       </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Mitra Integrasi</span>
                     </div>
-                    <h3 class="text-[17px] font-medium text-white mb-2 leading-snug">Sambungkan Sistem Anda via API</h3>
-                    <p class="text-[13px] leading-relaxed text-white/50 mb-6">
+                    <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Sambungkan Sistem Anda via API</h3>
+                    <p class="text-[13px] leading-relaxed mb-6" style="color: rgba(255, 255, 255, 0.65);">
                       Integrasikan e-wallet, delivery platform, atau sistem akuntansi dengan API terbuka Santap.
                     </p>
                   </div>
                   <NuxtLink
                     to="/contact"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 text-white/60 hover:text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Hubungi Tim API
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -367,14 +368,15 @@
                       </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Program Reseller</span>
                     </div>
-                    <h3 class="text-[17px] font-medium text-white mb-2 leading-snug">Jadi Mitra Reseller Santap</h3>
-                    <p class="text-[13px] leading-relaxed text-white/50 mb-6">
+                    <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Jadi Mitra Reseller Santap</h3>
+                    <p class="text-[13px] leading-relaxed mb-6" style="color: rgba(255, 255, 255, 0.65);">
                       Dapatkan komisi menarik dengan merekomendasikan Santap ke jaringan restoran dan cafe Anda.
                     </p>
                   </div>
                   <NuxtLink
                     to="/contact"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 text-white/60 hover:text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Daftar Reseller
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">

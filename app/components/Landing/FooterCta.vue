@@ -14,7 +14,7 @@
     <!-- ── Background: moody restaurant image + heavy overlay ── -->
     <div class="absolute inset-0 z-0" aria-hidden="true">
       <img
-        src="https://images.unsplash.com/photo-1514190051997-0f6f39ca5cde?w=1800&q=80&fit=crop&crop=center"
+        src="/images/footer-cta-bg.jpg"
         alt=""
         class="w-full h-full object-cover object-center"
         loading="lazy"
@@ -148,7 +148,9 @@
                 </li>
                 <li>
                   <a
-                    href="#"
+                    href="https://wa.me/628986606000?text=Halo%20Santap!%20Saya%20ingin%20konsultasi%20%26%20demo%20produk%20untuk%20restoran%2Fcafe%20saya.%20Terima%20kasih."
+                    target="_blank"
+                    rel="noopener noreferrer"
                     class="text-[15px] no-underline transition-colors duration-150 hover:!text-white"
                     style="color: rgba(255,255,255,0.65);"
                   >WhatsApp</a>
@@ -172,6 +174,7 @@
         </div>
       </div>
 
+
       <!-- Flex spacer to push brand name to bottom -->
       <div class="flex-1" style="min-height: clamp(60px, 8vh, 100px);"></div>
 
@@ -192,11 +195,11 @@
 
     <!-- ── Copyright bar ──────────────────────────────────────── -->
     <div class="relative z-10 w-full" style="border-top: 1px solid rgba(255,255,255,0.07);">
-      <div class="px-5 md:px-10 lg:px-16 max-w-[1400px] mx-auto py-5 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-8 text-center sm:text-left">
-          <p class="text-[11px] uppercase tracking-[0.1em]" style="color: rgba(255,255,255,0.25);">
-            © {{ currentYear }} Santap. All Rights Reserved.
-          </p>
+      <div class="px-5 md:px-10 lg:px-16 max-w-[1400px] mx-auto pt-5 pb-12 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-[11px] uppercase tracking-[0.1em]" style="color: rgba(255,255,255,0.25);">
+          © {{ currentYear }} Santap. All Rights Reserved.
+        </p>
+        <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-right">
           <div class="flex gap-4">
             <NuxtLink
               to="/terms"
@@ -209,10 +212,11 @@
               style="color: rgba(255,255,255,0.25);"
             >Kebijakan Privasi</NuxtLink>
           </div>
+          <span style="color: rgba(255,255,255,0.15);" class="hidden sm:inline">|</span>
+          <p class="text-[11px] uppercase tracking-[0.1em]" style="color: rgba(255,255,255,0.20);">
+            Dibuat untuk bisnis kuliner Indonesia
+          </p>
         </div>
-        <p class="text-[11px] uppercase tracking-[0.1em]" style="color: rgba(255,255,255,0.20);">
-          Dibuat untuk bisnis kuliner Indonesia
-        </p>
       </div>
     </div>
 

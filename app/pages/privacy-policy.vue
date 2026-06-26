@@ -102,7 +102,7 @@
                   <h2 class="text-[22px] font-semibold text-[var(--color-text-primary)]">Pengantar</h2>
                 </div>
                 <p>
-                  Kebijakan ini menjelaskan bagaimana PT Santap Teknologi Indonesia mengumpulkan, menggunakan, dan melindungi data pribadi Anda saat menggunakan aplikasi POS, dashboard, dan situs santap.id.
+                  Kebijakan ini menjelaskan bagaimana PT Sarwa Kalyana Cara (Sekeco) mengumpulkan, menggunakan, dan melindungi data pribadi Anda saat menggunakan aplikasi POS, dashboard, dan situs santap.id.
                 </p>
                 <p>
                   Dengan menggunakan layanan kami, Anda menyetujui kebijakan ini. Kami melindungi privasi pemilik merchant, staf operasional, dan pelanggan Anda.
@@ -233,10 +233,10 @@
                   Jika Anda memiliki kekhawatiran, pertanyaan, atau keluhan terkait cara kami memperlakukan data pribadi Anda atau perihal Kebijakan Privasi ini, silakan hubungi tim legal kami:
                 </p>
                 <div class="p-6 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-surface)] mt-2">
-                  <p class="font-semibold text-[var(--color-text-primary)] mb-1">PT Santap Teknologi Indonesia</p>
+                  <p class="font-semibold text-[var(--color-text-primary)] mb-1">PT Sarwa Kalyana Cara (Sekeco)</p>
                   <p class="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-4">
-                    Gedung Graha Kuliner, Lantai 4<br>
-                    Kuningan, Jakarta Selatan 12940
+                    Sleman, D.I. Yogyakarta<br>
+                    Indonesia
                   </p>
                   <p class="text-sm">
                     Email: <a href="mailto:legal@santap.id" class="text-[var(--color-primary)] font-semibold hover:underline">legal@santap.id</a>

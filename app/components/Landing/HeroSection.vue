@@ -11,7 +11,7 @@
       <img
         ref="bgImgRef"
         class="w-full h-full object-cover object-[center_40%] block hero-bg-img"
-        src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1800&q=85&fit=crop"
+        src="/images/landing-hero.jpg"
         alt=""
         loading="eager"
         fetchpriority="high"
@@ -119,7 +119,7 @@
               <rect x="5" y="2" width="14" height="20" rx="3" stroke="currentColor" stroke-width="1.8"/>
               <circle cx="12" cy="18" r="1" fill="currentColor"/>
             </svg>
-            Tersedia di Android | iOS segera hadir
+            Hanya tersedia di Android 
           </p>
         </div>
 

@@ -58,8 +58,8 @@
   <div class="md:hidden fixed inset-0 z-50 pointer-events-none nav-mobile-entry">
     <div
       class="absolute inset-0 bg-[#1A1512] flex flex-col pt-[100px] pb-6 overflow-y-auto overflow-x-hidden
-             transition-[transform,opacity] duration-[var(--motion-ui)] ease-[var(--ease-premium)]"
-      :class="mobileOpen ? 'translate-y-0 opacity-100 pointer-events-auto' : '-translate-y-full opacity-0 pointer-events-none'"
+             transition-[transform,opacity] ease-[var(--ease-premium)]"
+      :class="mobileOpen ? 'translate-y-0 opacity-100 pointer-events-auto duration-500' : '-translate-y-full opacity-0 pointer-events-none duration-500'"
     >
       <div class="absolute inset-0 pointer-events-none overflow-hidden opacity-[0.04]" aria-hidden="true">
         <svg class="absolute w-full h-full" viewBox="0 0 400 700" fill="none" preserveAspectRatio="xMidYMid slice">
@@ -74,14 +74,14 @@
           :key="item.to"
           :to="item.to"
           :style="{
-            transitionDelay: mobileOpen ? `${120 + i * 45}ms` : '0ms',
+            transitionDelay: mobileOpen ? `${120 + i * 45}ms` : `${(navItems.length - 1 - i) * 30}ms`,
             fontSize: 'clamp(32px, 9vw, 44px)',
             color: 'rgba(255, 255, 255, 0.7)',
           }"
           class="w-full text-center font-light no-underline py-2 tracking-[-0.01em]
-                 transition-[opacity,transform,color] duration-[var(--motion-ui)] ease-[var(--ease-premium)]
+                 transition-[opacity,transform,color] duration-500 ease-[var(--ease-premium)]
                  hover:!text-white"
-          :class="mobileOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'"
+          :class="mobileOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'"
           @click="mobileOpen = false"
         >
           {{ item.label }}
@@ -89,9 +89,9 @@
       </nav>
 
       <div
-        class="relative z-10 pt-8 text-center transition-[opacity,transform] duration-[var(--motion-ui)] ease-[var(--ease-premium)]"
+        class="relative z-10 pt-8 text-center transition-[opacity,transform] duration-500 ease-[var(--ease-premium)]"
         :style="{ transitionDelay: mobileOpen ? '280ms' : '0ms' }"
-        :class="mobileOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'"
+        :class="mobileOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'"
       >
         <a
           href="mailto:halo@santap.id"

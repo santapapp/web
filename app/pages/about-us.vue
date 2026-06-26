@@ -23,7 +23,7 @@
     >
       <!-- Background image -->
       <img
-        src="https://images.unsplash.com/photo-1552566626-52f8b828add9?w=1800&q=80&fit=crop"
+        src="/images/about-hero.jpg"
         alt="Interior restoran yang hangat dan nyaman"
         class="absolute inset-0 w-full h-full object-cover object-center"
         loading="eager"
@@ -204,6 +204,57 @@
     </section>
 
     <!-- ══════════════════════════════════════════════════════
+         OFFICE LOCATION SECTION
+         ══════════════════════════════════════════════════════ -->
+    <section
+      class="bg-[var(--color-bg-page)] px-5 md:px-10 lg:px-16 py-20 md:py-28 max-w-[1400px] mx-auto"
+      aria-label="Lokasi Kantor"
+    >
+      <!-- Top Divider -->
+      <div class="h-px bg-[var(--color-border)] mb-16"></div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+        <!-- Left: description -->
+        <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
+          <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">Lokasi</p>
+          <h2
+            class="font-medium tracking-tight leading-[1.1]"
+            style="font-size: clamp(28px, 3.5vw, 42px); color: var(--color-text-primary); margin-bottom: 1.5rem;"
+          >
+            Lokasi Kami
+          </h2>
+          <p class="text-[14.5px] leading-[1.7] text-[var(--color-text-secondary)] max-w-sm" style="margin-bottom: 1.5rem;">
+            Kami berbasis di Sleman, Daerah Istimewa Yogyakarta. Silakan lihat peta lokasi kantor kami di samping.
+          </p>
+          <p class="text-[14px] text-[var(--color-text-primary)] font-semibold leading-relaxed">
+            PT Sarwa Kalyana Cara (Sekeco)<br>
+            Sleman, D.I. Yogyakarta, Indonesia
+          </p>
+        </div>
+
+        <!-- Right: Map iframe -->
+        <div class="lg:col-span-8">
+          <div class="cmp-right-item">
+            <div
+              class="relative w-full overflow-hidden rounded-2xl border border-[var(--color-border)] shadow-[var(--shadow-1)]"
+              style="height: clamp(280px, 45vh, 480px);"
+            >
+              <iframe
+                src="https://maps.google.com/maps?q=Kabupaten%20Sleman%2C%20Daerah%20Istimewa%20Yogyakarta%2C%20Indonesia&z=12&output=embed"
+                class="absolute inset-0 w-full h-full"
+                style="border: 0; filter: grayscale(0.1) contrast(1.02);"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Lokasi Santap — Kabupaten Sleman, Daerah Istimewa Yogyakarta"
+                allowfullscreen
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════════
          CTA SECTION — Dark theme above footer
          ══════════════════════════════════════════════════════ -->
     <section
@@ -252,22 +303,27 @@
                     -webkit-text-fill-color: transparent;
                     background-clip: text;
                   "
-                >1000+ merchant.</span>
+                >10.000+ merchant.</span>
               </h2>
               <p class="text-[14.5px] leading-[1.75] max-w-sm mb-10" style="color: rgba(255,255,255,0.55);">
                 Santap bukan hanya kasir, tapi sistem complete untuk manage outlets, staff, inventory, dan decision-making berbasis data real-time.
               </p>
 
-              <!-- Proof stat row skeleton -->
+              <!-- Proof stat row -->
               <div class="flex items-center gap-6 mb-10">
                 <div>
-                  <div class="h-8 w-24 rounded bg-white/15 animate-pulse mb-2"></div>
-                  <div class="h-3 w-32 rounded bg-white/15 animate-pulse"></div>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">10.000+</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Merchant Aktif</p>
                 </div>
-                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.1);"></div>
+                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
                 <div>
-                  <div class="h-8 w-20 rounded bg-white/15 animate-pulse mb-2"></div>
-                  <div class="h-3 w-24 rounded bg-white/15 animate-pulse"></div>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">50+</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Kota di Indonesia</p>
+                </div>
+                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
+                <div>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">99.9%</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Uptime</p>
                 </div>
               </div>
             </div>
@@ -277,15 +333,15 @@
               <div class="h-px" style="background-color: rgba(255,255,255,0.08);"></div>
               <div class="flex items-center gap-8">
                 <div>
-                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255,255,255,0.35);">Email Kami</p>
-                  <a href="mailto:halo@santap.id" class="text-[14px] font-medium text-white hover:text-[var(--color-primary)] transition-colors no-underline">
+                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255, 255, 255, 0.5);">Email Kami</p>
+                  <a href="mailto:halo@santap.id" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
                     halo@santap.id
                   </a>
                 </div>
                 <div>
-                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255,255,255,0.35);">WhatsApp</p>
-                  <a href="https://wa.me/6281234567890" target="_blank" class="text-[14px] font-medium text-white hover:text-[var(--color-primary)] transition-colors no-underline">
-                    +62 812-3456-7890
+                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255, 255, 255, 0.5);">WhatsApp</p>
+                  <a href="https://wa.me/628986606000?text=Halo%20Santap!%20Saya%20ingin%20konsultasi%20%26%20demo%20produk%20untuk%20restoran%2Fcafe%20saya.%20Terima%20kasih." target="_blank" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
+                    +62 898-6606-000
                   </a>
                 </div>
               </div>
@@ -314,8 +370,8 @@
                     </div>
                     <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-primary)]">Gratis 14 Hari</span>
                   </div>
-                  <h3 class="text-[20px] font-medium text-white mb-2 leading-tight">Gratis 14 Hari Trial</h3>
-                  <p class="text-[13.5px] leading-relaxed text-white/55">
+                  <h3 class="text-[20px] font-medium mb-2 leading-tight" style="color: #ffffff;">Gratis 14 Hari Trial</h3>
+                  <p class="text-[13.5px] leading-relaxed" style="color: rgba(255, 255, 255, 0.75);">
                     Mulai digitalisasi kasir tanpa komitmen. Akses penuh ke semua fitur core: order management, KDS, payment, laporan. Tidak ada kartu kredit diperlukan.
                   </p>
                 </div>
@@ -349,14 +405,15 @@
                       </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Konsultasi</span>
                     </div>
-                    <h3 class="text-[17px] font-medium text-white mb-2 leading-snug">Konsultasi Kebutuhan</h3>
-                    <p class="text-[13px] leading-relaxed text-white/50 mb-6">
+                    <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Konsultasi Kebutuhan</h3>
+                    <p class="text-[13px] leading-relaxed mb-6" style="color: rgba(255, 255, 255, 0.65);">
                       Tim kami siap memahami workflow spesifik bisnis Anda dan recommend setup yang tepat. Gratis, no obligation.
                     </p>
                   </div>
                   <NuxtLink
                     to="/contact"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 text-white/60 hover:text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Jadwalkan Konsultasi
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -379,15 +436,16 @@
                       </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Hubungi</span>
                     </div>
-                    <h3 class="text-[17px] font-medium text-white mb-2 leading-snug">Chat dengan Tim Kami</h3>
-                    <p class="text-[13px] leading-relaxed text-white/50 mb-6">
+                    <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Chat dengan Tim Kami</h3>
+                    <p class="text-[13px] leading-relaxed mb-6" style="color: rgba(255, 255, 255, 0.65);">
                       Ada pertanyaan? Hubungi kami via WhatsApp. Real humans, not chatbot. Response dalam 2 jam (jam kerja).
                     </p>
                   </div>
                   <NuxtLink
-                    to="https://wa.me/6281234567890"
+                    to="https://wa.me/628986606000?text=Halo%20Santap!%20Saya%20ingin%20konsultasi%20%26%20demo%20produk%20untuk%20restoran%2Fcafe%20saya.%20Terima%20kasih."
                     target="_blank"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 text-white/60 hover:text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Chat WhatsApp
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">

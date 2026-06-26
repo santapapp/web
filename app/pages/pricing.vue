@@ -24,7 +24,7 @@
     >
       <!-- Background image -->
       <img
-        src="https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=1800&q=80&fit=crop"
+        src="/images/pricing-hero.jpg"
         alt="Dapur restoran sibuk"
         class="absolute inset-0 w-full h-full object-cover object-center"
         loading="eager"
@@ -302,81 +302,88 @@
       </div>
 
       <div class="relative z-10 px-5 md:px-10 lg:px-16 py-24 md:py-32 max-w-[1400px] mx-auto">
-
-        <!-- Header row -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 mb-20 md:mb-28">
-          <!-- Badge -->
-          <div class="lg:col-span-4 flex items-start prc-trust-badge">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          
+          <!-- Left: Sticky Header Column -->
+          <div class="prc-trust-badge lg:col-span-5 lg:sticky lg:top-28 self-start flex flex-col gap-6">
+            <!-- Badge -->
             <div
-              class="inline-flex items-center gap-3 px-4 py-2 rounded-md border"
+              class="inline-flex items-center gap-3 px-4 py-2 rounded-md border w-fit"
               style="background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1);"
             >
               <div class="w-2 h-2 rounded-sm flex-shrink-0" style="background-color: var(--color-primary);"></div>
               <span class="text-[10.5px] font-bold uppercase tracking-[0.16em]" style="color: rgba(255,255,255,0.8);">Jaminan Kami</span>
             </div>
-          </div>
 
-          <!-- Heading -->
-          <div class="lg:col-span-8 prc-trust-heading">
-            <h2
-              class="font-medium leading-[1.08] tracking-tight"
-              style="font-size: clamp(30px, 4.5vw, 56px); color: #FFFFFF; max-width: 680px;"
-            >
-              Komitmen kami pada <span
-                style="
-                  background: linear-gradient(100deg, #FFFFFF 0%, var(--color-primary) 55%, #FFA550 100%);
-                  -webkit-background-clip: text;
-                  -webkit-text-fill-color: transparent;
-                  background-clip: text;
-                "
-              >transparansi & keadilan.</span>
-            </h2>
-          </div>
-        </div>
-
-        <!-- 3 Focus Items -->
-        <div>
-          <!-- Top border -->
-          <div class="h-px" style="background-color: rgba(255,255,255,0.08);"></div>
-
-          <div
-            v-for="(focus, i) in focuses"
-            :key="focus.id"
-            class="prc-trust-row"
-          >
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-12 py-12 md:py-16 items-start group">
-              <!-- Number + Title (left) -->
-              <div class="md:col-span-5 flex items-baseline gap-5">
-                <span
-                  class="flex-shrink-0 tabular-nums font-light"
-                  style="font-size: 13px; color: rgba(255,255,255,0.25); letter-spacing: 0.04em;"
-                >{{ focus.number }}</span>
-                <h3
-                  class="font-medium tracking-tight leading-[1.1]"
-                  style="font-size: clamp(24px, 3vw, 38px); color: #FFFFFF;"
-                >{{ focus.title }}</h3>
-              </div>
-
-              <!-- Description (right) -->
-              <div class="md:col-span-7 md:pt-1.5">
-                <p class="text-[14.5px] leading-[1.75] max-w-[560px]" style="color: rgba(255,255,255,0.55);">
-                  {{ focus.desc }}
-                </p>
-                <!-- Feature tags -->
-                <div class="flex flex-wrap gap-2 mt-6">
-                  <span
-                    v-for="tag in focus.tags"
-                    :key="tag"
-                    class="px-3 py-1 rounded-full text-[11px] font-medium uppercase tracking-[0.1em]"
-                    style="background-color: rgba(255,255,255,0.06); color: rgba(255,255,255,0.45); border: 1px solid rgba(255,255,255,0.08);"
-                  >{{ tag }}</span>
-                </div>
-              </div>
+            <!-- Heading -->
+            <div class="prc-trust-heading">
+              <h2
+                class="font-medium leading-[1.08] tracking-tight"
+                style="font-size: clamp(30px, 4.5vw, 56px); color: #FFFFFF;"
+              >
+                Komitmen kami pada <span
+                  style="
+                    background: linear-gradient(100deg, #FFFFFF 0%, var(--color-primary) 55%, #FFA550 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                  "
+                >transparansi & keadilan.</span>
+              </h2>
             </div>
-            <!-- Divider -->
-            <div class="h-px" style="background-color: rgba(255,255,255,0.08);"></div>
           </div>
+
+          <!-- Right: List Column -->
+          <div class="lg:col-span-7 flex flex-col">
+            <!-- Top border -->
+            <div class="h-px" style="background-color: rgba(255,255,255,0.08);"></div>
+
+            <div
+              v-for="(focus, i) in focuses"
+              :key="focus.id"
+              class="prc-trust-row"
+            >
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-6 py-12 md:py-16 items-center group">
+                
+                <!-- Col 1: Huge Number -->
+                <div class="md:col-span-3 flex items-baseline justify-start">
+                  <span
+                    class="font-extrabold tracking-tighter leading-none select-none pointer-events-none tabular-nums"
+                    style="font-size: clamp(56px, 6.5vw, 84px); color: rgba(255, 255, 255, 0.05); font-family: var(--font-body);"
+                  >{{ focus.number }}</span>
+                </div>
+
+                <!-- Col 2: Title & Description & Tags -->
+                <div class="md:col-span-9 flex flex-col items-start gap-4">
+                  <div>
+                    <h3
+                      class="font-medium tracking-tight leading-[1.2] mb-3"
+                      style="font-size: clamp(20px, 2.2vw, 26px); color: #FFFFFF;"
+                    >{{ focus.title }}</h3>
+                    <p class="text-[14px] leading-relaxed" style="color: rgba(255,255,255,0.55);">
+                      {{ focus.desc }}
+                    </p>
+                  </div>
+
+                  <!-- Feature tags -->
+                  <div class="flex flex-wrap gap-2 mt-2">
+                    <span
+                      v-for="tag in focus.tags"
+                      :key="tag"
+                      class="px-3 py-1 rounded-full text-[11px] font-medium uppercase tracking-[0.1em]"
+                      style="background-color: rgba(255,255,255,0.06); color: rgba(255,255,255,0.45); border: 1px solid rgba(255,255,255,0.08);"
+                    >{{ tag }}</span>
+                  </div>
+                </div>
+
+              </div>
+              <!-- Divider -->
+              <div class="h-px" style="background-color: rgba(255,255,255,0.08);"></div>
+            </div>
+          </div>
+
         </div>
+      </div>
 
       </div>
     </section>
@@ -436,16 +443,21 @@
                 Tanpa biaya tersembunyi, tanpa komitmen jangka panjang. Coba gratis selama 14 hari.
               </p>
 
-              <!-- Proof stat row skeleton -->
+              <!-- Proof stat row -->
               <div class="flex items-center gap-6 mb-10">
                 <div>
-                  <div class="h-8 w-24 rounded bg-white/15 animate-pulse mb-2"></div>
-                  <div class="h-3 w-32 rounded bg-white/15 animate-pulse"></div>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">10.000+</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Merchant Aktif</p>
                 </div>
-                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.1);"></div>
+                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
                 <div>
-                  <div class="h-8 w-20 rounded bg-white/15 animate-pulse mb-2"></div>
-                  <div class="h-3 w-24 rounded bg-white/15 animate-pulse"></div>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">50+</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Kota di Indonesia</p>
+                </div>
+                <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
+                <div>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">99.9%</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Uptime</p>
                 </div>
               </div>
             </div>
@@ -455,15 +467,15 @@
               <div class="h-px" style="background-color: rgba(255,255,255,0.08);"></div>
               <div class="flex items-center gap-8">
                 <div>
-                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255,255,255,0.35);">Email Kami</p>
-                  <a href="mailto:halo@santap.id" class="text-[14px] font-medium text-white hover:text-[var(--color-primary)] transition-colors no-underline">
+                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255, 255, 255, 0.5);">Email Kami</p>
+                  <a href="mailto:halo@santap.id" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
                     halo@santap.id
                   </a>
                 </div>
                 <div>
-                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255,255,255,0.35);">WhatsApp</p>
-                  <a href="https://wa.me/6281234567890" target="_blank" class="text-[14px] font-medium text-white hover:text-[var(--color-primary)] transition-colors no-underline">
-                    +62 812-3456-7890
+                  <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255, 255, 255, 0.5);">WhatsApp</p>
+                  <a href="https://wa.me/628986606000?text=Halo%20Santap!%20Saya%20ingin%20konsultasi%20%26%20demo%20produk%20untuk%20restoran%2Fcafe%20saya.%20Terima%20kasih." target="_blank" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
+                    +62 898-6606-000
                   </a>
                 </div>
               </div>
@@ -492,8 +504,8 @@
                     </div>
                     <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-primary)]">Gratis 14 Hari</span>
                   </div>
-                  <h3 class="text-[20px] font-medium text-white mb-2 leading-tight">Coba Semua Paket</h3>
-                  <p class="text-[13.5px] leading-relaxed text-white/55">
+                  <h3 class="text-[20px] font-medium mb-2 leading-tight" style="color: #ffffff;">Coba Semua Paket</h3>
+                  <p class="text-[13.5px] leading-relaxed" style="color: rgba(255, 255, 255, 0.75);">
                     Akses penuh ke semua fitur tanpa komitmen. Batalkan kapan saja tanpa pertanyaan.
                   </p>
                 </div>
@@ -527,14 +539,15 @@
                       </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Konsultasi</span>
                     </div>
-                    <h3 class="text-[17px] font-medium text-white mb-2 leading-snug">Konsultasi Paket</h3>
-                    <p class="text-[13px] leading-relaxed text-white/50 mb-6">
+                    <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Konsultasi Paket</h3>
+                    <p class="text-[13px] leading-relaxed mb-6" style="color: rgba(255, 255, 255, 0.65);">
                       Butuh paket custom? Tim sales kami siap membantu menemukan solusi terbaik untuk bisnis Anda.
                     </p>
                   </div>
                   <NuxtLink
                     to="/contact"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 text-white/60 hover:text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Jadwalkan Konsultasi
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -557,15 +570,16 @@
                       </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Hubungi</span>
                     </div>
-                    <h3 class="text-[17px] font-medium text-white mb-2 leading-snug">Hubungi Tim Sales</h3>
-                    <p class="text-[13px] leading-relaxed text-white/50 mb-6">
+                    <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Hubungi Tim Sales</h3>
+                    <p class="text-[13px] leading-relaxed mb-6" style="color: rgba(255, 255, 255, 0.65);">
                       Ada pertanyaan tentang harga atau fitur? Chat langsung dengan tim kami via WhatsApp.
                     </p>
                   </div>
                   <NuxtLink
-                    to="https://wa.me/6281234567890"
+                    to="https://wa.me/628986606000?text=Halo%20Santap!%20Saya%20ingin%20konsultasi%20%26%20demo%20produk%20untuk%20restoran%2Fcafe%20saya.%20Terima%20kasih."
                     target="_blank"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 text-white/60 hover:text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Chat WhatsApp
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" aria-hidden="true">
