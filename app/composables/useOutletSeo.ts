@@ -42,7 +42,7 @@ export function useOutletSeo(
     routeType = 'outlet-index',
   } = options
 
-  const slug = computed(() => String(toValue(orgSlug) || ''))
+  const slug = computed(() => String(toValue(orgSlug) || '').trim().toLowerCase())
 
   // ── Single source of truth untuk semua keputusan SEO ────────────────────────
   // Urutan prioritas: loading → error → not-found → success

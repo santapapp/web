@@ -156,7 +156,7 @@ export const useCustomerApi = () => {
 
   return {
     async getOrganization(orgSlug: string): Promise<PublicOrgResponse> {
-      const encodedSlug = encodeURIComponent(orgSlug)
+      const encodedSlug = encodeURIComponent(orgSlug.trim().toLowerCase())
 
       return firstSuccessfulPublicRequest<PublicOrgResponse>([
         `/v1/customer/organization/${encodedSlug}`,
@@ -234,7 +234,7 @@ export const useCustomerApi = () => {
     },
 
     async getPublicOrder(orgSlug: string, orderToken: string): Promise<any> {
-      const encodedOrg = encodeURIComponent(orgSlug)
+      const encodedOrg = encodeURIComponent(orgSlug.trim().toLowerCase())
       const encodedOrder = encodeURIComponent(orderToken)
 
       // Table order tracking bersifat PUBLIK — tidak butuh X-Public-Token / session.

@@ -14,7 +14,7 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
   runtimeConfig: {
     public: {
-      // Override via NUXT_PUBLIC_API_BASE_URL (mis. http://localhost:8000 untuk dev lokal).
+      // Override via NUXT_PUBLIC_API_BASE_URL (mis. http://127.0.0.1:8000 untuk dev lokal).
       // Default production menunjuk ke API publik Santap.
       apiBaseUrl: "https://api.santap.app",
       useMockApi: false,

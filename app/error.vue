@@ -118,6 +118,8 @@ const goBack = async () => {
           <div class="flex flex-col sm:flex-row gap-3">
             <NuxtLink
               to="/"
+              active-class=""
+              exact-active-class=""
               class="inline-flex items-center justify-center gap-2 rounded-full font-bold uppercase tracking-[0.08em] no-underline transition-all hover:-translate-y-px cursor-pointer"
               style="
                 padding: clamp(12px, 2vw, 14px) clamp(20px, 3vw, 28px);

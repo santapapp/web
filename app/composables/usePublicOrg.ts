@@ -77,7 +77,7 @@ export const formatOrgAddress = (org: PublicOrg | null) =>
 
 export const usePublicOrg = (orgSlug: MaybeRefOrGetter<string>) => {
   const api = useCustomerApi();
-  const normalizedSlug = computed(() => String(toValue(orgSlug) || "").trim());
+  const normalizedSlug = computed(() => String(toValue(orgSlug) || "").trim().toLowerCase());
 
   const {
     data: org,

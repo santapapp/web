@@ -191,15 +191,15 @@ export function normalizeMenus(rawMenus: RawMenu[]): MenuProduct[] {
   })
 }
 
-const products = useState<MenuProduct[]>('menu-products', () => [])
-const searchQuery = useState<string>('menu-search-query', () => '')
-const activeCategory = useState<string>('menu-active-category', () => 'all')
-const pending = useState<boolean>('menu-pending', () => false)
-const error = useState<CustomerApiError | null>('menu-error', () => null)
-const loadedOrgSlug = useState<string>('menu-loaded-org-slug', () => '')
-const loadedOrgId = useState<string | number>('menu-loaded-org-id', () => '')
-
 export const useCustomerMenu = () => {
+  const products = useState<MenuProduct[]>('menu-products', () => [])
+  const searchQuery = useState<string>('menu-search-query', () => '')
+  const activeCategory = useState<string>('menu-active-category', () => 'all')
+  const pending = useState<boolean>('menu-pending', () => false)
+  const error = useState<CustomerApiError | null>('menu-error', () => null)
+  const loadedOrgSlug = useState<string>('menu-loaded-org-slug', () => '')
+  const loadedOrgId = useState<string | number>('menu-loaded-org-id', () => '')
+
   const api = useCustomerApi()
 
   const categories = computed<CustomerMenuCategoryGroup[]>(() => {
@@ -303,7 +303,7 @@ export const useCustomerMenu = () => {
   }
 
   const fetchMenuByOrgSlug = async (orgSlug: string) => {
-    const normalizedSlug = orgSlug.trim()
+    const normalizedSlug = orgSlug.trim().toLowerCase()
     if (!normalizedSlug) {
       products.value = []
       return { success: false, error: { message: 'Slug outlet tidak valid.', statusCode: 400 } }
