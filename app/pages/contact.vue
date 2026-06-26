@@ -1,5 +1,5 @@
 <template>
-  <main ref="mainRef" class="overflow-x-hidden w-full">
+  <main ref="mainRef" class="overflow-x-clip w-full">
 
     <!-- ── HERO — Curtain Reveal ──────────────────────────── -->
     <AppPageHeroCurtain
@@ -68,7 +68,7 @@
       <!-- Top Divider -->
       <div class="h-px bg-[var(--color-border)] mb-16"></div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
         
         <!-- Left Column: Heading -->
         <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
@@ -116,7 +116,7 @@
 
             <!-- Email channel -->
             <a 
-              href="mailto:halo@santap.id" 
+              href="mailto:info@sekeco.id" 
               class="cmp-right-item group flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 no-underline transition-opacity duration-200 hover:opacity-85"
             >
               <div class="flex items-start gap-4">
@@ -124,7 +124,7 @@
                 <div>
                   <h3 class="text-[18px] font-medium text-[var(--color-text-primary)]" style="margin-bottom: 0.25rem;">Kemitraan & Penjualan</h3>
                   <p class="text-[14px] text-[var(--color-text-secondary)] leading-relaxed max-w-lg">
-                    Hubungi sales kami di halo@santap.id untuk penawaran skala franchise/multi-outlet.
+                    Hubungi sales kami di info@sekeco.id untuk penawaran skala franchise/multi-outlet.
                   </p>
                 </div>
               </div>
@@ -233,8 +233,8 @@
               <div class="h-px" style="background-color: rgba(255,255,255,0.08);"></div>
               <div>
                 <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-2" style="color: rgba(255,255,255,0.35);">Email Penjualan</p>
-                <a href="mailto:halo@santap.id" class="text-[15px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
-                  halo@santap.id
+                <a href="mailto:info@sekeco.id" class="text-[15px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
+                  info@sekeco.id
                 </a>
               </div>
               <div>
@@ -249,181 +249,193 @@
           <!-- Right Column: Interactive Form -->
           <div class="lg:col-span-8 cnt-form-card">
             <div
-              class="border rounded-2xl p-6 md:p-10 lg:p-12"
+              class="border rounded-2xl p-6 md:p-10 lg:p-12 relative overflow-hidden"
               style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
             >
-              <h3 class="text-xl md:text-2xl font-medium tracking-tight mb-2" style="color: #ffffff; margin-bottom: 0.5rem;">
-                Kirim Pesan
-              </h3>
-              <p class="text-sm" style="color: rgba(255,255,255,0.55); margin-bottom: 2rem;">
-                Isi formulir berikut dan tim kami akan segera menghubungi Anda.
-              </p>
+              <!-- Glow accent -->
+              <div class="absolute top-0 right-0 w-64 h-64 pointer-events-none" style="background: radial-gradient(circle at top right, rgba(232,119,34,0.06) 0%, transparent 70%);"></div>
+              
+              <!-- Huge Faint Background Icon -->
+              <div class="absolute -top-10 -right-10 w-48 h-48 text-white opacity-[0.02] pointer-events-none select-none z-0">
+                <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
 
-              <form v-if="!isSubmitted" @submit.prevent="submitForm" class="flex flex-col gap-6">
-                
-                <!-- Row 1: Nama Lengkap + Nama Bisnis -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <!-- Nama -->
-                  <div class="flex flex-col gap-2">
-                    <label for="name" class="text-[11px] font-bold uppercase tracking-[0.08em] text-white/80">
-                      Nama Lengkap <span class="text-[var(--color-danger)]">*</span>
-                    </label>
-                    <input
-                      id="name"
-                      v-model="form.name"
-                      type="text"
-                      required
-                      placeholder="Masukkan nama lengkap Anda"
-                      class="form-input-dark"
-                      :class="{ 'border-danger-dark': errors.name }"
-                      @input="clearError('name')"
-                    />
-                    <span v-if="errors.name" class="text-xs text-[var(--color-danger)]">{{ errors.name }}</span>
-                  </div>
+              <div class="relative z-10">
+                <h3 class="text-xl md:text-2xl font-medium tracking-tight mb-2" style="color: #ffffff; margin-bottom: 0.5rem;">
+                  Kirim Pesan
+                </h3>
+                <p class="text-sm" style="color: rgba(255,255,255,0.55); margin-bottom: 2rem;">
+                  Isi formulir berikut dan tim kami akan segera menghubungi Anda.
+                </p>
 
-                  <!-- Nama Bisnis -->
-                  <div class="flex flex-col gap-2">
-                    <label for="businessName" class="text-[11px] font-bold uppercase tracking-[0.08em] text-white/80">
-                      Nama Restoran / Cafe <span class="text-[var(--color-danger)]">*</span>
-                    </label>
-                    <input
-                      id="businessName"
-                      v-model="form.businessName"
-                      type="text"
-                      required
-                      placeholder="Contoh: Kopi Cantik"
-                      class="form-input-dark"
-                      :class="{ 'border-danger-dark': errors.businessName }"
-                      @input="clearError('businessName')"
-                    />
-                    <span v-if="errors.businessName" class="text-xs text-[var(--color-danger)]">{{ errors.businessName }}</span>
-                  </div>
-                </div>
+                <form v-if="!isSubmitted" @submit.prevent="submitForm" class="flex flex-col gap-6">
+                  
+                  <!-- Row 1: Nama Lengkap + Nama Bisnis -->
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Nama -->
+                    <div class="flex flex-col gap-2">
+                      <label for="name" class="text-[11px] font-bold uppercase tracking-[0.08em] text-white/80">
+                        Nama Lengkap <span class="text-[var(--color-danger)]">*</span>
+                      </label>
+                      <input
+                        id="name"
+                        v-model="form.name"
+                        type="text"
+                        required
+                        placeholder="Masukkan nama lengkap Anda"
+                        class="form-input-dark"
+                        :class="{ 'border-danger-dark': errors.name }"
+                        @input="clearError('name')"
+                      />
+                      <span v-if="errors.name" class="text-xs text-[var(--color-danger)]">{{ errors.name }}</span>
+                    </div>
 
-                <!-- Row 2: Email + WhatsApp -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <!-- Email -->
-                  <div class="flex flex-col gap-2">
-                    <label for="email" class="text-[11px] font-bold uppercase tracking-[0.08em] text-white/80">
-                      Alamat Email <span class="text-[var(--color-danger)]">*</span>
-                    </label>
-                    <input
-                      id="email"
-                      v-model="form.email"
-                      type="email"
-                      required
-                      placeholder="nama@email.com"
-                      class="form-input-dark"
-                      :class="{ 'border-danger-dark': errors.email }"
-                      @input="clearError('email')"
-                    />
-                    <span v-if="errors.email" class="text-xs text-[var(--color-danger)]">{{ errors.email }}</span>
-                  </div>
-
-                  <!-- No WhatsApp -->
-                  <div class="flex flex-col gap-2">
-                    <label for="phone" class="text-[11px] font-bold uppercase tracking-[0.08em] text-white/80">
-                      No. WhatsApp <span class="text-[var(--color-danger)]">*</span>
-                    </label>
-                    <input
-                      id="phone"
-                      v-model="form.phone"
-                      type="tel"
-                      required
-                      placeholder="Contoh: 081234567890"
-                      class="form-input-dark"
-                      :class="{ 'border-danger-dark': errors.phone }"
-                      @input="clearError('phone')"
-                    />
-                    <span v-if="errors.phone" class="text-xs text-[var(--color-danger)]">{{ errors.phone }}</span>
-                  </div>
-                </div>
-
-                <!-- Dropdown: Paket Diminati -->
-                <div class="flex flex-col gap-2">
-                  <label for="interest" class="text-[11px] font-bold uppercase tracking-[0.08em] text-white/80">
-                    Paket yang Diminati
-                  </label>
-                  <div class="relative">
-                    <select
-                      id="interest"
-                      v-model="form.interest"
-                      class="form-select-dark"
-                    >
-                      <option value="starter">Starter (Kios / Kedai Kecil)</option>
-                      <option value="pro">Pro (Cafe / Restoran)</option>
-                      <option value="enterprise">Enterprise (Multi-Outlet & Jaringan Franchise)</option>
-                      <option value="partnership">Kemitraan Lain / General Support</option>
-                    </select>
-                    <!-- Custom arrow icon -->
-                    <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
-                        <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                      </svg>
+                    <!-- Nama Bisnis -->
+                    <div class="flex flex-col gap-2">
+                      <label for="businessName" class="text-[11px] font-bold uppercase tracking-[0.08em] text-white/80">
+                        Nama Restoran / Cafe <span class="text-[var(--color-danger)]">*</span>
+                      </label>
+                      <input
+                        id="businessName"
+                        v-model="form.businessName"
+                        type="text"
+                        required
+                        placeholder="Contoh: Kopi Cantik"
+                        class="form-input-dark"
+                        :class="{ 'border-danger-dark': errors.businessName }"
+                        @input="clearError('businessName')"
+                      />
+                      <span v-if="errors.businessName" class="text-xs text-[var(--color-danger)]">{{ errors.businessName }}</span>
                     </div>
                   </div>
-                </div>
 
-                <!-- Textarea: Pesan -->
-                <div class="flex flex-col gap-2">
-                  <label for="message" class="text-[11px] font-bold uppercase tracking-[0.08em] text-white/80">
-                    Pesan Anda <span class="text-[var(--color-danger)]">*</span>
-                  </label>
-                  <textarea
-                    id="message"
-                    v-model="form.message"
-                    required
-                    rows="5"
-                    placeholder="Ceritakan tentang kebutuhan bisnis kuliner Anda..."
-                    class="form-textarea-dark"
-                    :class="{ 'border-danger-dark': errors.message }"
-                    @input="clearError('message')"
-                  ></textarea>
-                  <span v-if="errors.message" class="text-xs text-[var(--color-danger)]">{{ errors.message }}</span>
-                </div>
+                  <!-- Row 2: Email + WhatsApp -->
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Email -->
+                    <div class="flex flex-col gap-2">
+                      <label for="email" class="text-[11px] font-bold uppercase tracking-[0.08em] text-white/80">
+                        Alamat Email <span class="text-[var(--color-danger)]">*</span>
+                      </label>
+                      <input
+                        id="email"
+                        v-model="form.email"
+                        type="email"
+                        required
+                        placeholder="nama@email.com"
+                        class="form-input-dark"
+                        :class="{ 'border-danger-dark': errors.email }"
+                        @input="clearError('email')"
+                      />
+                      <span v-if="errors.email" class="text-xs text-[var(--color-danger)]">{{ errors.email }}</span>
+                    </div>
 
-                <!-- Submit Button -->
-                <div class="mt-4 flex items-center justify-between gap-6 flex-wrap">
-                  <span class="text-xs leading-relaxed text-white/40 max-w-sm">
-                    Dengan mengirimkan pesan, Anda menyetujui <NuxtLink to="/privacy-policy" class="underline hover:text-white transition-colors" style="color: rgba(255, 255, 255, 0.8);">Kebijakan Privasi</NuxtLink> kami.
-                  </span>
+                    <!-- No WhatsApp -->
+                    <div class="flex flex-col gap-2">
+                      <label for="phone" class="text-[11px] font-bold uppercase tracking-[0.08em] text-white/80">
+                        No. WhatsApp <span class="text-[var(--color-danger)]">*</span>
+                      </label>
+                      <input
+                        id="phone"
+                        v-model="form.phone"
+                        type="tel"
+                        required
+                        placeholder="Contoh: 081234567890"
+                        class="form-input-dark"
+                        :class="{ 'border-danger-dark': errors.phone }"
+                        @input="clearError('phone')"
+                      />
+                      <span v-if="errors.phone" class="text-xs text-[var(--color-danger)]">{{ errors.phone }}</span>
+                    </div>
+                  </div>
 
-                  <button
-                    type="submit"
-                    :disabled="isLoading"
-                    class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-[11px] font-bold uppercase tracking-[0.1em] text-[#111009] bg-white hover:bg-white/95 hover:-translate-y-px transition-all duration-200 shadow-sm cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
-                  >
-                    <span v-if="isLoading">Mengirim...</span>
-                    <span v-else>Kirim Pesan</span>
-                    <svg v-if="!isLoading" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <!-- Dropdown: Paket Diminati -->
+                  <div class="flex flex-col gap-2">
+                    <label for="interest" class="text-[11px] font-bold uppercase tracking-[0.08em] text-white/80">
+                      Paket yang Diminati
+                    </label>
+                    <div class="relative">
+                      <select
+                        id="interest"
+                        v-model="form.interest"
+                        class="form-select-dark"
+                      >
+                        <option value="starter">Starter (Kios / Kedai Kecil)</option>
+                        <option value="pro">Pro (Cafe / Restoran)</option>
+                        <option value="enterprise">Enterprise (Multi-Outlet & Jaringan Franchise)</option>
+                        <option value="partnership">Kemitraan Lain / General Support</option>
+                      </select>
+                      <!-- Custom arrow icon -->
+                      <div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-white/40">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
+                          <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Textarea: Pesan -->
+                  <div class="flex flex-col gap-2">
+                    <label for="message" class="text-[11px] font-bold uppercase tracking-[0.08em] text-white/80">
+                      Pesan Anda <span class="text-[var(--color-danger)]">*</span>
+                    </label>
+                    <textarea
+                      id="message"
+                      v-model="form.message"
+                      required
+                      rows="5"
+                      placeholder="Ceritakan tentang kebutuhan bisnis kuliner Anda..."
+                      class="form-textarea-dark"
+                      :class="{ 'border-danger-dark': errors.message }"
+                      @input="clearError('message')"
+                    ></textarea>
+                    <span v-if="errors.message" class="text-xs text-[var(--color-danger)]">{{ errors.message }}</span>
+                  </div>
+
+                  <!-- Submit Button -->
+                  <div class="mt-4 flex items-center justify-between gap-6 flex-wrap">
+                    <span class="text-xs leading-relaxed text-white/40 max-w-sm">
+                      Dengan mengirimkan pesan, Anda menyetujui <NuxtLink to="/privacy-policy" class="underline hover:text-white transition-colors" style="color: rgba(255, 255, 255, 0.8);">Kebijakan Privasi</NuxtLink> kami.
+                    </span>
+
+                    <button
+                      type="submit"
+                      :disabled="isLoading"
+                      class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-[11px] font-bold uppercase tracking-[0.1em] text-[#111009] bg-white hover:bg-white/95 hover:-translate-y-px transition-all duration-200 shadow-sm cursor-pointer disabled:opacity-50 disabled:pointer-events-none"
+                    >
+                      <span v-if="isLoading">Mengirim...</span>
+                      <span v-else>Kirim Pesan</span>
+                      <svg v-if="!isLoading" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+
+                </form>
+
+                <!-- Success State -->
+                <div v-else class="py-12 flex flex-col items-center text-center gap-6 animate-[fadeIn_0.5s_ease-out]">
+                  <div class="w-16 h-16 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center text-[var(--color-primary)] border border-[var(--color-primary)]/30">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
+                  </div>
+                  <div>
+                    <h4 class="text-2xl font-medium tracking-tight text-white mb-2">
+                      Terima Kasih, {{ form.name }}!
+                    </h4>
+                    <p class="text-[14.5px] leading-relaxed max-w-md mx-auto text-white/60">
+                      Pesan Anda telah berhasil kami terima. Tim representative kami akan segera menghubungi Anda melalui WhatsApp atau Email dalam 1x24 jam kerja.
+                    </p>
+                  </div>
+                  <button
+                    @click="resetForm"
+                    class="mt-4 px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.08em] border border-white/20 text-white hover:bg-white/5 transition-all duration-200 cursor-pointer"
+                  >
+                    Kirim Pesan Lain
                   </button>
                 </div>
-
-              </form>
-
-              <!-- Success State -->
-              <div v-else class="py-12 flex flex-col items-center text-center gap-6 animate-[fadeIn_0.5s_ease-out]">
-                <div class="w-16 h-16 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center text-[var(--color-primary)] border border-[var(--color-primary)]/30">
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </div>
-                <div>
-                  <h4 class="text-2xl font-medium tracking-tight text-white mb-2">
-                    Terima Kasih, {{ form.name }}!
-                  </h4>
-                  <p class="text-[14.5px] leading-relaxed max-w-md mx-auto text-white/60">
-                    Pesan Anda telah berhasil kami terima. Tim representative kami akan segera menghubungi Anda melalui WhatsApp atau Email dalam 1x24 jam kerja.
-                  </p>
-                </div>
-                <button
-                  @click="resetForm"
-                  class="mt-4 px-6 py-2.5 rounded-full text-[10px] font-bold uppercase tracking-[0.08em] border border-white/20 text-white hover:bg-white/5 transition-all duration-200 cursor-pointer"
-                >
-                  Kirim Pesan Lain
-                </button>
               </div>
 
             </div>

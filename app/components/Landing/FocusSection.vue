@@ -2,12 +2,12 @@
   <!-- Dark section with dramatic animations -->
   <section
     ref="containerRef"
-    class="relative overflow-hidden"
+    class="relative"
     style="background-color: #111009;"
     aria-label="Fokus Kami"
   >
     <!-- ── Subtle background texture ─────────────────────── -->
-    <div class="focus-orb-wrap absolute inset-0 pointer-events-none" aria-hidden="true">
+    <div class="focus-orb-wrap absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
       <div
         class="focus-orb-1 focus-ambient-orb absolute"
         style="width: 60%; height: 60%; top: -20%; left: -10%; background: radial-gradient(circle, rgba(232,119,34,0.06) 0%, transparent 70%); border-radius: 50%;"

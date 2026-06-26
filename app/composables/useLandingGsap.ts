@@ -117,7 +117,7 @@ export async function runLandingGsap(
     return () => instances.forEach((t) => t.kill())
   }
 
-  return gsap.context(() => {
+  const ctxInstance = gsap.context(() => {
     const mm = gsap.matchMedia()
     setup({
       gsap,
@@ -130,4 +130,10 @@ export async function runLandingGsap(
       bindScrollAccordionStack,
     })
   }, root ?? undefined)
+
+  setTimeout(() => {
+    ScrollTrigger.refresh()
+  }, 400)
+
+  return ctxInstance
 }

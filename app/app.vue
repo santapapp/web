@@ -11,6 +11,13 @@
 const pageTransition = {
   name: 'page',
   mode: 'out-in',
+  onAfterEnter() {
+    if (import.meta.client) {
+      import('gsap/ScrollTrigger').then(({ ScrollTrigger }) => {
+        ScrollTrigger.refresh()
+      })
+    }
+  }
 } as const
 </script>
 

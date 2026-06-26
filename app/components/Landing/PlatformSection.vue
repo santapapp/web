@@ -354,6 +354,7 @@ const accordionItems = [
 
 onMounted(async () => {
   ctx = await runLandingGsap(containerRef.value, ({
+    gsap,
     mm,
     motion,
     revealInstant,
@@ -400,7 +401,7 @@ onMounted(async () => {
 
     const setupScrollDrivenAccordion = () => {
       scrollAccordion.value = true
-      const rows = gsap.utils.toArray<HTMLElement>('.plat-acc-row', accListRef.value)
+      const rows = gsap.utils.toArray('.plat-acc-row', accListRef.value) as HTMLElement[]
       if (!rows.length) return
       teardownScrollAccordion = bindScrollAccordionStack(rows, openItemFromScroll, { start: 'top 62%' })
     }

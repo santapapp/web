@@ -119,7 +119,7 @@ onUnmounted(() => {
   position: absolute;
   inset: 0;
   z-index: 2;
-  background-color: var(--color-bg-page, #0f0e0c);
+  background-color: transparent;
   transform-origin: top center;
   will-change: transform;
 }
@@ -130,6 +130,7 @@ onUnmounted(() => {
   z-index: 1;
   display: inline-block;
   will-change: opacity, transform;
+  opacity: 0;
 }
 
 /* Spasi antar kata, tidak perlu di-clip */

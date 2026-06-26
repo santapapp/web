@@ -1,5 +1,5 @@
 <template>
-  <main ref="mainRef" class="overflow-x-hidden w-full">
+  <main ref="mainRef" class="overflow-x-clip w-full">
 
     <!-- ── HERO — Curtain Reveal ──────────────────────────── -->
     <AppPageHeroCurtain
@@ -73,7 +73,7 @@
         <div class="h-px bg-[var(--color-border)]"></div>
 
         <!-- Category Grid -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 py-20 md:py-28">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start py-20 md:py-28">
           
           <!-- Left: Category info (cols 1-4) -->
           <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
@@ -106,42 +106,30 @@
           <div class="lg:col-span-8">
             <div class="flex flex-col gap-12">
               <div
-                v-for="feat in category.features"
+                v-for="(feat, fi) in category.features"
                 :key="feat.label"
-                class="cmp-right-item flex flex-col items-start transition-opacity duration-200 hover:opacity-90"
+                class="cmp-right-item flex flex-col gap-4"
               >
-                <!-- Feature icon & badge header -->
-                <div class="flex items-center gap-3 mb-4">
-                  <div
-                    class="w-8 h-8 rounded-lg flex items-center justify-center border border-[var(--color-border)] bg-[var(--color-bg-surface)] text-[var(--color-text-primary)]"
-                  >
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
-                      <path :d="feat.icon" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- Icon + Title + Badges row -->
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center flex-shrink-0">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                      <path :d="feat.icon" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                   </div>
-
-                  <!-- Badges -->
+                  <h3 class="text-[20px] font-medium text-[var(--color-text-primary)]">{{ feat.label }}</h3>
                   <span
                     v-if="feat.core"
-                    class="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-[0.08em] bg-[var(--color-primary-light)] text-[var(--color-primary)]"
+                    class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-[0.08em] bg-[var(--color-primary-light)] text-[var(--color-primary)]"
                   >Inti</span>
                   <span
                     v-if="feat.soon"
-                    class="px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-[0.08em] bg-[var(--color-bg-subtle)] text-[var(--color-text-tertiary)] border border-[var(--color-border)]"
+                    class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-[0.08em] bg-[var(--color-bg-subtle)] text-[var(--color-text-tertiary)] border border-[var(--color-border)]"
                   >Segera</span>
                 </div>
 
-                <!-- Feature Title -->
-                <h3
-                  class="font-medium tracking-tight text-lg text-[var(--color-text-primary)] mb-2"
-                >
-                  {{ feat.label }}
-                </h3>
-
                 <!-- Feature Description -->
-                <p
-                  class="text-[13.5px] leading-[1.65] text-[var(--color-text-secondary)]"
-                >
+                <p class="text-[14.5px] leading-relaxed text-[var(--color-text-secondary)]">
                   {{ feat.desc }}
                 </p>
               </div>
@@ -157,12 +145,12 @@
          ══════════════════════════════════════════════════════ -->
     <section
       ref="focusSecRef"
-      class="relative overflow-hidden"
+      class="relative"
       style="background-color: #111009;"
       aria-label="Keandalan Platform"
     >
       <!-- Subtle background texture -->
-      <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+      <div class="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <div
           class="absolute"
           style="width: 60%; height: 60%; top: -20%; left: -10%; background: radial-gradient(circle, rgba(232,119,34,0.06) 0%, transparent 70%); border-radius: 50%;"
@@ -303,12 +291,12 @@
                   "
                 >restoran Anda.</span>
               </h2>
-              <p class="text-[14.5px] leading-[1.75] max-w-sm mb-10" style="color: rgba(255,255,255,0.55);">
+              <p class="text-[14.5px] leading-[1.75] max-w-sm" style="color: rgba(255,255,255,0.55);">
                 Dengan semua fitur modern dalam satu platform yang mudah digunakan dan terpercaya.
               </p>
 
               <!-- Proof stat row -->
-              <div class="flex items-center gap-6 mb-10">
+              <div class="flex items-center gap-6 mt-8">
                 <div>
                   <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">10.000+</p>
                   <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Merchant Aktif</p>
@@ -327,13 +315,13 @@
             </div>
 
             <!-- Contact info -->
-            <div class="hidden lg:flex flex-col gap-5">
+            <div class="hidden lg:flex flex-col mt-8">
               <div class="h-px" style="background-color: rgba(255,255,255,0.08);"></div>
-              <div class="flex items-center gap-8">
+              <div class="flex items-center gap-8 pt-8">
                 <div>
                   <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255, 255, 255, 0.5);">Email Kami</p>
-                  <a href="mailto:halo@santap.id" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
-                    halo@santap.id
+                  <a href="mailto:info@sekeco.id" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
+                    info@sekeco.id
                   </a>
                 </div>
                 <div>
@@ -358,14 +346,15 @@
                 <!-- Glow accent -->
                 <div class="absolute top-0 right-0 w-48 h-48 pointer-events-none" style="background: radial-gradient(circle at top right, rgba(232,119,34,0.12) 0%, transparent 70%);"></div>
                 
+                <!-- Huge Faint Background Icon -->
+                <div class="absolute -top-8 -right-8 w-36 h-36 text-[var(--color-primary)] opacity-[0.08] pointer-events-none select-none z-0">
+                  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+
                 <div class="flex-1 relative z-10">
                   <div class="flex items-center gap-2 mb-3">
-                    <!-- Icon -->
-                    <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: var(--color-primary);">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"/>
-                      </svg>
-                    </div>
                     <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-primary)]">Gratis 14 Hari</span>
                   </div>
                   <h3 class="text-[20px] font-medium mb-2 leading-tight" style="color: #ffffff;">Coba Santap Sekarang</h3>
@@ -391,16 +380,18 @@
 
                 <!-- Sub-card A: Konsultasi Gratis -->
                 <div
-                  class="border rounded-2xl p-7 flex flex-col justify-between"
+                  class="border rounded-2xl p-7 flex flex-col justify-between relative overflow-hidden"
                   style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
                 >
-                  <div>
+                  <!-- Huge Faint Background Icon -->
+                  <div class="absolute -top-6 -right-6 w-28 h-28 text-white opacity-[0.03] pointer-events-none select-none z-0">
+                    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+
+                  <div class="relative z-10">
                     <div class="flex items-center gap-2 mb-3">
-                      <div class="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style="background-color: rgba(255,255,255,0.08);">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-9a9 9 0 11-18 0 9 9 0 0118 0z" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Konsultasi</span>
                     </div>
                     <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Konsultasi Kebutuhan Anda</h3>
@@ -410,7 +401,7 @@
                   </div>
                   <NuxtLink
                     to="/contact"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white relative z-10"
                     style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Jadwalkan Konsultasi
@@ -422,27 +413,29 @@
 
                 <!-- Sub-card B: Hubungi Perwakilan -->
                 <div
-                  class="border rounded-2xl p-7 flex flex-col justify-between"
+                  class="border rounded-2xl p-7 flex flex-col justify-between relative overflow-hidden"
                   style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
                 >
-                  <div>
+                  <!-- Huge Faint Background Icon -->
+                  <div class="absolute -top-6 -right-6 w-28 h-28 text-white opacity-[0.03] pointer-events-none select-none z-0">
+                    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zM22 6l-10 7L2 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+
+                  <div class="relative z-10">
                     <div class="flex items-center gap-2 mb-3">
-                      <div class="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style="background-color: rgba(255,255,255,0.08);">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Hubungi</span>
                     </div>
                     <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Hubungi Perwakilan Kami</h3>
                     <p class="text-[13px] leading-relaxed mb-6" style="color: rgba(255, 255, 255, 0.65);">
-                      Terhubung langsung dengan tim sales kami melalui WhatsApp atau email untuk bantuan cepat.
+                      Terhubung langsung dengan tim sales kami melalui WhatsApp or email untuk bantuan cepat.
                     </p>
                   </div>
                   <NuxtLink
                     to="https://wa.me/628986606000?text=Halo%20Santap!%20Saya%20ingin%20konsultasi%20%26%20demo%20produk%20untuk%20restoran%2Fcafe%20saya.%20Terima%20kasih."
                     target="_blank"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white relative z-10"
                     style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Chat WhatsApp
@@ -601,35 +594,39 @@ onMounted(async () => {
         const heading = focusSecRef.value.querySelector<HTMLElement>('.ftr-focus-heading')
         const rows    = focusSecRef.value.querySelectorAll<HTMLElement>('.ftr-focus-row')
 
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: focusSecRef.value,
+            start: 'top bottom',
+            once: true,
+            invalidateOnRefresh: true,
+          }
+        })
+
         if (badge) {
           gsap.set(badge, { opacity: 0, y: 14 })
-          gsap.to(badge, {
-            scrollTrigger: { trigger: focusSecRef.value, start: 'top 80%' },
+          tl.to(badge, {
             opacity: 1, y: 0,
-            duration: 0.7,
+            duration: 0.5,
             ease: 'power3.out',
-          })
+          }, 0)
         }
         if (heading) {
           gsap.set(heading, { opacity: 0, y: 22 })
-          gsap.to(heading, {
-            scrollTrigger: { trigger: focusSecRef.value, start: 'top 78%' },
+          tl.to(heading, {
             opacity: 1, y: 0,
-            duration: 1,
+            duration: 0.75,
             ease: 'power3.out',
-            delay: 0.1,
-          })
+          }, 0)
         }
         if (rows.length) {
           gsap.set(rows, { opacity: 0, y: 20 })
-          gsap.to(rows, {
-            scrollTrigger: { trigger: focusSecRef.value, start: 'top 75%' },
+          tl.to(rows, {
             opacity: 1, y: 0,
-            duration: 0.85,
+            duration: 0.6,
             ease: 'power3.out',
-            stagger: 0.12,
-            delay: 0.2,
-          })
+            stagger: 0.08,
+          }, 0)
         }
       }
     })
@@ -643,6 +640,21 @@ onMounted(async () => {
       )
     })
   }, mainRef.value ?? undefined)
+
+  setTimeout(() => {
+    ScrollTrigger.refresh()
+  }, 400)
+  setTimeout(() => {
+    ScrollTrigger.refresh()
+  }, 800)
+
+  // Refresh once all assets (hero/section images) finish loading — prevents
+  // stale trigger positions on bottom sections from late layout shift.
+  if (document.readyState === 'complete') {
+    ScrollTrigger.refresh()
+  } else {
+    window.addEventListener('load', () => ScrollTrigger.refresh(), { once: true })
+  }
 })
 
 onUnmounted(() => { ctx?.revert() })

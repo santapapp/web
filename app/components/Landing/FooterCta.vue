@@ -126,6 +126,13 @@
               </li>
               <li>
                 <NuxtLink
+                  to="/team"
+                  class="text-[15px] no-underline transition-colors duration-150 hover:!text-white"
+                  style="color: rgba(255,255,255,0.65);"
+                >Tim</NuxtLink>
+              </li>
+              <li>
+                <NuxtLink
                   to="/contact"
                   class="text-[15px] no-underline transition-colors duration-150 hover:!text-white"
                   style="color: rgba(255,255,255,0.65);"

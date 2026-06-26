@@ -1,5 +1,5 @@
 <template>
-  <main ref="mainRef" class="overflow-x-hidden w-full">
+  <main ref="mainRef" class="overflow-x-clip w-full">
 
     <!-- ── HERO — Curtain Reveal ──────────────────────────── -->
     <AppPageHeroCurtain
@@ -69,7 +69,7 @@
       <!-- Top Divider -->
       <div class="h-px bg-[var(--color-border)] mb-16"></div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
         
         <!-- Left Column: Heading -->
         <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
@@ -87,26 +87,24 @@
 
         <!-- Right Column: Values List -->
         <div class="lg:col-span-8">
-          <div class="flex flex-col gap-8">
-            <div class="h-px bg-[var(--color-border)]"></div>
-
-            <div 
-              v-for="(val, i) in values" 
+          <div class="flex flex-col gap-12">
+            <div
+              v-for="(val, i) in values"
               :key="i"
-              class="cmp-right-item flex flex-col sm:flex-row sm:items-start justify-between gap-4 py-6"
+              class="cmp-right-item flex flex-col gap-4"
             >
-              <div class="flex items-start gap-4">
-                <span class="text-[12px] font-medium tabular-nums text-[var(--color-text-tertiary)] mt-1">0{{ i + 1 }}.</span>
-                <div>
-                  <h3 class="text-[18px] font-medium text-[var(--color-text-primary)] mb-1">{{ val.title }}</h3>
-                  <p class="text-[14.5px] text-[var(--color-text-secondary)] leading-relaxed max-w-xl">
-                    {{ val.desc }}
-                  </p>
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center flex-shrink-0">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path :d="val.icon" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </div>
+                <h3 class="text-[20px] font-medium text-[var(--color-text-primary)]">{{ val.title }}</h3>
               </div>
+              <p class="text-[14.5px] leading-relaxed text-[var(--color-text-secondary)]">
+                {{ val.desc }}
+              </p>
             </div>
-
-            <div class="h-px bg-[var(--color-border)]"></div>
           </div>
         </div>
 
@@ -125,7 +123,7 @@
       <!-- Top Divider -->
       <div class="h-px bg-[var(--color-border)] mb-16"></div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
         
         <!-- Left Column: Heading -->
         <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
@@ -237,12 +235,12 @@
                   "
                 >10.000+ merchant.</span>
               </h2>
-              <p class="text-[14.5px] leading-[1.75] max-w-sm mb-10" style="color: rgba(255,255,255,0.55);">
+              <p class="text-[14.5px] leading-[1.75] max-w-sm" style="color: rgba(255,255,255,0.55);">
                 Ratusan restoran dan kafe telah mempercayai Santap untuk operasional kasir harian mereka.
               </p>
 
               <!-- Proof stat row -->
-              <div class="flex items-center gap-6 mb-10">
+              <div class="flex items-center gap-6 mt-8">
                 <div>
                   <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">10.000+</p>
                   <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Merchant Aktif</p>
@@ -261,13 +259,13 @@
             </div>
 
             <!-- Contact info -->
-            <div class="hidden lg:flex flex-col gap-5">
+            <div class="hidden lg:flex flex-col mt-8">
               <div class="h-px" style="background-color: rgba(255,255,255,0.1);"></div>
-              <div class="flex items-center gap-8">
+              <div class="flex items-center gap-8 pt-8">
                 <div>
                   <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255, 255, 255, 0.5);">Email Kami</p>
-                  <a href="mailto:halo@santap.id" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
-                    halo@santap.id
+                  <a href="mailto:info@sekeco.id" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
+                    info@sekeco.id
                   </a>
                 </div>
                 <div>
@@ -292,14 +290,15 @@
                 <!-- Glow accent -->
                 <div class="absolute top-0 right-0 w-48 h-48 pointer-events-none" style="background: radial-gradient(circle at top right, rgba(232,119,34,0.12) 0%, transparent 70%);"></div>
                 
+                <!-- Huge Faint Background Icon -->
+                <div class="absolute -top-8 -right-8 w-36 h-36 text-[var(--color-primary)] opacity-[0.08] pointer-events-none select-none z-0">
+                  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                
                 <div class="flex-1 relative z-10">
                   <div class="flex items-center gap-2 mb-3">
-                    <!-- Icon -->
-                    <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: var(--color-primary);">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                      </svg>
-                    </div>
                     <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-primary)]">Mitra Merchant</span>
                   </div>
                   <h3 class="text-[20px] font-medium mb-2 leading-tight" style="color: #ffffff;">Daftarkan Restoran atau Cafe Anda</h3>
@@ -319,22 +318,24 @@
                   </svg>
                 </NuxtLink>
               </div>
-
+ 
               <!-- Card 2: Mitra Integrasi -->
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
+ 
                 <!-- Sub-card A: API / Integrasi -->
                 <div
-                  class="border rounded-2xl p-7 flex flex-col justify-between"
+                  class="border rounded-2xl p-7 flex flex-col justify-between relative overflow-hidden"
                   style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
                 >
-                  <div>
+                  <!-- Huge Faint Background Icon -->
+                  <div class="absolute -top-6 -right-6 w-28 h-28 text-white opacity-[0.03] pointer-events-none select-none z-0">
+                    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M8 9l3 3-3 3M13 15h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+
+                  <div class="relative z-10">
                     <div class="flex items-center gap-2 mb-3">
-                      <div class="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style="background-color: rgba(255,255,255,0.08);">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <path d="M8 9l3 3-3 3M13 15h3" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Mitra Integrasi</span>
                     </div>
                     <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Sambungkan Sistem Anda via API</h3>
@@ -344,7 +345,7 @@
                   </div>
                   <NuxtLink
                     to="/contact"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white relative z-10"
                     style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Hubungi Tim API
@@ -353,19 +354,21 @@
                     </svg>
                   </NuxtLink>
                 </div>
-
+ 
                 <!-- Sub-card B: Kemitraan / Reseller -->
                 <div
-                  class="border rounded-2xl p-7 flex flex-col justify-between"
+                  class="border rounded-2xl p-7 flex flex-col justify-between relative overflow-hidden"
                   style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
                 >
-                  <div>
+                  <!-- Huge Faint Background Icon -->
+                  <div class="absolute -top-6 -right-6 w-28 h-28 text-white opacity-[0.03] pointer-events-none select-none z-0">
+                    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+
+                  <div class="relative z-10">
                     <div class="flex items-center gap-2 mb-3">
-                      <div class="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style="background-color: rgba(255,255,255,0.08);">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Program Reseller</span>
                     </div>
                     <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Jadi Mitra Reseller Santap</h3>
@@ -375,7 +378,7 @@
                   </div>
                   <NuxtLink
                     to="/contact"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white relative z-10"
                     style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Daftar Reseller
@@ -496,6 +499,13 @@ onMounted(async () => {
       )
     })
   }, mainRef.value ?? undefined)
+
+  setTimeout(() => {
+    ScrollTrigger.refresh()
+  }, 400)
+  setTimeout(() => {
+    ScrollTrigger.refresh()
+  }, 800)
 })
 
 onUnmounted(() => { ctx?.revert() })
@@ -508,15 +518,18 @@ useHead({
 const values = [
   {
     title: 'Inovasi Terus Menerus',
-    desc: 'Kami terus update POS cloud agar selaras dengan tren F&B terkini dan kebutuhan merchant.'
+    desc: 'Kami terus update POS cloud agar selaras dengan tren F&B terkini dan kebutuhan merchant.',
+    icon: 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z'
   },
   {
     title: 'Ketulusan Melayani',
-    desc: 'Support WhatsApp kami siap 24/7 karena restoran tidak pernah tutup.'
+    desc: 'Support WhatsApp kami siap 24/7 karena restoran tidak pernah tutup.',
+    icon: 'M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z'
   },
   {
     title: 'Kemitraan Adil',
-    desc: 'Tanpa biaya tersembunyi. Harga transparan untuk keberlanjutan bisnis kita bersama.'
+    desc: 'Tanpa biaya tersembunyi. Harga transparan untuk keberlanjutan bisnis kita bersama.',
+    icon: 'M12 3v18M3 7l9-4 9 4M7 7l-2.5 5.5a2.5 2.5 0 005 0L7 7zm10 0l-2.5 5.5a2.5 2.5 0 005 0L17 7z'
   }
 ]
 

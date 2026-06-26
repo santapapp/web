@@ -94,12 +94,12 @@
         :class="mobileOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'"
       >
         <a
-          href="mailto:halo@santap.id"
+          href="mailto:info@sekeco.id"
           class="text-[13px] font-medium !text-white opacity-60 hover:opacity-100
                  transition-opacity duration-[var(--motion-micro)] no-underline
                  underline underline-offset-4 decoration-white/30"
         >
-          halo@santap.id
+          info@sekeco.id
         </a>
       </div>
     </div>

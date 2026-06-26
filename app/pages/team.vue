@@ -1,5 +1,5 @@
 <template>
-  <main ref="mainRef">
+  <main ref="mainRef" class="overflow-x-clip">
 
     <!-- ── HERO — Curtain Reveal ──────────────────────────── -->
     <AppPageHeroCurtain
@@ -67,7 +67,7 @@
       <!-- Top Divider -->
       <div class="h-px bg-[var(--color-border)] mb-16"></div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
         
         <!-- Left Column: Heading -->
         <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
@@ -78,9 +78,21 @@
           >
             Studio Product Indonesia
           </h2>
-          <p class="text-[14.5px] leading-[1.7] text-[var(--color-text-secondary)] mb-12 max-w-sm">
+          <p class="text-[14.5px] leading-[1.7] text-[var(--color-text-secondary)] mb-10 max-w-sm">
             Sejak 2015, kami membangun produk digital yang elegant, functional, dan sustainable untuk pasar Southeast Asia.
           </p>
+          <NuxtLink
+            to="https://sekeco.github.io"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-6 py-3 rounded-full text-[11px] font-bold uppercase tracking-[0.08em] no-underline transition-all hover:-translate-y-px mt-4"
+            style="background-color: var(--color-text-primary); color: #ffffff;"
+          >
+            Kunjungi Sekeco
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </NuxtLink>
         </div>
 
         <!-- Right Column: Content -->
@@ -131,7 +143,7 @@
       <!-- Top Divider -->
       <div class="h-px bg-[var(--color-border)] mb-16"></div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
         <!-- Left title -->
         <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
           <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">Tim</p>
@@ -177,7 +189,7 @@
       <!-- Top Divider -->
       <div class="h-px bg-[var(--color-border)] mb-16"></div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
         <!-- Left title -->
         <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
           <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">Cara Kerja</p>
@@ -216,7 +228,7 @@
       <!-- Top Divider -->
       <div class="h-px bg-[var(--color-border)] mb-16"></div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
         <!-- Left title -->
         <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
           <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">Struktur</p>
@@ -234,7 +246,47 @@
         <!-- Right: Parent company info -->
         <div class="lg:col-span-8">
           <div class="flex flex-col gap-12">
+            <div class="cmp-right-item flex flex-col gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center flex-shrink-0">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2L2 7h20L12 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <h3 class="text-[20px] font-medium text-[var(--color-text-primary)]">Tata Kelola & Legalitas</h3>
+              </div>
+              <p class="text-[14.5px] leading-relaxed text-[var(--color-text-secondary)]">
+                PT Sarwa Kalyana Cara menaungi seluruh operasional produk digital di bawah Sekeco Studio. Kami memastikan kepatuhan penuh terhadap regulasi industri F&B dan standar keamanan transaksi di Indonesia.
+              </p>
+            </div>
 
+            <div class="cmp-right-item flex flex-col gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center flex-shrink-0">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <h3 class="text-[20px] font-medium text-[var(--color-text-primary)]">Stabilitas & Keberlanjutan</h3>
+              </div>
+              <p class="text-[14.5px] leading-relaxed text-[var(--color-text-secondary)]">
+                Sebagai entitas induk, Sarwa Kalyana menyediakan fondasi finansial dan infrastruktur hukum yang kokoh. Hal ini memungkinkan tim produk Santap fokus 100% pada inovasi produk tanpa tekanan pertumbuhan jangka pendek yang agresif.
+              </p>
+            </div>
+
+            <div class="cmp-right-item flex flex-col gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center flex-shrink-0">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98M21 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm-12 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0zm12 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <h3 class="text-[20px] font-medium text-[var(--color-text-primary)]">Sinergi Ekosistem</h3>
+              </div>
+              <p class="text-[14.5px] leading-relaxed text-[var(--color-text-secondary)]">
+                Kami membangun ekosistem yang terintegrasi, menghubungkan solusi teknologi Santap dengan berbagai unit bisnis strategis di bidang F&B guna menciptakan nilai tambah bagi seluruh merchant mitra kami.
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -250,7 +302,7 @@
       <!-- Top Divider -->
       <div class="h-px bg-[var(--color-border)] mb-16"></div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
         <!-- Left title -->
         <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
           <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">Lokasi</p>
@@ -268,15 +320,29 @@
         <!-- Right: Location info -->
         <div class="lg:col-span-8">
           <div class="flex flex-col gap-12">
-            <div class="cmp-right-item">
-              <h3 class="text-[20px] font-semibold text-[var(--color-text-primary)] mb-4">🏢 Lokasi</h3>
+            <div class="cmp-right-item flex flex-col gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center flex-shrink-0">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z M12 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <h3 class="text-[20px] font-medium text-[var(--color-text-primary)]">Lokasi</h3>
+              </div>
               <p class="text-[15px] leading-[1.8] text-[var(--color-text-secondary)]">
                 Based di Sleman, Yogyakarta, Indonesia. Tim Sekeco di satu lokasi untuk kolaborasi yang tight dan fast iteration.
               </p>
             </div>
 
-            <div class="cmp-right-item">
-              <h3 class="text-[20px] font-semibold text-[var(--color-text-primary)] mb-4">👥 Tim Santap</h3>
+            <div class="cmp-right-item flex flex-col gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center flex-shrink-0">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <h3 class="text-[20px] font-medium text-[var(--color-text-primary)]">Tim Santap</h3>
+              </div>
               <p class="text-[15px] leading-[1.8] text-[var(--color-text-secondary)] mb-4">
                 5-8 professionals (product engineers, designers, product manager, hospitality consultant)
               </p>
@@ -285,10 +351,17 @@
               </p>
             </div>
 
-            <div class="cmp-right-item">
-              <h3 class="text-[20px] font-semibold text-[var(--color-text-primary)] mb-4">🤝 Hubungi Kami</h3>
+            <div class="cmp-right-item flex flex-col gap-4">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-[var(--color-primary-light)] text-[var(--color-primary)] flex items-center justify-center flex-shrink-0">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <h3 class="text-[20px] font-medium text-[var(--color-text-primary)]">Hubungi Kami</h3>
+              </div>
               <p class="text-[15px] leading-[1.8] text-[var(--color-text-secondary)]">
-                Email: halo@santap.id | WhatsApp: +62 898-6606-000
+                Email: info@sekeco.id | WhatsApp: +62 898-6606-000
               </p>
             </div>
           </div>
@@ -347,12 +420,12 @@
                   "
                 >Santap</span> adalah team yang care.
               </h2>
-              <p class="text-[14.5px] leading-[1.75] max-w-sm mb-10" style="color: rgba(255,255,255,0.55);">
+              <p class="text-[14.5px] leading-[1.75] max-w-sm mb-0" style="color: rgba(255,255,255,0.55);">
                 Tim yang passionate tentang membuat operasional restoran lebih sederhana, lebih cepat, dan lebih menguntungkan.
               </p>
 
               <!-- Proof stat row -->
-              <div class="flex items-center gap-6 mb-10">
+              <div class="flex items-center gap-6 mt-10 mb-10">
                 <div>
                   <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">10.000+</p>
                   <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Merchant Aktif</p>
@@ -376,8 +449,8 @@
               <div class="flex items-center gap-8">
                 <div>
                   <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255, 255, 255, 0.5);">Email Kami</p>
-                  <a href="mailto:halo@santap.id" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
-                    halo@santap.id
+                  <a href="mailto:info@sekeco.id" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
+                    info@sekeco.id
                   </a>
                 </div>
                 <div>
@@ -402,14 +475,15 @@
                 <!-- Glow accent -->
                 <div class="absolute top-0 right-0 w-48 h-48 pointer-events-none" style="background: radial-gradient(circle at top right, rgba(232,119,34,0.12) 0%, transparent 70%);"></div>
                 
+                <!-- Huge Faint Background Icon -->
+                <div class="absolute -top-8 -right-8 w-36 h-36 text-[var(--color-primary)] opacity-[0.08] pointer-events-none select-none z-0">
+                  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+
                 <div class="flex-1 relative z-10">
                   <div class="flex items-center gap-2 mb-3">
-                    <!-- Icon -->
-                    <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: var(--color-primary);">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"/>
-                      </svg>
-                    </div>
                     <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-primary)]">Gratis 14 Hari</span>
                   </div>
                   <h3 class="text-[20px] font-medium mb-2 leading-tight" style="color: #ffffff;">Coba Santap Sekarang</h3>
@@ -435,16 +509,18 @@
 
                 <!-- Sub-card A: Konsultasi -->
                 <div
-                  class="border rounded-2xl p-7 flex flex-col justify-between"
+                  class="border rounded-2xl p-7 flex flex-col justify-between relative overflow-hidden"
                   style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
                 >
-                  <div>
+                  <!-- Huge Faint Background Icon -->
+                  <div class="absolute -top-6 -right-6 w-28 h-28 text-white opacity-[0.03] pointer-events-none select-none z-0">
+                    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+
+                  <div class="relative z-10">
                     <div class="flex items-center gap-2 mb-3">
-                      <div class="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style="background-color: rgba(255,255,255,0.08);">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-9a9 9 0 11-18 0 9 9 0 0118 0z" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Konsultasi</span>
                     </div>
                     <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Hubungi Tim Kami</h3>
@@ -454,7 +530,7 @@
                   </div>
                   <NuxtLink
                     to="/contact"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white relative z-10"
                     style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Hubungi Kami
@@ -466,16 +542,18 @@
 
                 <!-- Sub-card B: Learn More -->
                 <div
-                  class="border rounded-2xl p-7 flex flex-col justify-between"
+                  class="border rounded-2xl p-7 flex flex-col justify-between relative overflow-hidden"
                   style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
                 >
-                  <div>
+                  <!-- Huge Faint Background Icon -->
+                  <div class="absolute -top-6 -right-6 w-28 h-28 text-white opacity-[0.03] pointer-events-none select-none z-0">
+                    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M12 21a9 9 0 100-18 9 9 0 000 18zM12 9v4M12 16h.01" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+
+                  <div class="relative z-10">
                     <div class="flex items-center gap-2 mb-3">
-                      <div class="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style="background-color: rgba(255,255,255,0.08);">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Learn</span>
                     </div>
                     <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Tentang Santap</h3>
@@ -485,7 +563,7 @@
                   </div>
                   <NuxtLink
                     to="/features"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white relative z-10"
                     style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Explore Features
@@ -568,8 +646,8 @@ onMounted(async () => {
       // ─── CTA Section: left heading + right cards ──────────────────────────────
       const ctaSec = mainRef.value?.querySelector('[aria-label="Bergabung dengan Santap"]')
       if (ctaSec) {
-        const leftCol = ctaSec.parentElement?.querySelector('.lg\\:col-span-5')
-        const rightCards = ctaSec.parentElement?.querySelectorAll('.lg\\:col-span-7 > div > div')
+        const leftCol = ctaSec.querySelector('.lg\\:col-span-5')
+        const rightCards = ctaSec.querySelectorAll('.lg\\:col-span-7 > div > div')
 
         if (leftCol) {
           gsap.set(leftCol, { opacity: 0, y: 32 })
@@ -604,6 +682,13 @@ onMounted(async () => {
       )
     })
   }, mainRef.value ?? undefined)
+
+  setTimeout(() => {
+    ScrollTrigger.refresh()
+  }, 400)
+  setTimeout(() => {
+    ScrollTrigger.refresh()
+  }, 800)
 })
 
 onUnmounted(() => { ctx?.revert() })

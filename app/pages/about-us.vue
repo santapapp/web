@@ -67,7 +67,7 @@
       <!-- Top Divider -->
       <div class="h-px bg-[var(--color-border)] mb-16"></div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
         
         <!-- Left Column: Heading -->
         <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
@@ -121,7 +121,7 @@
       <!-- Top Divider -->
       <div class="h-px bg-[var(--color-border)] mb-16"></div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
         <!-- Left title -->
         <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
           <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">Prinsip Kerja</p>
@@ -167,7 +167,7 @@
       <!-- Top Divider -->
       <div class="h-px bg-[var(--color-border)] mb-16"></div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
         <!-- Left: description -->
         <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
           <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">Perjalanan</p>
@@ -213,7 +213,7 @@
       <!-- Top Divider -->
       <div class="h-px bg-[var(--color-border)] mb-16"></div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
         <!-- Left: description -->
         <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
           <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">Lokasi</p>
@@ -334,8 +334,8 @@
               <div class="flex items-center gap-8">
                 <div>
                   <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255, 255, 255, 0.5);">Email Kami</p>
-                  <a href="mailto:halo@santap.id" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
-                    halo@santap.id
+                  <a href="mailto:info@sekeco.id" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
+                    info@sekeco.id
                   </a>
                 </div>
                 <div>
@@ -571,6 +571,13 @@ onMounted(async () => {
       )
     })
   }, mainRef.value ?? undefined)
+
+  setTimeout(() => {
+    ScrollTrigger.refresh()
+  }, 400)
+  setTimeout(() => {
+    ScrollTrigger.refresh()
+  }, 800)
 })
 
 onUnmounted(() => { ctx?.revert() })

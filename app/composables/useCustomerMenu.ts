@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue'
+import { useState } from '#imports'
 import type {
   CustomerMenuCategoryGroup,
   MenuProduct,
@@ -190,11 +191,13 @@ export function normalizeMenus(rawMenus: RawMenu[]): MenuProduct[] {
   })
 }
 
-const products = ref<MenuProduct[]>([])
-const searchQuery = ref('')
-const activeCategory = ref('all')
-const pending = ref(false)
-const error = ref<CustomerApiError | null>(null)
+const products = useState<MenuProduct[]>('menu-products', () => [])
+const searchQuery = useState<string>('menu-search-query', () => '')
+const activeCategory = useState<string>('menu-active-category', () => 'all')
+const pending = useState<boolean>('menu-pending', () => false)
+const error = useState<CustomerApiError | null>('menu-error', () => null)
+const loadedOrgSlug = useState<string>('menu-loaded-org-slug', () => '')
+const loadedOrgId = useState<string | number>('menu-loaded-org-id', () => '')
 
 export const useCustomerMenu = () => {
   const api = useCustomerApi()
@@ -262,10 +265,14 @@ export const useCustomerMenu = () => {
       const sessionStore = useCustomerSessionStore()
       const response = await api.getMenu(sessionStore.organization?.id, true)
       processMenuResponse(response)
+      if (sessionStore.organization?.id) {
+        loadedOrgId.value = sessionStore.organization.id
+      }
       return { success: true, count: products.value.length }
     } catch (err) {
       error.value = err as CustomerApiError
       products.value = []
+      loadedOrgId.value = ''
       return { success: false, error: err as CustomerApiError }
     } finally {
       pending.value = false
@@ -273,16 +280,22 @@ export const useCustomerMenu = () => {
   }
 
   const fetchMenuByOrgId = async (orgId: number | string) => {
+    if (products.value.length > 0 && loadedOrgId.value === orgId) {
+      return { success: true, count: products.value.length }
+    }
+
     pending.value = true
     error.value = null
 
     try {
       const response = await api.getMenu(orgId, false)
       processMenuResponse(response)
+      loadedOrgId.value = orgId
       return { success: true, count: products.value.length }
     } catch (err) {
       error.value = err as CustomerApiError
       products.value = []
+      loadedOrgId.value = ''
       return { success: false, error: err as CustomerApiError }
     } finally {
       pending.value = false
@@ -296,16 +309,22 @@ export const useCustomerMenu = () => {
       return { success: false, error: { message: 'Slug outlet tidak valid.', statusCode: 400 } }
     }
 
+    if (products.value.length > 0 && loadedOrgSlug.value === normalizedSlug) {
+      return { success: true, count: products.value.length }
+    }
+
     pending.value = true
     error.value = null
 
     try {
       const response = await api.getMenuByOrgSlug(normalizedSlug)
       processMenuResponse(response)
+      loadedOrgSlug.value = normalizedSlug
       return { success: true, count: products.value.length }
     } catch (err) {
       error.value = err as CustomerApiError
       products.value = []
+      loadedOrgSlug.value = ''
       return { success: false, error: err as CustomerApiError }
     } finally {
       pending.value = false
