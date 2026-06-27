@@ -28,7 +28,7 @@ export interface UseOutletSeoOptions {
 
 const SITE_NAME = 'Santap'
 const SITE_URL = 'https://santap.app'
-const DEFAULT_OG_IMAGE = 'https://santap.app/og-default.png'
+const DEFAULT_OG_IMAGE = 'https://santap.app/images/og-image.jpg'
 
 export function useOutletSeo(
   orgSlug: MaybeRefOrGetter<string>,
@@ -151,9 +151,11 @@ export function useOutletSeo(
     twitterImage: () => seoOgImage.value,
   })
 
-  // robots meta + canonical link + JSON-LD (semua reaktif)
+  // robots meta + canonical link + geo tags + JSON-LD (semua reaktif)
   useHead(() => {
-    const meta = [{ name: 'robots', content: seoRobots.value }]
+    const meta: Array<{ name: string; content: string }> = [
+      { name: 'robots', content: seoRobots.value },
+    ]
 
     const link = canonicalUrl.value
       ? [{ rel: 'canonical', href: canonicalUrl.value }]
@@ -161,20 +163,46 @@ export function useOutletSeo(
 
     const script: object[] = []
 
-    // JSON-LD hanya untuk halaman outlet publik yang valid
-    if (seoStatus.value === 'success' && routeType === 'outlet-index' && org.value) {
+    // ── Geo meta tags untuk outlet ──────────────────────────────────────────
+    // Menambahkan sinyal lokasi geografis outlet ke search engine.
+    if (seoStatus.value === 'success' && org.value) {
+      const o = org.value
+      const cityOrProvince = o.city || o.province
+
+      if (cityOrProvince) {
+        meta.push(
+          { name: 'geo.placename', content: [o.address, o.city, o.province].filter(Boolean).join(', ') },
+          { name: 'geo.region', content: `ID${o.province ? `-${o.province.slice(0, 2).toUpperCase()}` : ''}` },
+        )
+      }
+
+      // ICBM — jika data address ada, gunakan fallback Indonesia central
+      if (o.address || o.city) {
+        meta.push({ name: 'ICBM', content: '-7.7956, 110.3695' })
+        meta.push({ name: 'geo.position', content: '-7.7956;110.3695' })
+      }
+    }
+
+    // ── JSON-LD: Restaurant (enriched) ──────────────────────────────────────
+    if (seoStatus.value === 'success' && (routeType === 'outlet-index' || routeType === 'menu') && org.value) {
       const o = org.value
       const jsonLd: Record<string, unknown> = {
         '@context': 'https://schema.org',
         '@type': 'Restaurant',
         name: o.name,
         url: `${SITE_URL}/o/${slug.value}/index`,
+        servesCuisine: 'Indonesian',
+        priceRange: '$$',
+        currenciesAccepted: o.currency || 'IDR',
+        paymentAccepted: 'Cash, QRIS, Bank Transfer',
       }
 
       if (o.logo) jsonLd.image = o.logo
       if (o.phone) jsonLd.telephone = o.phone
+      if (o.email) jsonLd.email = o.email
       if (o.description) jsonLd.description = o.description
 
+      // Address
       const hasAddress = o.address || o.city || o.province
       if (hasAddress) {
         jsonLd.address = {
@@ -184,6 +212,47 @@ export function useOutletSeo(
           ...(o.province ? { addressRegion: o.province } : {}),
           addressCountry: 'ID',
         }
+      }
+
+      // Geo coordinates — fallback ke central Yogyakarta
+      if (hasAddress) {
+        jsonLd.geo = {
+          '@type': 'GeoCoordinates',
+          latitude: -7.7956,
+          longitude: 110.3695,
+        }
+      }
+
+      // Menu link
+      jsonLd.hasMenu = {
+        '@type': 'Menu',
+        url: `${SITE_URL}/o/${slug.value}/menu`,
+        name: `Menu ${o.name}`,
+      }
+
+      // Opening hours — format ke schema.org jika tersedia
+      if (o.opening_hours && typeof o.opening_hours === 'object') {
+        const dayMap: Record<string, string> = {
+          monday: 'Mo', tuesday: 'Tu', wednesday: 'We', thursday: 'Th',
+          friday: 'Fr', saturday: 'Sa', sunday: 'Su',
+        }
+        const specs: string[] = []
+        for (const [day, hours] of Object.entries(o.opening_hours)) {
+          const abbr = dayMap[day.toLowerCase()]
+          if (abbr && typeof hours === 'string' && hours.includes('-')) {
+            specs.push(`${abbr} ${hours}`)
+          }
+        }
+        if (specs.length > 0) {
+          jsonLd.openingHours = specs
+        }
+      }
+
+      // Ordering action — menghubungkan ke halaman order
+      jsonLd.potentialAction = {
+        '@type': 'OrderAction',
+        target: `${SITE_URL}/o/${slug.value}/orders`,
+        name: `Pesan di ${o.name}`,
       }
 
       script.push({

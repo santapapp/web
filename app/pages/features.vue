@@ -659,11 +659,24 @@ onMounted(async () => {
 
 onUnmounted(() => { ctx?.revert() })
 
-useHead({
-  title: 'Fitur — Santap',
-  meta: [
-    { name: 'description', content: 'Semua fitur yang dibutuhkan kasir modern: manajemen pesanan, laporan real-time, multi pembayaran, dan lebih banyak lagi.' }
-  ]
+useSeoMeta({
+  title: 'Fitur Aplikasi Kasir Santap — POS, QRIS & Laporan',
+  description: 'Semua fitur yang dibutuhkan kasir modern: manajemen pesanan, laporan real-time, multi pembayaran, dan lebih banyak lagi.',
+  ogTitle: 'Fitur Lengkap Santap — Aplikasi POS Cloud untuk Restoran',
+  ogDescription: 'Manajemen pesanan, KDS, multi pembayaran (QRIS, tunai, transfer), dashboard real-time, dan stok otomatis dalam satu aplikasi.',
+  ogImage: '/images/og-image.jpg',
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Fitur Lengkap Santap — Aplikasi POS Cloud',
+  twitterDescription: 'Manajemen pesanan, KDS, multi pembayaran, dashboard real-time, dan stok otomatis dalam satu aplikasi.',
+})
+
+// Breadcrumb JSON-LD — jejak navigasi untuk rich result + konteks AI crawler.
+usePageSeo({
+  breadcrumbs: [
+    { name: 'Beranda', item: '/' },
+    { name: 'Fitur', item: '/features' },
+  ],
 })
 const focuses = [
   {

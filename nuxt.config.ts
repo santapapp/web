@@ -47,6 +47,85 @@ export default defineNuxtConfig({
     ],
   },
 
+  // Sitemap — konfigurasi prioritas dan frekuensi crawl per halaman.
+  // Halaman dinamis outlet (/o/**) di-exclude karena slug tidak diketahui build-time.
+  sitemap: {
+    excludeAppSources: true,
+    defaults: {
+      changefreq: 'monthly',
+      priority: 0.5,
+      lastmod: new Date().toISOString(),
+    },
+    urls: [
+      { loc: '/', changefreq: 'weekly', priority: 1.0 },
+      { loc: '/features', changefreq: 'monthly', priority: 0.9 },
+      { loc: '/pricing', changefreq: 'monthly', priority: 0.9 },
+      { loc: '/about-us', changefreq: 'monthly', priority: 0.7 },
+      { loc: '/company', changefreq: 'monthly', priority: 0.7 },
+      { loc: '/contact', changefreq: 'monthly', priority: 0.8 },
+      { loc: '/team', changefreq: 'monthly', priority: 0.5 },
+      { loc: '/privacy-policy', changefreq: 'yearly', priority: 0.3 },
+      { loc: '/terms', changefreq: 'yearly', priority: 0.3 },
+    ],
+  },
+
+  // Schema.org — identitas organisasi global (single source of truth).
+  // @nuxtjs/seo (nuxt-schema-org) memakai identity ini untuk meng-emit node
+  // Organization sekali di @graph dan menautkannya ke WebSite + WebPage tiap
+  // halaman. JANGAN duplikasi node Organization secara manual di plugin/halaman.
+  schemaOrg: {
+    identity: {
+      type: 'Organization',
+      name: 'Santap',
+      legalName: 'PT Sarwa Kalyana Cara',
+      alternateName: 'Sekeco',
+      description:
+        'Santap adalah aplikasi kasir (POS) cloud untuk restoran dan cafe di Indonesia: pesanan digital dari meja, open bill, dan pembayaran QRIS.',
+      url: 'https://santap.app',
+      logo: 'https://santap.app/images/logo.png',
+      email: 'info@sekeco.id',
+      telephone: '+628986606000',
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Sleman',
+        addressRegion: 'D.I. Yogyakarta',
+        addressCountry: 'ID',
+      },
+      sameAs: [
+        'https://play.google.com/store/apps/details?id=com.santap.pos',
+      ],
+    },
+  },
+
+  // PWA — manifest lengkap + matikan service worker di dev agar tidak flood
+  // console dengan error precache (manifest.webmanifest 404, dll).
+  // vite-pwa otomatis menyuntikkan <link rel="manifest"> sehingga tidak perlu
+  // ditambahkan manual di app.head (mencegah duplikasi).
+  pwa: {
+    devOptions: { enabled: false },
+    registerType: "autoUpdate",
+    manifest: {
+      name: "Santap — Aplikasi Kasir POS Restoran & Cafe",
+      short_name: "Santap",
+      description:
+        "Aplikasi kasir (POS) cloud untuk restoran dan cafe Indonesia: pesanan digital, open bill, dan pembayaran QRIS.",
+      lang: "id",
+      dir: "ltr",
+      start_url: "/",
+      scope: "/",
+      display: "standalone",
+      orientation: "portrait-primary",
+      background_color: "#ffffff",
+      theme_color: "#ffffff",
+      categories: ["business", "food", "productivity"],
+      icons: [
+        { src: "/pwa-192x192.png", sizes: "192x192", type: "image/png", purpose: "any" },
+        { src: "/pwa-512x512.png", sizes: "512x512", type: "image/png", purpose: "any" },
+        { src: "/maskable-512x512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      ],
+    },
+  },
+
   image: {
     domains: ["images.unsplash.com"],
   },
@@ -70,10 +149,32 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
+      // Disable automatic site name appending by SEO module to prevent duplicate suffixes
+      titleTemplate: "%s",
       // Default head — halaman yang tidak override useSeoMeta akan memakai ini.
       // Halaman outlet menggantikan semua ini via useOutletSeo composable.
       htmlAttrs: { lang: "id" },
-      meta: [{ name: "theme-color", content: "#ffffff" }],
+      // Favicon, icon, dan apple-touch-icon. <link rel="manifest"> disuntikkan
+      // otomatis oleh vite-pwa, jadi tidak ditambahkan di sini.
+      link: [
+        { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+        { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16x16.png" },
+        { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32x32.png" },
+        { rel: "icon", type: "image/png", sizes: "48x48", href: "/favicon-48x48.png" },
+        { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
+        { rel: "apple-touch-icon", sizes: "167x167", href: "/apple-touch-icon-167x167.png" },
+        { rel: "apple-touch-icon", sizes: "152x152", href: "/apple-touch-icon-152x152.png" },
+        { rel: "apple-touch-icon", sizes: "120x120", href: "/apple-touch-icon-120x120.png" },
+        // Resource hints — percepat koneksi awal ke API publik.
+        { rel: "preconnect", href: "https://api.santap.app", crossorigin: "" },
+        { rel: "dns-prefetch", href: "https://api.santap.app" },
+      ],
+      meta: [
+        { name: "theme-color", content: "#ffffff" },
+        { name: "msapplication-TileColor", content: "#f95e22" },
+        { name: "msapplication-config", content: "/browserconfig.xml" },
+        { name: "format-detection", content: "telephone=no" },
+      ],
     },
   },
 });

@@ -605,11 +605,16 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
-useHead({
-  title: 'Harga Langganan — Santap',
-  meta: [
-    { name: 'description', content: 'Pilihan paket berlangganan aplikasi kasir mobile Santap. Dapatkan paket Starter, Pro, atau Enterprise sesuai kebutuhan restoran Anda.' }
-  ]
+useSeoMeta({
+  title: 'Harga & Paket Langganan Aplikasi Kasir Santap POS',
+  description: 'Pilihan paket berlangganan aplikasi kasir mobile Santap. Dapatkan paket Starter, Pro, atau Enterprise sesuai kebutuhan restoran Anda.',
+  ogTitle: 'Harga Langganan Santap — Mulai dari Gratis',
+  ogDescription: 'Paket Starter, Pro, dan Enterprise untuk restoran dan cafe Indonesia. Gratis 14 hari trial, tanpa kartu kredit.',
+  ogImage: '/images/og-image.jpg',
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Harga Langganan Santap — Mulai dari Gratis',
+  twitterDescription: 'Paket Starter, Pro, dan Enterprise. Gratis 14 hari trial, tanpa kartu kredit.',
 })
 const isAnnual = ref(false)
 
@@ -870,6 +875,16 @@ const faqItems = [
     answer: 'Ya, bebas upgrade/downgrade. Tagihan disesuaikan otomatis dengan periode sisa bulan aktif.'
   }
 ]
+
+// Breadcrumb + FAQPage JSON-LD. FAQ memakai faqItems yang sama dengan akordion
+// di template sehingga konten terstruktur konsisten dengan yang dilihat user.
+usePageSeo({
+  breadcrumbs: [
+    { name: 'Beranda', item: '/' },
+    { name: 'Harga', item: '/pricing' },
+  ],
+  faq: faqItems,
+})
 
 const focuses = [
   {

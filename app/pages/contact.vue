@@ -451,11 +451,24 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
 
-useHead({
-  title: 'Hubungi Kami — Santap',
-  meta: [
-    { name: 'description', content: 'Hubungi tim aplikasi kasir mobile Santap. Dapatkan konsultasi gratis, demo produk, atau ajukan pertanyaan seputar kemitraan dan integrasi POS restoran.' }
-  ]
+useSeoMeta({
+  title: 'Hubungi Santap — Konsultasi & Demo Aplikasi Kasir POS',
+  description: 'Hubungi tim aplikasi kasir mobile Santap. Dapatkan konsultasi gratis, demo produk, atau ajukan pertanyaan seputar kemitraan dan integrasi POS restoran.',
+  ogTitle: 'Hubungi Kami — Santap',
+  ogDescription: 'Konsultasi gratis, demo produk, atau pertanyaan seputar kemitraan. Tim Santap siap membantu via WhatsApp atau email.',
+  ogImage: '/images/og-image.jpg',
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Hubungi Kami — Santap',
+  twitterDescription: 'Konsultasi gratis dan demo produk. Tim Santap siap membantu via WhatsApp atau email.',
+})
+
+// Breadcrumb JSON-LD — jejak navigasi untuk rich result + konteks AI crawler.
+usePageSeo({
+  breadcrumbs: [
+    { name: 'Beranda', item: '/' },
+    { name: 'Kontak', item: '/contact' },
+  ],
 })
 
 // ── Refs for scroll animations ───────────────────────────

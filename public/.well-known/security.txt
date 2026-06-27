@@ -1,0 +1,4 @@
+Contact: mailto:info@sekeco.id
+Expires: 2027-06-27T00:00:00.000Z
+Preferred-Languages: id, en
+Canonical: https://santap.app/.well-known/security.txt

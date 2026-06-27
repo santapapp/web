@@ -24,13 +24,13 @@ useSeoMeta({
   ogTitle: () => `${pageTitle.value} | Santap`,
   ogDescription: () => pageDescription.value,
   ogType: 'website',
-  ogImage: 'https://santap.app/og-default.png',
+  ogImage: 'https://santap.app/images/og-image.jpg',
   ogSiteName: 'Santap',
   ogLocale: 'id_ID',
   twitterCard: 'summary_large_image',
   twitterTitle: () => `${pageTitle.value} | Santap`,
   twitterDescription: () => pageDescription.value,
-  twitterImage: 'https://santap.app/og-default.png',
+  twitterImage: 'https://santap.app/images/og-image.jpg',
 })
 useHead({
   meta: [{ name: 'robots', content: 'noindex, nofollow' }],

@@ -252,11 +252,24 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
-useHead({
-  title: 'Syarat & Ketentuan Penggunaan — Santap',
-  meta: [
-    { name: 'description', content: 'Bacalah syarat dan ketentuan penggunaan aplikasi kasir mobile POS Santap, aturan berlangganan, ketentuan pembayaran QRIS, dan batas tanggung jawab.' }
-  ]
+useSeoMeta({
+  title: 'Syarat & Ketentuan Layanan Aplikasi Kasir Santap',
+  description: 'Bacalah syarat dan ketentuan penggunaan aplikasi kasir mobile POS Santap, aturan berlangganan, ketentuan pembayaran QRIS, dan batas tanggung jawab.',
+  ogTitle: 'Syarat & Ketentuan — Santap',
+  ogDescription: 'Syarat penggunaan aplikasi POS Santap: aturan berlangganan, pembayaran QRIS, dan ketentuan layanan.',
+  ogImage: '/images/og-image.jpg',
+  ogType: 'website',
+  twitterCard: 'summary',
+  twitterTitle: 'Syarat & Ketentuan — Santap',
+  twitterDescription: 'Syarat dan ketentuan penggunaan aplikasi POS Santap.',
+})
+
+// Breadcrumb JSON-LD — jejak navigasi untuk rich result + konteks AI crawler.
+usePageSeo({
+  breadcrumbs: [
+    { name: 'Beranda', item: '/' },
+    { name: 'Syarat & Ketentuan', item: '/terms' },
+  ],
 })
 
 const sections = [

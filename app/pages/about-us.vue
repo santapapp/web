@@ -468,11 +468,24 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
-useHead({
-  title: 'Tentang Kami — Santap',
-  meta: [
-    { name: 'description', content: 'Kenali kisah berdirinya, misi utama, dan perjalanan tim Santap dalam menghadirkan solusi teknologi POS cloud untuk ekosistem kuliner di Indonesia.' }
-  ]
+useSeoMeta({
+  title: 'Tentang Santap — POS Cloud untuk Kuliner Indonesia',
+  description: 'Kenali kisah berdirinya, misi utama, dan perjalanan tim Santap dalam menghadirkan solusi teknologi POS cloud untuk ekosistem kuliner di Indonesia.',
+  ogTitle: 'Tentang Kami — Santap',
+  ogDescription: 'Kenali kisah, visi, dan milestone perjalanan Santap membangun solusi POS cloud untuk bisnis kuliner Indonesia.',
+  ogImage: '/images/og-image.jpg',
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Tentang Kami — Santap',
+  twitterDescription: 'Kisah, visi, dan milestone perjalanan Santap membangun solusi POS cloud untuk bisnis kuliner Indonesia.',
+})
+
+// Breadcrumb JSON-LD — jejak navigasi untuk rich result + konteks AI crawler.
+usePageSeo({
+  breadcrumbs: [
+    { name: 'Beranda', item: '/' },
+    { name: 'Tentang Kami', item: '/about-us' },
+  ],
 })
 
 const mainRef = ref<HTMLElement | null>(null)

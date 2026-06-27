@@ -587,11 +587,24 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
-useHead({
-  title: 'Tim Kami — Santap',
-  meta: [
-    { name: 'description', content: 'Kenali tim Sekeco di balik Santap: product engineers, designers, dan hospitality experts yang membangun POS terbaik untuk restoran Indonesia.' }
-  ]
+useSeoMeta({
+  title: 'Tim Santap — Pembangun POS Restoran oleh Sekeco',
+  description: 'Kenali tim Sekeco di balik Santap: product engineers, designers, dan hospitality experts yang membangun POS terbaik untuk restoran Indonesia.',
+  ogTitle: 'Tim Kami — Santap',
+  ogDescription: 'Product engineers, designers, dan hospitality experts yang membangun POS terbaik untuk restoran Indonesia.',
+  ogImage: '/images/og-image.jpg',
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Tim Kami — Santap',
+  twitterDescription: 'Kenali tim di balik Santap — POS cloud terbaik untuk restoran Indonesia.',
+})
+
+// Breadcrumb JSON-LD — jejak navigasi untuk rich result + konteks AI crawler.
+usePageSeo({
+  breadcrumbs: [
+    { name: 'Beranda', item: '/' },
+    { name: 'Tim', item: '/team' },
+  ],
 })
 
 const mainRef = ref<HTMLElement | null>(null)

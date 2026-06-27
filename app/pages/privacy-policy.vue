@@ -256,11 +256,24 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
-useHead({
-  title: 'Kebijakan Privasi — Santap',
-  meta: [
-    { name: 'description', content: 'Pelajari bagaimana kami mengumpulkan, mengamankan, dan memperlakukan data transaksi kasir POS serta informasi pribadi pelanggan Anda dengan aman di Santap.' }
-  ]
+useSeoMeta({
+  title: 'Kebijakan Privasi Santap — Keamanan Data POS Anda',
+  description: 'Pelajari bagaimana kami mengumpulkan, mengamankan, dan memperlakukan data transaksi kasir POS serta informasi pribadi pelanggan Anda dengan aman di Santap.',
+  ogTitle: 'Kebijakan Privasi — Santap',
+  ogDescription: 'Cara Santap mengumpulkan, mengamankan, dan memperlakukan data transaksi POS serta informasi pelanggan Anda.',
+  ogImage: '/images/og-image.jpg',
+  ogType: 'website',
+  twitterCard: 'summary',
+  twitterTitle: 'Kebijakan Privasi — Santap',
+  twitterDescription: 'Kebijakan privasi dan keamanan data Santap POS.',
+})
+
+// Breadcrumb JSON-LD — jejak navigasi untuk rich result + konteks AI crawler.
+usePageSeo({
+  breadcrumbs: [
+    { name: 'Beranda', item: '/' },
+    { name: 'Kebijakan Privasi', item: '/privacy-policy' },
+  ],
 })
 
 const sections = [

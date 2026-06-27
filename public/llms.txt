@@ -1,0 +1,44 @@
+# Santap
+
+> Santap adalah aplikasi kasir (POS) cloud untuk restoran, cafe, dan UMKM kuliner di Indonesia. Pelanggan memesan langsung dari meja lewat QR code, merchant mengelola pesanan dan menerima pembayaran QRIS, lalu memantau laporan penjualan secara real-time.
+
+Santap dikembangkan oleh PT Sarwa Kalyana Cara (Sekeco), berbasis di Sleman, D.I. Yogyakarta, Indonesia. Tersedia sebagai aplikasi Android dan aplikasi web.
+
+## Produk
+- Aplikasi kasir (POS) cloud untuk Android dan web
+- Pemesanan digital dari meja via QR code (scan-to-order)
+- Open bill dan tagihan per meja
+- Pembayaran QRIS, tunai, dan transfer bank — tanpa komisi penjualan
+- Manajemen menu, kategori, stok, dan ketersediaan real-time
+- Kitchen Display System (KDS) untuk dapur
+- Laporan penjualan dan dashboard real-time
+- Dukungan multi-outlet untuk merchant dengan banyak cabang
+
+## Harga
+- Langganan bulanan, biaya flat per outlet, tanpa kontrak minimum
+- Gratis uji coba 14 hari, tanpa kartu kredit
+- Paket: Starter, Pro, dan Enterprise
+- Bebas upgrade atau downgrade kapan saja
+- Detail: https://santap.app/pricing
+
+## Untuk siapa
+- Restoran, cafe, dan kedai makanan & minuman (F&B)
+- Merchant UMKM kuliner di seluruh Indonesia
+
+## Halaman penting
+- Beranda: https://santap.app/
+- Fitur: https://santap.app/features
+- Harga: https://santap.app/pricing
+- Tentang Kami: https://santap.app/about-us
+- Perusahaan & Kemitraan: https://santap.app/company
+- Tim: https://santap.app/team
+- Kontak: https://santap.app/contact
+
+## Legal
+- Kebijakan Privasi: https://santap.app/privacy-policy
+- Syarat & Ketentuan: https://santap.app/terms
+
+## Kontak
+- Email: info@sekeco.id
+- Telepon/WhatsApp: +62 898-6606-000
+- Unduh di Google Play: https://play.google.com/store/apps/details?id=com.santap.pos

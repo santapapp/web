@@ -1,0 +1,12 @@
+/* TEAM */
+  Perusahaan: PT Sarwa Kalyana Cara (Sekeco)
+  Produk: Santap — Aplikasi Kasir POS Cloud
+  Kontak: info [at] sekeco.id
+  Lokasi: Sleman, D.I. Yogyakarta, Indonesia
+
+/* SITE */
+  Bahasa: Indonesia (id)
+  Standar: HTML5, CSS3, JavaScript
+  Framework: Nuxt 4, Vue 3
+  Komponen & UI: @nuxt/ui, Tailwind CSS
+  Last update: 2026-06-27

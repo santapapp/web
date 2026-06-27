@@ -509,11 +509,24 @@ onMounted(async () => {
 })
 
 onUnmounted(() => { ctx?.revert() })
-useHead({
-  title: 'Mitra & Perusahaan — Santap',
-  meta: [
-    { name: 'description', content: 'Kenali visi, komitmen, dan pilar kerja Santap dalam memberdayakan jutaan merchant F&B di seluruh Indonesia lewat teknologi POS POS modern.' }
-  ]
+useSeoMeta({
+  title: 'Mitra & Perusahaan Santap — Solusi POS Merchant F&B',
+  description: 'Kenali visi, komitmen, dan pilar kerja Santap dalam memberdayakan jutaan merchant F&B di seluruh Indonesia lewat teknologi POS modern.',
+  ogTitle: 'Mitra & Perusahaan — Santap',
+  ogDescription: 'Bergabunglah dengan 10.000+ merchant F&B Indonesia. Santap adalah partner teknologi POS cloud yang terpercaya.',
+  ogImage: '/images/og-image.jpg',
+  ogType: 'website',
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'Mitra & Perusahaan — Santap',
+  twitterDescription: 'Bergabunglah dengan 10.000+ merchant F&B Indonesia. Santap, partner teknologi POS cloud terpercaya.',
+})
+
+// Breadcrumb JSON-LD — jejak navigasi untuk rich result + konteks AI crawler.
+usePageSeo({
+  breadcrumbs: [
+    { name: 'Beranda', item: '/' },
+    { name: 'Perusahaan', item: '/company' },
+  ],
 })
 const values = [
   {
