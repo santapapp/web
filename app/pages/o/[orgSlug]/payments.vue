@@ -748,10 +748,7 @@ onMounted(async () => {
                     QRIS
                   </span>
                 </div>
-                <div class="flex items-center justify-between gap-3">
-                  <span class="text-xs text-stone-500 font-medium shrink-0">Mitra Gateway</span>
-                  <span class="text-xs font-semibold text-stone-800 text-right">Sekeco Payment</span>
-                </div>
+
               </div>
 
               <!-- Financial Breakdown -->
@@ -932,51 +929,38 @@ onMounted(async () => {
           </div>
 
           <!-- Payment Instructions — shown below the grid when QR is active -->
-          <div v-if="openBill && qrDataUrl && !isPaid && !isFailed && !isExpired" class="mt-5 grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div v-if="openBill && qrDataUrl && !isPaid && !isFailed && !isExpired" class="mt-5">
             <!-- Steps -->
-            <div class="bg-white rounded-xl border border-stone-200/60 shadow-sm px-4 py-3.5">
-              <div class="text-xs font-bold text-stone-900 flex items-center gap-1.5 mb-3.5">
-                <UIcon name="i-lucide-info" class="size-4 text-orange-500" />
+            <div class="bg-white rounded-xl border border-stone-200/60 shadow-sm px-5 py-4">
+              <div class="text-sm font-bold text-stone-900 flex items-center gap-1.5 mb-4">
+                <UIcon name="i-lucide-info" class="size-4.5 text-orange-500" />
                 Petunjuk Pembayaran
               </div>
               <ol class="space-y-3">
                 <li class="flex items-start gap-2.5">
-                  <span class="size-5 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600 font-bold shrink-0 text-[10px]">1</span>
+                  <span class="size-5.5 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600 font-bold shrink-0 text-xs">1</span>
                   <span class="text-xs text-stone-500 leading-relaxed pt-0.5">Buka aplikasi mobile banking atau e-wallet (GoPay, OVO, Dana, LinkAja, ShopeePay, dll).</span>
                 </li>
                 <li class="flex items-start gap-2.5">
-                  <span class="size-5 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600 font-bold shrink-0 text-[10px]">2</span>
+                  <span class="size-5.5 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600 font-bold shrink-0 text-xs">2</span>
                   <span class="text-xs text-stone-500 leading-relaxed pt-0.5">Pilih opsi <strong class="text-stone-700">Scan / Bayar QRIS</strong> dan arahkan kamera ke QR Code di atas.</span>
                 </li>
                 <li class="flex items-start gap-2.5">
-                  <span class="size-5 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600 font-bold shrink-0 text-[10px]">3</span>
+                  <span class="size-5.5 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600 font-bold shrink-0 text-xs">3</span>
                   <span class="text-xs text-stone-500 leading-relaxed pt-0.5">Pastikan nominal tagihan sudah sesuai, lalu masukkan PIN pembayaran untuk menyelesaikan transaksi.</span>
                 </li>
                 <li class="flex items-start gap-2.5">
-                  <span class="size-5 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600 font-bold shrink-0 text-[10px]">4</span>
+                  <span class="size-5.5 rounded-full bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-600 font-bold shrink-0 text-xs">4</span>
                   <span class="text-xs text-stone-500 leading-relaxed pt-0.5">Setelah pembayaran sukses, sistem akan memperbarui status pesanan secara otomatis dalam beberapa detik.</span>
                 </li>
               </ol>
-            </div>
 
-            <!-- Gateway Info -->
-            <div class="bg-orange-50/30 rounded-xl border border-orange-100/60 px-4 py-3.5">
-              <div class="flex items-center gap-1.5 mb-3">
-                <UIcon name="i-lucide-shield-check" class="size-4 text-orange-500 shrink-0" />
-                <span class="text-xs font-bold text-orange-800">Informasi Gerbang Pembayaran</span>
+              <div class="mt-4 pt-3.5 border-t border-dashed border-stone-100 flex items-start gap-2 text-[11px] text-stone-400 leading-relaxed">
+                <UIcon name="i-lucide-shield-check" class="size-3.5 text-stone-400 shrink-0 mt-0.5" />
+                <span>
+                  Layanan pembayaran QRIS ini diproses secara aman. Pada aplikasi e-wallet Anda, detail penerima akan tertera atas nama <strong class="text-stone-600 font-semibold">PT Sarwa Kalyana Cara</strong> selaku penyelenggara resmi.
+                </span>
               </div>
-              <p class="text-xs text-stone-500 leading-relaxed mb-3">
-                Layanan pembayaran QRIS ini diproses secara aman oleh mitra resmi kami, <span class="text-stone-800 font-semibold">Sekeco Payment</span>.
-              </p>
-              <div class="bg-white/70 border border-orange-100 rounded-xl px-3.5 py-3 mb-3">
-                <span class="text-[10px] font-bold text-orange-600 uppercase tracking-wider block mb-1">Catatan Penerima QRIS:</span>
-                <p class="text-xs text-stone-500 leading-relaxed italic">
-                  Pada aplikasi e-wallet Anda, detail penerima akan tertera atas nama <span class="text-stone-800 font-semibold not-italic">PT Sarwa Kalyana Cara</span> selaku penyelenggara gerbang pembayaran resmi.
-                </p>
-              </div>
-              <p class="text-[11px] text-stone-400 leading-relaxed">
-                * Jika QRIS tidak dapat dipindai, Anda dapat melakukan pembayaran langsung melalui kasir restoran.
-              </p>
             </div>
           </div>
 

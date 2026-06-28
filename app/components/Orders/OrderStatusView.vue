@@ -321,11 +321,11 @@ const downloadReceipt = async () => {
                   :to="`/o/${orgSlug}/orders`"
                   class="w-full min-h-[40px] px-3 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-150 cursor-pointer active:scale-[0.98]"
                   :class="canPay
-                    ? 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300'
-                    : 'bg-orange-600 text-white hover:bg-orange-700 shadow-md shadow-orange-600/20'"
+                    ? 'bg-white border border-slate-200 text-slate-700 !text-slate-700 hover:bg-slate-50 hover:border-slate-300'
+                    : 'bg-orange-600 text-white !text-white hover:bg-orange-700 shadow-md shadow-orange-600/20'"
                 >
                   <UIcon name="i-lucide-plus" class="size-4" />
-                  <span>Tambah Pesanan Lagi</span>
+                  <span>{{ canPay ? 'Tambah Pesanan Lagi' : 'Buat Pesanan Lagi' }}</span>
                 </NuxtLink>
               </div>
 
