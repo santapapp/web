@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import jsQR from 'jsqr'
-import { extractQrToken } from '~/composables/useCustomerSession'
+import { parseQrInput } from '~/composables/useCustomerSession'
 
 /**
  * OrdersQrScanner — Komponen scan QR kamera untuk halaman orders
@@ -70,12 +70,12 @@ const isCameraSupported = computed(() => {
  * Atau bisa juga format rawstring: KB-03|abc123token
  */
 const parseQrContent = (rawValue: string): ScanResult | null => {
-  const token = extractQrToken(rawValue)
-  if (!token) return null
+  const parsed = parseQrInput(rawValue)
+  if (!parsed) return null
 
   return {
-    table: token,
-    qr: token
+    table: parsed.token,
+    qr: rawValue
   }
 }
 
@@ -252,7 +252,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="qr-scanner-overlay" role="dialog" aria-modal="true" aria-label="Scan QR meja">
+  <div class="qr-scanner-overlay" role="dialog" aria-modal="true" aria-label="Scan QR meja atau struk">
 
     <!-- ── Idle: tombol mulai (tidak tampil karena auto-start) ── -->
 
@@ -303,7 +303,7 @@ onUnmounted(() => {
 
         <!-- Instruction text -->
         <p class="scanner-instruction">
-          {{ scanSuccess ? 'QR terdeteksi! 🎉' : 'Arahkan kamera ke QR meja Anda' }}
+          {{ scanSuccess ? 'QR terdeteksi! 🎉' : 'Arahkan kamera ke QR meja atau struk Anda' }}
         </p>
       </div>
     </div>
@@ -313,7 +313,7 @@ onUnmounted(() => {
       <div class="state-icon-lg">🔒</div>
       <div class="text-[15px] font-bold text-white uppercase tracking-wider">Izin kamera diperlukan</div>
       <p>
-        Anda perlu mengizinkan akses kamera agar bisa scan QR meja.
+        Anda perlu mengizinkan akses kamera agar bisa scan QR meja atau struk.
         Buka pengaturan browser dan izinkan kamera untuk situs ini.
       </p>
 
@@ -374,7 +374,7 @@ onUnmounted(() => {
       <div class="state-icon-lg">🔗</div>
       <div class="text-[15px] font-bold text-white uppercase tracking-wider">Masukkan URL QR</div>
       <p>
-        Salin URL dari QR meja menggunakan kamera HP, lalu tempel di sini.
+        Salin URL dari QR meja/struk menggunakan kamera HP, lalu tempel di sini.
       </p>
 
       <div class="manual-input-group">
