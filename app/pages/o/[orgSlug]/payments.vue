@@ -51,6 +51,11 @@ const initError = ref<string | null>(null)
 const qrDataUrl = ref<string | null>(null)
 const isPageLoading = ref(true)
 const isDownloading = ref(false)
+const isSharing = ref(false)
+const canUseWebShare = computed(() => {
+  if (!import.meta.client) return false
+  return !!(navigator.share && navigator.canShare)
+})
 const showCancelModal = ref(false)
 // true jika halaman ini melacak TABLE ORDER (query ?order=), false untuk open bill (?bill=)
 const isTableOrderPage = ref(false)
@@ -133,7 +138,10 @@ const formatTime = (isoString: string) => {
 // Generate QR code dari qr_string menggunakan canvas API
 const generateQrDataUrl = async (qrString: string): Promise<string> => {
   if (qrString.startsWith('http')) {
-    return qrString
+    // Gunakan proxy backend untuk menghindari masalah CORS di Canvas client
+    const config = useRuntimeConfig()
+    const baseUrl = String(config.public.apiBaseUrl || 'https://api.santap.app').replace(/\/$/, '')
+    return `${baseUrl}/v1/customer/qr-proxy?url=${encodeURIComponent(qrString)}`
   }
   // Gunakan QR API publik untuk generate QR image
   return `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(qrString)}&bgcolor=ffffff&color=1a1714&margin=2`
@@ -160,42 +168,162 @@ const handleInitiatePayment = async () => {
   }
 }
 
-// Download QRIS sebagai PNG dengan background putih
+// Helper to safely draw rounded rects on canvas across all devices
+const drawRoundRect = (
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  radius: number | number[]
+) => {
+  if (typeof ctx.roundRect === 'function') {
+    ctx.roundRect(x, y, width, height, radius)
+  } else {
+    const r = typeof radius === 'number' ? radius : (radius[0] || 0)
+    ctx.moveTo(x + r, y)
+    ctx.lineTo(x + width - r, y)
+    ctx.quadraticCurveTo(x + width, y, x + width, y + r)
+    ctx.lineTo(x + width, y + height - r)
+    ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height)
+    ctx.lineTo(x + r, y + height)
+    ctx.quadraticCurveTo(x, y + height, x, y + height - r)
+    ctx.lineTo(x, y + r)
+    ctx.quadraticCurveTo(x, y, x + r, y)
+  }
+}
+
+// Generate a premium branded Santap payment card image
+const generateSantapPaymentCardBlob = async (qrDataUrl: string): Promise<Blob> => {
+  const qrImg = new Image()
+  qrImg.crossOrigin = 'anonymous'
+  await new Promise<void>((resolve, reject) => {
+    qrImg.onload = () => resolve()
+    qrImg.onerror = () => reject(new Error('Gagal memuat gambar QR.'))
+    qrImg.src = qrDataUrl
+  })
+
+  const width = 480
+  const height = 720
+  const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  const ctx = canvas.getContext('2d')!
+
+  // 1. Draw soft cream background
+  ctx.fillStyle = '#FAFAF9' // stone-50
+  ctx.fillRect(0, 0, width, height)
+
+  // 2. Draw Top Header Panel (Orange brand background with rounded top corners)
+  ctx.fillStyle = '#E87722' // Santap orange
+  ctx.beginPath()
+  drawRoundRect(ctx, 0, 0, width, 130, [16, 16, 0, 0])
+  ctx.fill()
+
+  // 3. Draw brand header text
+  ctx.fillStyle = '#ffffff'
+  ctx.font = '900 32px system-ui, -apple-system, sans-serif'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  ctx.fillText('SANTAP', width / 2, 50)
+
+  ctx.font = 'bold 12px system-ui, -apple-system, sans-serif'
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'
+  ctx.fillText('QRIS - E-PAYMENT CARD', width / 2, 90)
+
+  // 4. White Main Card content section
+  ctx.fillStyle = '#ffffff'
+  ctx.beginPath()
+  drawRoundRect(ctx, 20, 150, width - 40, 520, 16)
+  ctx.fill()
+
+  // Draw border for main card
+  ctx.lineWidth = 1.5
+  ctx.strokeStyle = '#E7E5E4' // stone-200
+  ctx.stroke()
+
+  // 5. Merchant Details
+  ctx.fillStyle = '#1C1917' // stone-900
+  ctx.font = 'bold 22px system-ui, -apple-system, sans-serif'
+  const orgName = openBill.value?.dining_table?.organization?.name || customerSession.organization.value?.name || 'Restoran Santap'
+  ctx.fillText(orgName, width / 2, 195)
+
+  ctx.fillStyle = '#78716C' // stone-500
+  ctx.font = '600 13px system-ui, -apple-system, sans-serif'
+  const tableName = openBill.value?.dining_table?.name || openBill.value?.dining_table?.code || 'Meja'
+  const orderNum = openBill.value?.order_number ?? '-'
+  ctx.fillText(`${tableName}   •   #${orderNum}`, width / 2, 225)
+
+  // 6. Draw QRIS Frame
+  ctx.strokeStyle = '#E87722'
+  ctx.lineWidth = 2
+  ctx.beginPath()
+  drawRoundRect(ctx, width / 2 - 110, 250, 220, 220, 12)
+  ctx.stroke()
+
+  // Draw QR Image
+  ctx.drawImage(qrImg, width / 2 - 100, 260, 200, 200)
+
+  // Draw QRIS text banner below QR
+  ctx.fillStyle = '#E87722'
+  ctx.font = 'bold 11px system-ui, -apple-system, sans-serif'
+  ctx.fillText('PINDAI MENGGUNAKAN QRIS', width / 2, 495)
+
+  // 7. Divider dashed line
+  ctx.strokeStyle = '#E7E5E4'
+  ctx.lineWidth = 1.5
+  ctx.setLineDash([6, 6])
+  ctx.beginPath()
+  ctx.moveTo(40, 525)
+  ctx.lineTo(width - 40, 525)
+  ctx.stroke()
+  ctx.setLineDash([]) // reset line dash
+
+  // 8. Total tagihan
+  ctx.fillStyle = '#78716C' // stone-500
+  ctx.font = 'bold 12px system-ui, -apple-system, sans-serif'
+  ctx.fillText('TOTAL TAGIHAN', width / 2, 550)
+
+  ctx.fillStyle = '#E87722' // orange-600
+  ctx.font = '900 28px system-ui, -apple-system, sans-serif'
+  const totalStr = formatCurrency(openBill.value?.total_amount ?? 0)
+  ctx.fillText(totalStr, width / 2, 585)
+
+  // 9. Payment Methods instructions
+  ctx.fillStyle = '#78716C' // stone-500
+  ctx.font = '500 11px system-ui, -apple-system, sans-serif'
+  ctx.fillText('Mendukung: DANA, GoPay, OVO, LinkAja, ShopeePay,', width / 2, 625)
+  ctx.fillText('BRIMo, BCA Mobile, Livin\' Mandiri, dan e-wallet/m-banking lainnya.', width / 2, 640)
+
+  // 10. Outer Footer
+  ctx.fillStyle = '#A8A29E' // stone-400
+  ctx.font = 'bold 10px system-ui, -apple-system, sans-serif'
+  ctx.fillText('Terima kasih atas pesanan Anda   •   powered by santap.id', width / 2, 685)
+
+  // Export to Blob
+  return new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (blob) {
+        resolve(blob)
+      } else {
+        reject(new Error('Gagal merender gambar.'))
+      }
+    }, 'image/png')
+  })
+}
+
+// Download QRIS sebagai PNG dengan template kartu Santap premium
 const handleDownloadQris = async () => {
   if (!qrDataUrl.value || isDownloading.value) return
   isDownloading.value = true
 
   try {
-    const img = new Image()
-    img.crossOrigin = 'anonymous'
-
-    await new Promise<void>((resolve, reject) => {
-      img.onload = () => resolve()
-      img.onerror = () => reject(new Error('Gagal memuat gambar QR.'))
-      img.src = qrDataUrl.value!
-    })
-
-    const size = 512
-    const canvas = document.createElement('canvas')
-    canvas.width = size
-    canvas.height = size
-    const ctx = canvas.getContext('2d')!
-
-    // White background agar QR tetap terbaca
-    ctx.fillStyle = '#ffffff'
-    ctx.fillRect(0, 0, size, size)
-    ctx.drawImage(img, 0, 0, size, size)
-
-    const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, 'image/png')
-    )
-
-    if (!blob) throw new Error('Gagal mengekspor gambar.')
+    const blob = await generateSantapPaymentCardBlob(qrDataUrl.value)
 
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `qris-${openBill.value?.order_number ?? 'santap'}.png`
+    a.download = `qris-payment-${openBill.value?.order_number ?? 'santap'}.png`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -203,20 +331,66 @@ const handleDownloadQris = async () => {
 
     toast.add({
       title: 'QRIS berhasil diunduh',
-      description: `File qris-${openBill.value?.order_number ?? 'santap'}.png telah tersimpan.`,
+      description: `Kartu pembayaran qris-payment-${openBill.value?.order_number ?? 'santap'}.png telah tersimpan.`,
       color: 'success',
       icon: 'i-lucide-download'
     })
-  } catch (err) {
+  } catch (err: any) {
     console.error('[handleDownloadQris]', err)
     toast.add({
       title: 'Gagal mengunduh QRIS',
-      description: 'Silakan coba lagi atau screenshot QR Code secara manual.',
+      description: err.message || 'Silakan coba lagi atau screenshot QR Code secara manual.',
       color: 'error',
       icon: 'i-lucide-alert-circle'
     })
   } finally {
     isDownloading.value = false
+  }
+}
+
+// Bagikan QRIS ke e-wallet, mobile banking, WhatsApp, atau simpan ke galeri menggunakan Web Share API
+const handleShareQris = async () => {
+  if (!qrDataUrl.value || isSharing.value) return
+  isSharing.value = true
+
+  try {
+    const blob = await generateSantapPaymentCardBlob(qrDataUrl.value)
+    const file = new File(
+      [blob],
+      `pembayaran-qris-${openBill.value?.order_number ?? 'santap'}.png`,
+      { type: 'image/png' }
+    )
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: `Pembayaran QRIS - ${openBill.value?.dining_table?.organization?.name ?? 'Santap'}`,
+        text: `Silakan scan QRIS untuk membayar pesanan sebesar ${formatCurrency(openBill.value?.total_amount ?? 0)}.`
+      })
+
+      toast.add({
+        title: 'Menu Berbagi Dinonaktifkan/Dibuka',
+        description: 'Silakan pilih aplikasi pembayaran (DANA, BRIMo, GoPay, dll.) atau simpan ke galeri.',
+        color: 'success',
+        icon: 'i-lucide-share-2'
+      })
+    } else {
+      throw new Error('Fitur berbagi file tidak didukung oleh browser Anda.')
+    }
+  } catch (err: any) {
+    if (err.name === 'AbortError') {
+      // User cancelled the share dialog
+      return
+    }
+    console.error('[handleShareQris]', err)
+    toast.add({
+      title: 'Gagal Berbagi QRIS',
+      description: err.message || 'Silakan download gambar QR secara manual.',
+      color: 'error',
+      icon: 'i-lucide-alert-circle'
+    })
+  } finally {
+    isSharing.value = false
   }
 }
 
@@ -671,13 +845,26 @@ onMounted(async () => {
                 <div class="w-full flex flex-col gap-2.5 pt-1">
                   <!-- Download QRIS -->
                   <UButton
-                    label="Download QRIS"
+                    label="Download Gambar QR"
                     color="primary"
                     icon="i-lucide-download"
                     block
                     :loading="isDownloading"
-                    :disabled="isDownloading"
+                    :disabled="isDownloading || isSharing"
                     @click="handleDownloadQris"
+                  />
+
+                  <!-- Share QRIS to Payment Apps / WhatsApp / Gallery -->
+                  <UButton
+                    v-if="canUseWebShare"
+                    label="Bagikan ke Aplikasi Pembayaran"
+                    color="neutral"
+                    variant="subtle"
+                    icon="i-lucide-share-2"
+                    block
+                    :loading="isSharing"
+                    :disabled="isSharing || isDownloading"
+                    @click="handleShareQris"
                   />
 
                   <!-- Cancel Payment (open bill only) -->
@@ -685,6 +872,7 @@ onMounted(async () => {
                     v-if="!isTableOrderPage"
                     label="Batalkan Pembayaran"
                     color="error"
+                    variant="ghost"
                     icon="i-lucide-circle-x"
                     block
                     :loading="cancelPending"
