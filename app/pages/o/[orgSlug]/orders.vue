@@ -12,6 +12,7 @@ definePageMeta({
 const route = useRoute()
 const router = useRouter()
 const orgSlug = computed(() => String(route.params.orgSlug || ''))
+const toast = useToast()
 
 const {
   mode,
@@ -476,6 +477,88 @@ const handleDecrease = (product: any) => {
   }
 }
 
+let audioCtx: AudioContext | null = null
+
+const getAudioContext = () => {
+  if (!import.meta.client) return null
+  if (!audioCtx) {
+    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext
+    if (AudioContextClass) {
+      audioCtx = new AudioContextClass()
+    }
+  }
+  return audioCtx
+}
+
+// Resume AudioContext on first click or touch to bypass browser autoplay restrictions
+if (import.meta.client) {
+  const resumeAudio = () => {
+    const ctx = getAudioContext()
+    if (ctx && ctx.state === 'suspended') {
+      ctx.resume().then(() => {
+        console.log('DEBUG: AudioContext resumed successfully on user interaction.')
+      })
+    }
+    window.removeEventListener('click', resumeAudio)
+    window.removeEventListener('touchstart', resumeAudio)
+  }
+  window.addEventListener('click', resumeAudio)
+  window.addEventListener('touchstart', resumeAudio)
+}
+
+const playNotificationSound = () => {
+  if (!import.meta.client) return
+  try {
+    const ctx = getAudioContext()
+    if (!ctx) return
+    
+    // Explicitly resume in case it was not resumed yet
+    if (ctx.state === 'suspended') {
+      ctx.resume()
+    }
+    
+    const playTone = (freq: number, start: number, duration: number) => {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      
+      osc.type = 'sine'
+      osc.frequency.setValueAtTime(freq, start)
+      
+      gain.gain.setValueAtTime(0.12, start)
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration)
+      
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      
+      osc.start(start)
+      osc.stop(start + duration)
+    }
+
+    const now = ctx.currentTime
+    playTone(523.25, now, 0.25) // C5
+    playTone(783.99, now + 0.12, 0.35) // G5
+  } catch (e) {
+    console.warn('Failed to play audio notification:', e)
+  }
+}
+
+const pendingToasts = ref<Array<{ title: string; description: string; color: 'success' | 'error' | 'warning' | 'info'; icon: string }>>([])
+
+// Watch the pending toasts queue to trigger toast rendering and play sound within Vue's execution context
+watch(pendingToasts, (newVal) => {
+  if (newVal.length > 0) {
+    const item = newVal.shift()
+    if (item) {
+      try {
+        toast.add(item)
+        playNotificationSound()
+      } catch (err) {
+        console.error('Failed to add toast inside watch:', err)
+      }
+    }
+  }
+}, { deep: true })
+
 // ── Real-Time Echo Integration ──
 const { initEcho, disconnectEcho } = useEcho()
 
@@ -501,44 +584,117 @@ watch(
       echo.private(`open-bill.${billId}`)
         .listen('.repeat-order-created', (payload: any) => {
           console.log('Real-time Open Bill Repeat Order Created:', payload)
-          if (!order.value) return
+          
+          try {
+            if (!order.value) return
 
-          // Update total amount and bill status
-          if (payload.orderTotal !== undefined || payload.order_total !== undefined) {
-            order.value.total_amount = Number(payload.orderTotal ?? payload.order_total)
-          }
-          if (payload.billStatus || payload.bill_status) {
-            order.value.bill_status = payload.billStatus || payload.bill_status
-          }
-
-          // Append items from the new batch (mapping them appropriately)
-          if (Array.isArray(payload.items) && payload.items.length > 0) {
-            const mappedItems = payload.items.map(mapOrderItem)
-
-            // Avoid adding duplicates (just in case)
-            const existingIds = new Set(order.value.items.map(i => i.id))
-            const newItems = mappedItems.filter((item: any) => !existingIds.has(item.id))
-            
-            order.value.items = [...order.value.items, ...newItems]
-
-            // Recalculate subtotal amount based on all items
-            order.value.subtotal_amount = order.value.items.reduce((sum: number, item: any) => sum + item.subtotal, 0)
-          }
-
-          // Sync the updated bill details to the customer session store
-          const sessionStore = useCustomerSessionStore()
-          if (sessionStore.sessionType === 'open_bill' && sessionStore.openBill) {
-            const rawStatus = order.value.bill_status as string
-            const status: 'open' | 'closed' | 'locked' =
-              rawStatus === 'locked' ? 'locked' :
-              (['closed', 'cancelled', 'failed', 'paid', 'expired'].includes(rawStatus) ? 'closed' : 'open')
-
-            sessionStore.setOpenBill({
-              id: String(order.value.id ?? order.value.public_token ?? sessionStore.sessionToken ?? ''),
-              bill_number: String(order.value.order_number ?? '-'),
-              status,
-              total_amount: Number(order.value.total_amount ?? 0)
+            // Push to reactive queue to process within Vue's active context (avoids context loss and unblocks audio/toast)
+            const itemsCount = payload.items?.length || payload.batch?.items_count || 1
+            pendingToasts.value.push({
+              title: 'Pesanan Baru Ditambahkan',
+              description: `${itemsCount} item baru telah ditambahkan ke Pesanan #${payload.batch?.batch_number ?? ''}`,
+              color: 'success',
+              icon: 'i-lucide-bell'
             })
+
+            // Update total amount and bill status
+            if (payload.orderTotal !== undefined || payload.order_total !== undefined) {
+              order.value.total_amount = Number(payload.orderTotal ?? payload.order_total)
+            }
+            if (payload.billStatus || payload.bill_status) {
+              order.value.bill_status = payload.billStatus || payload.bill_status
+            }
+
+            // Append items from the new batch (mapping them appropriately)
+            if (Array.isArray(payload.items) && payload.items.length > 0) {
+              const mappedItems = payload.items.map(mapOrderItem)
+
+              // Avoid adding duplicates (just in case)
+              const existingIds = new Set(order.value.items.map(i => i.id))
+              const newItems = mappedItems.filter((item: any) => !existingIds.has(item.id))
+              
+              if (newItems.length > 0) {
+                order.value.items = [...order.value.items, ...newItems]
+              }
+
+              // Recalculate subtotal amount based on all items
+              order.value.subtotal_amount = order.value.items.reduce((sum: number, item: any) => sum + item.subtotal, 0)
+            }
+
+            // Sync the updated bill details to the customer session store
+            const sessionStore = useCustomerSessionStore()
+            if (sessionStore.sessionType === 'open_bill' && sessionStore.openBill) {
+              const rawStatus = order.value.bill_status as string
+              const status: 'open' | 'closed' | 'locked' =
+                rawStatus === 'locked' ? 'locked' :
+                (['closed', 'cancelled', 'failed', 'paid', 'expired'].includes(rawStatus) ? 'closed' : 'open')
+
+              sessionStore.setOpenBill({
+                id: String(order.value.id ?? order.value.public_token ?? sessionStore.sessionToken ?? ''),
+                bill_number: String(order.value.order_number ?? '-'),
+                status,
+                total_amount: Number(order.value.total_amount ?? 0)
+              })
+            }
+          } catch (err) {
+            console.error('ERROR inside WebSocket event handler:', err)
+          }
+        })
+        .listen('.item-status-updated', (payload: any) => {
+          console.log('Real-time Open Bill Item Status Updated:', payload)
+          try {
+            if (!order.value) return
+
+            // 1. Map status translation for display
+            const statusLabels: Record<string, string> = {
+              preparing: 'Dimasak',
+              ready: 'Siap disajikan',
+              served: 'Tersaji',
+              cancelled: 'Dibatalkan'
+            }
+            const statusLabel = statusLabels[payload.itemStatus] || payload.itemStatus
+
+            // 2. Queue toast notification with context-friendly text
+            let toastTitle = 'Status Menu Diperbarui'
+            let toastColor: 'success' | 'info' | 'warning' | 'error' = 'info'
+            let toastIcon = 'i-lucide-receipt'
+
+            if (payload.itemStatus === 'ready') {
+              toastTitle = 'Menu Siap Disajikan!'
+              toastColor = 'success'
+              toastIcon = 'i-lucide-check-circle'
+            } else if (payload.itemStatus === 'served') {
+              toastTitle = 'Menu Telah Tersaji'
+              toastColor = 'success'
+              toastIcon = 'i-lucide-utensils'
+            } else if (payload.itemStatus === 'cancelled') {
+              toastTitle = 'Menu Dibatalkan'
+              toastColor = 'error'
+              toastIcon = 'i-lucide-x-circle'
+            }
+
+            pendingToasts.value.push({
+              title: toastTitle,
+              description: `"${payload.name}" kini berstatus: ${statusLabel}`,
+              color: toastColor,
+              icon: toastIcon
+            })
+
+            // 3. Reactively update the matching item status in our order
+            const item = order.value.items.find(i => i.id === payload.itemId)
+            if (item) {
+              item.item_status = payload.itemStatus
+            }
+
+            // 4. Update order status and totals if provided in payload
+            if (payload.orderStatus) {
+              order.value.order_status = payload.orderStatus
+            }
+            if (payload.orderTotal !== undefined) {
+              order.value.total_amount = Number(payload.orderTotal)
+            }
+          } catch (err) {
+            console.error('ERROR inside item status update event handler:', err)
           }
         })
     }

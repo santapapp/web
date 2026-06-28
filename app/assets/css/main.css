@@ -13,6 +13,7 @@
   @nuxt/ui already handles the base/preflight layer via its own index.css.
 */
 @import "tailwindcss";
+@import "@nuxt/ui";
 @import "./motion.css";
 
 
@@ -597,5 +598,13 @@ p {
 [role="alertdialog"] h5,
 [role="alertdialog"] h6 {
   font-family: var(--font-body) !important;
+}
+
+/* ── Force Toast / Toaster z-index ───────────────────────── */
+div[class*="toaster"],
+div[class*="toast"],
+.u-toast,
+.u-toaster {
+  z-index: 999999 !important;
 }
 
