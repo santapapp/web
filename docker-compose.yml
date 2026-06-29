@@ -19,4 +19,10 @@ services:
       - NUXT_PUBLIC_REVERB_HOST=reverb.santap.app
       - NUXT_PUBLIC_REVERB_PORT=443
       - NUXT_PUBLIC_REVERB_SCHEME=https
+    networks:
+      - proxy
     restart: always
+
+networks:
+  proxy:
+    external: true

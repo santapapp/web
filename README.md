@@ -53,5 +53,5 @@ Catatan: untuk sementara `lint` diarahkan ke `nuxt typecheck` sampai konfigurasi
 ## Dokumentasi
 
 - [Design System & Style Guide](style.md)
-- [Referensi API Web Customer](docs/docs-api.md)
+- [Dokumentasi Analisis Masalah Aktif](docs/active_issues.md)
 
