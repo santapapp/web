@@ -165,9 +165,11 @@ export default defineNuxtConfig({
         { rel: "apple-touch-icon", sizes: "167x167", href: "/apple-touch-icon-167x167.png" },
         { rel: "apple-touch-icon", sizes: "152x152", href: "/apple-touch-icon-152x152.png" },
         { rel: "apple-touch-icon", sizes: "120x120", href: "/apple-touch-icon-120x120.png" },
-        // Resource hints — percepat koneksi awal ke API publik.
+        // Resource hints — percepat koneksi awal ke API publik dan WebSocket Reverb.
         { rel: "preconnect", href: "https://api.santap.app", crossorigin: "" },
         { rel: "dns-prefetch", href: "https://api.santap.app" },
+        { rel: "preconnect", href: "https://reverb.santap.app", crossorigin: "" },
+        { rel: "dns-prefetch", href: "https://reverb.santap.app" },
       ],
       meta: [
         { name: "theme-color", content: "#ffffff" },

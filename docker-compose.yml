@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: santap_web
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - HOST=0.0.0.0
+      - NODE_ENV=production
+      # Environment variables di bawah ini dapat di-override di environment hosting
+      - NUXT_PUBLIC_API_BASE_URL=https://api.santap.app
+      - NUXT_PUBLIC_USE_MOCK_API=false
+      - NUXT_PUBLIC_REVERB_APP_KEY=santapreverbkeypublic
+      - NUXT_PUBLIC_REVERB_HOST=reverb.santap.app
+      - NUXT_PUBLIC_REVERB_PORT=443
+      - NUXT_PUBLIC_REVERB_SCHEME=https
+    restart: always

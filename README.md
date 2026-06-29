@@ -52,6 +52,6 @@ Catatan: untuk sementara `lint` diarahkan ke `nuxt typecheck` sampai konfigurasi
 
 ## Dokumentasi
 
-- [Santap Web routing dan flow](docs/santap_web/README.md)
-- [Roadmap implementasi](docs/roadmap.md)
+- [Design System & Style Guide](style.md)
+- [Referensi API Web Customer](docs/docs-api.md)
 
