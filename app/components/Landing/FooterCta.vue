@@ -14,7 +14,7 @@
     <!-- ── Background: moody restaurant image + heavy overlay ── -->
     <div class="absolute inset-0 z-0" aria-hidden="true">
       <img
-        src="/images/footer-cta-bg.jpg"
+        src="https://res.cloudinary.com/drohf7ab1/image/upload/f_auto,q_auto/footer-cta-bg"
         alt=""
         class="w-full h-full object-cover object-center"
         loading="lazy"

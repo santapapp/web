@@ -11,7 +11,7 @@
       <img
         ref="bgImgRef"
         class="w-full h-full object-cover object-[center_40%] block hero-bg-img"
-        src="/images/landing-hero.jpg"
+        src="https://res.cloudinary.com/drohf7ab1/image/upload/f_auto,q_auto/landing-hero"
         alt=""
         loading="eager"
         fetchpriority="high"

@@ -54,7 +54,8 @@ const isDownloading = ref(false)
 const isSharing = ref(false)
 const canUseWebShare = computed(() => {
   if (!import.meta.client) return false
-  return !!(navigator.share && navigator.canShare)
+  const nav = navigator as any
+  return !!(nav.share && nav.canShare)
 })
 const showCancelModal = ref(false)
 // true jika halaman ini melacak TABLE ORDER (query ?order=), false untuk open bill (?bill=)
@@ -245,7 +246,7 @@ const generateSantapPaymentCardBlob = async (qrDataUrl: string): Promise<Blob> =
   // 5. Merchant Details
   ctx.fillStyle = '#1C1917' // stone-900
   ctx.font = 'bold 22px system-ui, -apple-system, sans-serif'
-  const orgName = openBill.value?.dining_table?.organization?.name || customerSession.organization.value?.name || 'Restoran Santap'
+  const orgName = customerSession.organization.value?.name || 'Restoran Santap'
   ctx.fillText(orgName, width / 2, 195)
 
   ctx.fillStyle = '#78716C' // stone-500
@@ -361,10 +362,10 @@ const handleShareQris = async () => {
       { type: 'image/png' }
     )
 
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    if (typeof navigator.canShare === 'function' && navigator.canShare({ files: [file] })) {
       await navigator.share({
         files: [file],
-        title: `Pembayaran QRIS - ${openBill.value?.dining_table?.organization?.name ?? 'Santap'}`,
+        title: `Pembayaran QRIS - ${customerSession.organization.value?.name ?? 'Santap'}`,
         text: `Silakan scan QRIS untuk membayar pesanan sebesar ${formatCurrency(openBill.value?.total_amount ?? 0)}.`
       })
 

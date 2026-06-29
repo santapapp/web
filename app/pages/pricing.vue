@@ -24,7 +24,7 @@
     >
       <!-- Background image -->
       <img
-        src="/images/pricing-hero.jpg"
+        src="https://res.cloudinary.com/drohf7ab1/image/upload/f_auto,q_auto/pricing-hero"
         alt="Dapur restoran sibuk"
         class="absolute inset-0 w-full h-full object-cover object-center"
         loading="eager"

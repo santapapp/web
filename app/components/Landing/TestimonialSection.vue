@@ -61,7 +61,7 @@ const testimonials = [
     role: 'Owner',
     place: 'Warung Makan Pak Budi',
     rating: 5,
-    avatar: '/images/avatar-1.jpg'
+    avatar: 'https://res.cloudinary.com/drohf7ab1/image/upload/f_auto,q_auto/avatar-1'
   },
   {
     id: 't2',
@@ -70,7 +70,7 @@ const testimonials = [
     role: 'Manager',
     place: 'Kopi Nusantara Cafe',
     rating: 5,
-    avatar: '/images/avatar-2.jpg'
+    avatar: 'https://res.cloudinary.com/drohf7ab1/image/upload/f_auto,q_auto/avatar-2'
   },
   {
     id: 't3',
@@ -79,7 +79,7 @@ const testimonials = [
     role: 'Owner',
     place: 'Rumah Makan Sari Bundo',
     rating: 5,
-    avatar: '/images/avatar-3.jpg'
+    avatar: 'https://res.cloudinary.com/drohf7ab1/image/upload/f_auto,q_auto/avatar-3'
   }
 ]
 
