@@ -27,7 +27,7 @@
         src="https://res.cloudinary.com/drohf7ab1/image/upload/f_auto,q_auto/pricing-hero"
         alt="Dapur restoran sibuk"
         class="absolute inset-0 w-full h-full object-cover object-center"
-        loading="eager"
+        loading="lazy"
       />
       <!-- Dark overlay -->
       <div
@@ -172,6 +172,8 @@
           <!-- Bottom Button -->
           <NuxtLink
             :to="plan.ctaLink"
+            :target="plan.ctaExternal ? '_blank' : undefined"
+            :rel="plan.ctaExternal ? 'noopener noreferrer' : undefined"
             class="inline-flex items-center justify-center py-3.5 rounded-full text-[11px] font-bold uppercase tracking-[0.08em] no-underline transition-all hover:-translate-y-px"
             :style="plan.featured
               ? 'background-color: var(--color-text-primary); color: #FFFFFF;'
@@ -472,7 +474,7 @@
                 </div>
                 <div>
                   <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255, 255, 255, 0.5);">WhatsApp</p>
-                  <a href="https://wa.me/628986606000?text=Halo%20Santap!%20Saya%20ingin%20konsultasi%20%26%20demo%20produk%20untuk%20restoran%2Fcafe%20saya.%20Terima%20kasih." target="_blank" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
+                  <a href="https://wa.me/628986606000?text=Halo%20Santap!%20Saya%20ingin%20konsultasi%20%26%20demo%20produk%20untuk%20restoran%2Fcafe%20saya.%20Terima%20kasih." target="_blank" rel="noopener noreferrer" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
                     +62 898-6606-000
                   </a>
                 </div>
@@ -808,7 +810,8 @@ const plans = [
     showPeriod: true,
     featured: false,
     ctaLabel: 'Mulai Uji Coba',
-    ctaLink: '/#',
+    ctaLink: 'https://play.google.com/store/apps/details?id=com.santap.pos',
+    ctaExternal: true,
     features: [
       'Kasir Mobile (1 akun)',
       'Kitchen Display System',
@@ -826,7 +829,8 @@ const plans = [
     showPeriod: true,
     featured: true,
     ctaLabel: 'Coba Pro 14 Hari',
-    ctaLink: '/#',
+    ctaLink: 'https://play.google.com/store/apps/details?id=com.santap.pos',
+    ctaExternal: true,
     features: [
       'Multi Kasir & Pelayan',
       'Manajemen Stok & Bahan Baku',
@@ -846,6 +850,7 @@ const plans = [
     featured: false,
     ctaLabel: 'Hubungi Sales',
     ctaLink: '/contact',
+    ctaExternal: false,
     features: [
       'Unlimited Cabang/Outlet',
       'Stok Terpusat Multi-Lokasi',

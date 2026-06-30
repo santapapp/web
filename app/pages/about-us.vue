@@ -26,7 +26,7 @@
         src="https://res.cloudinary.com/drohf7ab1/image/upload/f_auto,q_auto/about-hero"
         alt="Interior restoran yang hangat dan nyaman"
         class="absolute inset-0 w-full h-full object-cover object-center"
-        loading="eager"
+        loading="lazy"
       />
       <!-- Dark overlay -->
       <div
