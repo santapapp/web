@@ -18,10 +18,10 @@
 useSeoMeta({
   title: 'Santap — Aplikasi Kasir Mobile untuk Restoran & Cafe',
   description:
-    'Santap adalah aplikasi mobile POS cloud untuk restoran dan cafe Indonesia. Catat pesanan, proses pembayaran, dan pantau laporan penjualan dari mana saja.',
+    'Santap adalah aplikasi mobile POS cloud untuk restoran dan cafe Indonesia oleh Sekeco (PT Sarwa Kalyana Cara) Sleman, Yogyakarta. Catat pesanan, kelola pembayaran QRIS, dan pantau laporan penjualan dari mana saja.',
   ogTitle: 'Santap — Aplikasi Kasir Mobile untuk Restoran & Cafe',
   ogDescription:
-    'Aplikasi kasir (POS) berbasis cloud yang dirancang khusus untuk bisnis kuliner Indonesia. Download sekarang dan sederhanakan operasional restoran Anda.',
+    'Aplikasi kasir (POS) berbasis cloud oleh Sekeco (PT Sarwa Kalyana Cara) Sleman, Yogyakarta. Dirancang khusus untuk bisnis kuliner Indonesia. Coba gratis sekarang!',
   ogImage: '/images/og-image.jpg',
   twitterCard: 'summary_large_image',
 })

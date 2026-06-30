@@ -204,7 +204,7 @@
     <div class="relative z-10 w-full" style="border-top: 1px solid rgba(255,255,255,0.07);">
       <div class="px-5 md:px-10 lg:px-16 max-w-[1400px] mx-auto pt-5 pb-12 flex flex-col md:flex-row items-center justify-between gap-4">
         <p class="text-[11px] uppercase tracking-[0.1em]" style="color: rgba(255,255,255,0.25);">
-          © {{ currentYear }} Santap. All Rights Reserved.
+          © {{ currentYear }} Santap oleh PT Sarwa Kalyana Cara (Sekeco).
         </p>
         <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-right">
           <div class="flex gap-4">
@@ -221,7 +221,7 @@
           </div>
           <span style="color: rgba(255,255,255,0.15);" class="hidden sm:inline">|</span>
           <p class="text-[11px] uppercase tracking-[0.1em]" style="color: rgba(255,255,255,0.20);">
-            Dibuat untuk bisnis kuliner Indonesia
+            Dibuat di Sleman, Yogyakarta untuk bisnis kuliner Indonesia
           </p>
         </div>
       </div>
