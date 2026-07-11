@@ -436,7 +436,7 @@ onMounted(async () => {
     } else if (route.query.bill && typeof route.query.bill === 'string') {
       sessionStore.sessionToken = route.query.bill
       sessionStore.sessionType = 'open_bill'
-      sessionStore.persist()
+      sessionStore.persist(orgSlug.value)
       trackingIdentifier = route.query.bill
     }
 

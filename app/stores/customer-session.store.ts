@@ -123,11 +123,35 @@ export const useCustomerSessionStore = defineStore('customer-session', {
       this.lastRestoredSlug = orgSlug
 
       const storageKey = orgSlug ? `customer_session_${orgSlug}` : STORAGE_KEY
-      const raw = localStorage.getItem(`${storageKey}.meta`)
+      let raw = localStorage.getItem(`${storageKey}.meta`)
+
+      // Migrasi: jika key namespace kosong tapi ada data di key legacy global, migrasikan.
+      if (!raw && orgSlug) {
+        const legacyRaw = localStorage.getItem(`${STORAGE_KEY}.meta`)
+        if (legacyRaw) {
+          try {
+            const legacyMeta = JSON.parse(legacyRaw)
+            // Hanya migrasikan jika org cocok atau tidak ada org di data lama
+            const legacySlug = legacyMeta.organization?.slug?.trim()?.toLowerCase() || ''
+            if (!legacySlug || legacySlug === orgSlug) {
+              localStorage.setItem(`${storageKey}.meta`, legacyRaw)
+              const legacyToken = localStorage.getItem(STORAGE_KEY)
+              if (legacyToken) localStorage.setItem(storageKey, legacyToken)
+              // Bersihkan legacy key setelah migrasi berhasil
+              localStorage.removeItem(STORAGE_KEY)
+              localStorage.removeItem(`${STORAGE_KEY}.meta`)
+              raw = legacyRaw
+            }
+          } catch {
+            // Legacy data rusak — abaikan
+          }
+        }
+      }
+
       if (!raw) {
         // Tidak ada metadata sesi — bersihkan token lepas (mis. sisa table order lama).
         localStorage.removeItem(storageKey)
-        this.clear()
+        this._clearState()
         return
       }
 
@@ -155,10 +179,15 @@ export const useCustomerSessionStore = defineStore('customer-session', {
       }
     },
 
-    persist() {
+    /**
+     * Persist session ke localStorage.
+     * @param orgSlugOverride — gunakan saat organization belum di-set di state
+     *   (misal: awal startSessionForOpenBill saat token baru di-inject).
+     */
+    persist(orgSlugOverride?: string) {
       if (!import.meta.client) return
 
-      const orgSlug = (this.organization?.slug || getActiveOrgSlug()).trim().toLowerCase()
+      const orgSlug = (orgSlugOverride || this.organization?.slug || getActiveOrgSlug()).trim().toLowerCase()
       const storageKey = orgSlug ? `customer_session_${orgSlug}` : STORAGE_KEY
 
       // Hanya OPEN BILL yang dipersist ke localStorage.
@@ -170,7 +199,7 @@ export const useCustomerSessionStore = defineStore('customer-session', {
         return
       }
 
-      // Simpan token di key utama (sesuai docs: 'customer_session')
+      // Simpan token di key utama
       if (this.sessionToken) {
         localStorage.setItem(storageKey, this.sessionToken)
       }
@@ -198,6 +227,9 @@ export const useCustomerSessionStore = defineStore('customer-session', {
       this.table = null
       this.openBill = null
       this.sessionType = null
+      // Reset restore flags agar re-restore dimungkinkan setelah clear
+      this.restored = false
+      this.lastRestoredSlug = null
 
       if (import.meta.client) {
         const storageKey = orgSlug ? `customer_session_${orgSlug}` : STORAGE_KEY
@@ -208,6 +240,19 @@ export const useCustomerSessionStore = defineStore('customer-session', {
         localStorage.removeItem(STORAGE_KEY)
         localStorage.removeItem(`${STORAGE_KEY}.meta`)
       }
+    },
+
+    /**
+     * Helper internal: bersihkan state tanpa menghapus localStorage.
+     * Digunakan oleh restore() saat tidak ada data untuk di-restore.
+     */
+    _clearState() {
+      this.sessionToken = null
+      this.expiresAt = null
+      this.organization = null
+      this.table = null
+      this.openBill = null
+      this.sessionType = null
     }
   }
 })

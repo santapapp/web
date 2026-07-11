@@ -1,4 +1,4 @@
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import type { CartItem, CartMode, SelectedVariant, OrderItemPayload } from '~/stores/cart.store'
 
 export const useCart = (mode: CartMode = 'table_order') => {
@@ -6,6 +6,12 @@ export const useCart = (mode: CartMode = 'table_order') => {
 
   if (import.meta.client) {
     store.restore()
+
+    // Re-restore cart saat berpindah outlet tanpa full page reload (SPA navigation)
+    const route = useRoute()
+    watch(() => route.params.orgSlug, () => {
+      store.restore(true) // force=true
+    })
   }
 
   return {

@@ -115,27 +115,20 @@ const getActiveOrgSlug = (): string => {
   }
 }
 
-const cleanOrphanStorages = (activeSlug: string) => {
-  if (!import.meta.client || !activeSlug) return
+/**
+ * Bersihkan key localStorage legacy (global, non-namespaced) setelah
+ * migrasi ke format namespaced. TIDAK menghapus key outlet lain
+ * untuk keamanan multi-tab browser.
+ */
+const cleanLegacyStorages = () => {
+  if (!import.meta.client) return
   try {
-    const activeCartKey = `santap_cart_${activeSlug}`
-    const activeSessionKey = `customer_session_${activeSlug}`
-    const keysToRemove: string[] = []
-
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i)
-      if (key) {
-        if (key.startsWith('santap_cart_') && key !== activeCartKey) {
-          keysToRemove.push(key)
-        }
-        if (key.startsWith('customer_session_') && !key.startsWith(activeSessionKey) && key !== 'customer_session') {
-          keysToRemove.push(key)
-        }
-      }
-    }
-    keysToRemove.forEach((k) => localStorage.removeItem(k))
-  } catch (e) {
-    console.error('Failed to clean orphan storage:', e)
+    // Hapus legacy global key yang sudah tidak digunakan
+    localStorage.removeItem('santap_cart_v2')
+    localStorage.removeItem('customer_session')
+    localStorage.removeItem('customer_session.meta')
+  } catch {
+    // Abaikan error
   }
 }
 
@@ -345,13 +338,26 @@ export const useCartStore = defineStore('cart', {
       this.restored = true
       this.lastRestoredSlug = orgSlug
 
-      // Bersihkan sampah outlet lain
-      if (orgSlug) {
-        cleanOrphanStorages(orgSlug)
+      const storageKey = orgSlug ? `santap_cart_${orgSlug}` : STORAGE_KEY
+      let raw = localStorage.getItem(storageKey)
+
+      // Migrasi: jika key namespaced kosong tapi ada data di key legacy global, migrasikan.
+      if (!raw && orgSlug) {
+        const legacyRaw = localStorage.getItem(STORAGE_KEY)
+        if (legacyRaw) {
+          try {
+            JSON.parse(legacyRaw) // validasi format
+            localStorage.setItem(storageKey, legacyRaw)
+            raw = legacyRaw
+          } catch {
+            // Legacy data rusak — abaikan
+          }
+        }
       }
 
-      const storageKey = orgSlug ? `santap_cart_${orgSlug}` : STORAGE_KEY
-      const raw = localStorage.getItem(storageKey)
+      // Bersihkan key legacy global setelah migrasi
+      cleanLegacyStorages()
+
       if (!raw) {
         // Reset state jika tidak ada data di local storage untuk outlet ini
         this.carts = {

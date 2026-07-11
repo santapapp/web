@@ -8,6 +8,12 @@ export const useOrderCart = (mode: MaybeRefOrGetter<CartMode> = 'table_order') =
 
   if (import.meta.client) {
     store.restore()
+
+    // Re-restore cart saat berpindah outlet tanpa full page reload (SPA navigation)
+    const route = useRoute()
+    watch(() => route.params.orgSlug, () => {
+      store.restore(true) // force=true: baca dari key namespaced outlet baru
+    })
   }
 
   const currentMode = computed(() => toValue(mode))

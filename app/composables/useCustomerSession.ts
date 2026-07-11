@@ -327,7 +327,9 @@ export const useCustomerSession = () => {
     store.sessionToken = billToken
     store.sessionType = 'open_bill'
     store.expiresAt = fallbackExpiry
-    store.persist()
+    // Pass orgSlug eksplisit karena organization belum di-set di state
+    const currentSlug = options.orgSlug || normalizeSlug(String(useRoute().params.orgSlug || ''))
+    store.persist(currentSlug)
 
     try {
       const response = await api.validateSession()
@@ -421,7 +423,8 @@ export const useCustomerSession = () => {
   }
 
   const restoreAndValidate = async (): Promise<boolean> => {
-    store.restore()
+    const routeSlug = normalizeSlug(String(useRoute().params.orgSlug || ''))
+    store.restore(routeSlug)
 
     if (!store.hasSession || store.isExpired) {
       store.clear()
@@ -444,7 +447,7 @@ export const useCustomerSession = () => {
   }
 
   const restoreAndValidateForOrg = async (orgSlug: string): Promise<boolean> => {
-    store.restore()
+    store.restore(normalizeSlug(orgSlug))
 
     if (!store.hasSession || store.isExpired || !store.organization?.slug) {
       store.clear()
@@ -478,7 +481,8 @@ export const useCustomerSession = () => {
   }
 
   const restoreLocal = (): boolean => {
-    store.restore()
+    const routeSlug = normalizeSlug(String(useRoute().params.orgSlug || ''))
+    store.restore(routeSlug)
     if (!store.hasSession || store.isExpired) {
       store.clear()
       return false

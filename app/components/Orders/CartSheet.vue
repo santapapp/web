@@ -149,7 +149,7 @@ onUnmounted(() => {
     >
       <div
         v-if="open"
-        class="fixed inset-0 z-50 flex justify-center bg-black/45 backdrop-blur-xs w-full h-dvh min-h-screen overflow-hidden customer-ordering-layout"
+        class="fixed inset-0 z-50 flex justify-center bg-black/45 backdrop-blur-xs w-full overflow-hidden customer-ordering-layout"
       >
         <div class="bg-gray-50 flex flex-col w-full max-w-lg md:max-w-xl h-full shadow-2xl relative outline-none">
           <!-- Header (Sticky) -->
