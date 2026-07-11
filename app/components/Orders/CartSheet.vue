@@ -75,7 +75,7 @@ const checkoutLabel = computed(() => {
 })
 
 const isSubmitDisabled = computed(() =>
-  Boolean(props.submitting || props.paymentLocked || props.submitDisabled)
+  Boolean(props.submitting || props.submitDisabled)
 )
 
 // Writable computed properties untuk customerName dan orderNote
@@ -380,16 +380,16 @@ onUnmounted(() => {
             v-if="items.length > 0"
             class="flex-shrink-0 border-t border-gray-100 bg-white px-5 pt-4 pb-[max(20px,env(safe-area-inset-bottom))] space-y-3"
           >
-            <!-- Payment locked banner (open bill dengan payment pending) -->
+            <!-- Payment info banner (open bill dengan payment pending) -->
             <div
               v-if="paymentLocked"
-              class="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3.5"
+              class="flex items-start gap-3 bg-blue-50/70 border border-blue-200 rounded-2xl px-4 py-3.5"
             >
-              <UIcon name="i-lucide-lock" class="size-4.5 text-amber-700 shrink-0 mt-0.5" />
+              <UIcon name="i-lucide-info" class="size-4.5 text-blue-700 shrink-0 mt-0.5" />
               <div>
-                <p class="text-sm font-bold text-amber-900">Pesanan Terkunci</p>
-                <p class="text-xs text-amber-700 font-normal mt-0.5 leading-relaxed">
-                  Pembayaran sedang menunggu konfirmasi. Selesaikan atau batalkan pembayaran terlebih dahulu.
+                <p class="text-sm font-bold text-blue-900">Pembayaran Berlangsung</p>
+                <p class="text-xs text-blue-700 font-normal mt-0.5 leading-relaxed">
+                  Transaksi pembayaran Anda sedang diproses. Anda tetap dapat menambahkan menu baru ke tagihan ini.
                 </p>
               </div>
             </div>

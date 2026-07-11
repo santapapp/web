@@ -11,6 +11,15 @@ import type { CustomerSessionOrg, CustomerSessionTable, StoredSessionOpenBill, C
 
 const STORAGE_KEY = 'customer_session'
 
+const getActiveOrgSlug = (): string => {
+  try {
+    const route = useRoute()
+    return String(route.params.orgSlug || '').trim().toLowerCase()
+  } catch {
+    return ''
+  }
+}
+
 interface CustomerSessionState {
   sessionToken: string | null
   expiresAt: string | null
@@ -25,6 +34,7 @@ interface CustomerSessionState {
    */
   sessionType: CustomerSessionType | null
   restored: boolean
+  lastRestoredSlug: string | null
 }
 
 export const useCustomerSessionStore = defineStore('customer-session', {
@@ -35,7 +45,8 @@ export const useCustomerSessionStore = defineStore('customer-session', {
     table: null,
     openBill: null,
     sessionType: null,
-    restored: false
+    restored: false,
+    lastRestoredSlug: null
   }),
 
   getters: {
@@ -102,19 +113,26 @@ export const useCustomerSessionStore = defineStore('customer-session', {
      * jadi tidak pernah dipulihkan dari localStorage. Data table order lama (mis. dari
      * versi sebelumnya) akan ikut dibersihkan di sini.
      */
-    restore() {
-      if (!import.meta.client || this.restored) return
+    restore(orgSlugParam?: string) {
+      if (!import.meta.client) return
+      
+      const orgSlug = (orgSlugParam || getActiveOrgSlug()).trim().toLowerCase()
+      if (this.restored && this.lastRestoredSlug === orgSlug) return
+      
       this.restored = true
+      this.lastRestoredSlug = orgSlug
 
-      const raw = localStorage.getItem(`${STORAGE_KEY}.meta`)
+      const storageKey = orgSlug ? `customer_session_${orgSlug}` : STORAGE_KEY
+      const raw = localStorage.getItem(`${storageKey}.meta`)
       if (!raw) {
         // Tidak ada metadata sesi — bersihkan token lepas (mis. sisa table order lama).
-        localStorage.removeItem(STORAGE_KEY)
+        localStorage.removeItem(storageKey)
+        this.clear()
         return
       }
 
       try {
-        const meta = JSON.parse(raw) as Omit<CustomerSessionState, 'restored'>
+        const meta = JSON.parse(raw) as Omit<CustomerSessionState, 'restored' | 'lastRestoredSlug'>
 
         // Hanya open bill yang merupakan session valid yang boleh dipulihkan.
         if (meta.sessionType !== 'open_bill') {
@@ -140,23 +158,26 @@ export const useCustomerSessionStore = defineStore('customer-session', {
     persist() {
       if (!import.meta.client) return
 
+      const orgSlug = (this.organization?.slug || getActiveOrgSlug()).trim().toLowerCase()
+      const storageKey = orgSlug ? `customer_session_${orgSlug}` : STORAGE_KEY
+
       // Hanya OPEN BILL yang dipersist ke localStorage.
       // Table order bersifat sementara (in-memory) dan TIDAK boleh menjadi session
       // permanen — jadi setiap kali state bukan open_bill, bersihkan localStorage.
       if (this.sessionType !== 'open_bill') {
-        localStorage.removeItem(STORAGE_KEY)
-        localStorage.removeItem(`${STORAGE_KEY}.meta`)
+        localStorage.removeItem(storageKey)
+        localStorage.removeItem(`${storageKey}.meta`)
         return
       }
 
       // Simpan token di key utama (sesuai docs: 'customer_session')
       if (this.sessionToken) {
-        localStorage.setItem(STORAGE_KEY, this.sessionToken)
+        localStorage.setItem(storageKey, this.sessionToken)
       }
 
       // Simpan metadata session di key terpisah
       localStorage.setItem(
-        `${STORAGE_KEY}.meta`,
+        `${storageKey}.meta`,
         JSON.stringify({
           sessionToken: this.sessionToken,
           expiresAt: this.expiresAt,
@@ -169,6 +190,8 @@ export const useCustomerSessionStore = defineStore('customer-session', {
     },
 
     clear() {
+      const orgSlug = (this.organization?.slug || getActiveOrgSlug()).trim().toLowerCase()
+
       this.sessionToken = null
       this.expiresAt = null
       this.organization = null
@@ -177,6 +200,11 @@ export const useCustomerSessionStore = defineStore('customer-session', {
       this.sessionType = null
 
       if (import.meta.client) {
+        const storageKey = orgSlug ? `customer_session_${orgSlug}` : STORAGE_KEY
+        localStorage.removeItem(storageKey)
+        localStorage.removeItem(`${storageKey}.meta`)
+
+        // Bersihkan juga legacy global key
         localStorage.removeItem(STORAGE_KEY)
         localStorage.removeItem(`${STORAGE_KEY}.meta`)
       }

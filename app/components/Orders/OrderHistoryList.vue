@@ -241,7 +241,7 @@ const downloadReceipt = async (orderToken: string, orderCode: string) => {
                 variant="outline"
                 label="Batal"
                 size="sm"
-                @click="showDeleteAll = false"
+                @click="() => { showDeleteAll = false }"
               />
               <UButton
                 block
@@ -250,7 +250,7 @@ const downloadReceipt = async (orderToken: string, orderCode: string) => {
                 label="Hapus Semua"
                 icon="i-lucide-trash-2"
                 size="sm"
-                @click="emit('remove-all'); showDeleteAll = false"
+                @click="() => { emit('remove-all'); showDeleteAll = false }"
               />
             </div>
           </div>

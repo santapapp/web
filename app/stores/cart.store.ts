@@ -101,9 +101,43 @@ interface CartBucket {
 interface CartState {
   carts: Record<CartMode, CartBucket>
   restored: boolean
+  lastRestoredSlug: string | null
 }
 
 const STORAGE_KEY = 'santap_cart_v2'
+
+const getActiveOrgSlug = (): string => {
+  try {
+    const route = useRoute()
+    return String(route.params.orgSlug || '').trim().toLowerCase()
+  } catch {
+    return ''
+  }
+}
+
+const cleanOrphanStorages = (activeSlug: string) => {
+  if (!import.meta.client || !activeSlug) return
+  try {
+    const activeCartKey = `santap_cart_${activeSlug}`
+    const activeSessionKey = `customer_session_${activeSlug}`
+    const keysToRemove: string[] = []
+
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i)
+      if (key) {
+        if (key.startsWith('santap_cart_') && key !== activeCartKey) {
+          keysToRemove.push(key)
+        }
+        if (key.startsWith('customer_session_') && !key.startsWith(activeSessionKey) && key !== 'customer_session') {
+          keysToRemove.push(key)
+        }
+      }
+    }
+    keysToRemove.forEach((k) => localStorage.removeItem(k))
+  } catch (e) {
+    console.error('Failed to clean orphan storage:', e)
+  }
+}
 
 const createBucket = (): CartBucket => ({
   items: [],
@@ -117,7 +151,8 @@ export const useCartStore = defineStore('cart', {
       table_order: createBucket(),
       open_bill: createBucket()
     },
-    restored: false
+    restored: false,
+    lastRestoredSlug: null
   }),
 
   getters: {
@@ -288,19 +323,43 @@ export const useCartStore = defineStore('cart', {
 
     persist() {
       if (!import.meta.client) return
+      
+      const orgSlug = getActiveOrgSlug()
+      const storageKey = orgSlug ? `santap_cart_${orgSlug}` : STORAGE_KEY
+      
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.carts))
+        localStorage.setItem(storageKey, JSON.stringify(this.carts))
       } catch {
         // Storage quota exceeded — ignore
       }
     },
 
-    restore() {
-      if (!import.meta.client || this.restored) return
+    restore(force = false) {
+      if (!import.meta.client) return
+      
+      const orgSlug = getActiveOrgSlug()
+      
+      // Jika sudah di-restore untuk outlet yang sama, lewati (kecuali dipaksa via force=true)
+      if (this.restored && this.lastRestoredSlug === orgSlug && !force) return
+      
       this.restored = true
+      this.lastRestoredSlug = orgSlug
 
-      const raw = localStorage.getItem(STORAGE_KEY)
-      if (!raw) return
+      // Bersihkan sampah outlet lain
+      if (orgSlug) {
+        cleanOrphanStorages(orgSlug)
+      }
+
+      const storageKey = orgSlug ? `santap_cart_${orgSlug}` : STORAGE_KEY
+      const raw = localStorage.getItem(storageKey)
+      if (!raw) {
+        // Reset state jika tidak ada data di local storage untuk outlet ini
+        this.carts = {
+          table_order: createBucket(),
+          open_bill: createBucket()
+        }
+        return
+      }
 
       try {
         const parsed = JSON.parse(raw)
@@ -327,8 +386,10 @@ export const useCartStore = defineStore('cart', {
             }
           }
 
-          if (parsed.table_order) this.carts.table_order = migrateBucket(parsed.table_order)
-          if (parsed.open_bill) this.carts.open_bill = migrateBucket(parsed.open_bill)
+          this.carts = {
+            table_order: parsed.table_order ? migrateBucket(parsed.table_order) : createBucket(),
+            open_bill: parsed.open_bill ? migrateBucket(parsed.open_bill) : createBucket()
+          }
         }
       } catch {
         this.carts = { table_order: createBucket(), open_bill: createBucket() }

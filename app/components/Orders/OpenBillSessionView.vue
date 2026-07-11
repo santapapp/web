@@ -370,9 +370,9 @@ onUnmounted(() => {
 
           <!-- ── CTA Actions ── -->
           <div class="space-y-2 pb-6">
-            <!-- Bayar Total (hanya saat sesi aktif dan ada item dan payment bukan pending/paid) -->
+            <!-- Bayar Total (hanya saat sesi aktif dan ada item dan payment bukan paid) -->
             <button
-              v-if="!isBillClosed && !isPaid && !isPaymentPending && rootItems.length > 0"
+              v-if="!isBillClosed && !isPaid && rootItems.length > 0"
               type="button"
               :disabled="payPending"
               class="w-full min-h-[38px] rounded-lg bg-orange-600 text-white font-bold hover:bg-orange-700 active:scale-[0.98] transition-all duration-150 shadow-md shadow-orange-600/25 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-xs"
@@ -387,7 +387,7 @@ onUnmounted(() => {
 
             <!-- Tambah Pesanan Lagi -->
             <button
-              v-if="!isBillClosed && !isPaid && !isPaymentPending"
+              v-if="!isBillClosed && !isPaid"
               type="button"
               class="w-full min-h-[38px] rounded-lg bg-stone-900 text-white font-bold hover:bg-stone-850 active:scale-[0.98] transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer shadow-md shadow-stone-900/10 text-xs"
               @click="emit('add-more')"

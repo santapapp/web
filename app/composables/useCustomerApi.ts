@@ -46,10 +46,14 @@ export const useCustomerApi = () => {
   const getToken = (): string | null => {
     if (!import.meta.client) return null
     try {
-      // persist() menyimpan raw token di 'customer_session' (string, bukan JSON)
-      // dan metadata JSON di 'customer_session.meta'.
+      const route = useRoute()
+      const orgSlug = String(route.params.orgSlug || '').trim().toLowerCase()
+      const storageKey = orgSlug ? `customer_session_${orgSlug}` : SESSION_STORAGE_KEY
+
+      // persist() menyimpan raw token di 'customer_session_[orgSlug]' (string, bukan JSON)
+      // dan metadata JSON di 'customer_session_[orgSlug].meta'.
       // Kita baca dari .meta agar bisa cek sessionType sebelum mengirim token.
-      const meta = localStorage.getItem(`${SESSION_STORAGE_KEY}.meta`)
+      const meta = localStorage.getItem(`${storageKey}.meta`)
       if (meta) {
         const parsed = JSON.parse(meta)
         // table_order = lokal, tidak perlu token ke backend
@@ -59,8 +63,19 @@ export const useCustomerApi = () => {
 
       // Fallback: baca raw token langsung (format lama / edge case)
       // Ini hanya berlaku jika .meta tidak ada tapi token ada — kirim apa adanya.
-      const raw = localStorage.getItem(SESSION_STORAGE_KEY)
-      if (!raw) return null
+      const raw = localStorage.getItem(storageKey)
+      if (!raw) {
+        // Cek juga fallback legacy global key
+        const legacyMeta = localStorage.getItem(`${SESSION_STORAGE_KEY}.meta`)
+        if (legacyMeta) {
+          const parsed = JSON.parse(legacyMeta)
+          if (parsed.sessionType === 'table_order') return null
+          return parsed.sessionToken || null
+        }
+        const legacyRaw = localStorage.getItem(SESSION_STORAGE_KEY)
+        if (!legacyRaw) return null
+        return legacyRaw
+      }
 
       // Coba parse sebagai JSON (format lama)
       try {

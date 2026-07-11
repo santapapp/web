@@ -570,7 +570,7 @@ onMounted(async () => {
           label="Kembali"
           color="neutral"
           variant="outline"
-          @click="showCancelModal = false"
+          @click="() => { showCancelModal = false }"
         />
         <UButton
           label="Ya, Batalkan"
@@ -663,7 +663,7 @@ onMounted(async () => {
               color="primary"
               icon="i-lucide-utensils"
               block
-              @click="router.push(`/o/${orgSlug}/orders`)"
+              @click="() => { router.push(`/o/${orgSlug}/orders`) }"
             />
           </div>
 
@@ -681,7 +681,7 @@ onMounted(async () => {
               color="primary"
               icon="i-lucide-arrow-left"
               block
-              @click="router.push(`/o/${orgSlug}/orders`)"
+              @click="() => { router.push(`/o/${orgSlug}/orders`) }"
             />
           </div>
 
@@ -979,7 +979,7 @@ onMounted(async () => {
               color="primary"
               icon="i-lucide-utensils"
               block
-              @click="router.push(`/o/${orgSlug}/orders`)"
+              @click="() => { router.push(`/o/${orgSlug}/orders`) }"
             />
           </div>
 
