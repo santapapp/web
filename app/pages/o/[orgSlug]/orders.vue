@@ -197,7 +197,7 @@ const startOpenBillPoll = () => {
       return
     }
 
-    const res = await fetchOpenBill()
+    const res = await fetchOpenBill({ silent: true })
     if (res.success) {
       if (order.value?.bill_status === 'closed' || order.value?.payment_status === 'paid') {
         stopOpenBillPoll()

@@ -19,6 +19,11 @@ import type {
 } from '~/types/customer-order'
 import type { CustomerApiError } from './useCustomerApi'
 
+// Module-level throttle trackers to protect API from aggressive polling / reconnect loops
+let lastOrderStatusFetchTime = 0
+let lastOpenBillFetchTime = 0
+const MIN_FETCH_INTERVAL_MS = 5000 // 5 seconds throttle
+
 export const useCustomerOrder = () => {
   const api = useCustomerApi()
   const sessionStore = useCustomerSessionStore()
@@ -139,7 +144,15 @@ export const useCustomerOrder = () => {
    * Menggunakan public_token dari localStorage sebagai X-Public-Token.
    * GET /v1/customer/order
    */
-  const fetchOpenBill = async () => {
+  const fetchOpenBill = async (opts: { silent?: boolean } = {}) => {
+    const { silent = false } = opts
+    const now = Date.now()
+
+    // Throttle silent background fetches
+    if (silent && (now - lastOpenBillFetchTime < MIN_FETCH_INTERVAL_MS) && order.value) {
+      return { success: true, data: order.value }
+    }
+
     fetchPending.value = true
     fetchError.value = null
 
@@ -156,6 +169,7 @@ export const useCustomerOrder = () => {
 
       // Sync total ke session store
       syncToSessionStore(raw)
+      lastOpenBillFetchTime = Date.now()
 
       return { success: true, data: order.value }
     } catch (err) {
@@ -182,6 +196,12 @@ export const useCustomerOrder = () => {
     // skeleton/loading dan tanpa mengosongkan state valid terakhir saat 1 request gagal.
     // Loading (statusPending) hanya untuk load awal / aksi penting.
     const { silent = false } = opts
+    const now = Date.now()
+
+    // Throttle silent background fetches
+    if (silent && (now - lastOrderStatusFetchTime < MIN_FETCH_INTERVAL_MS) && order.value) {
+      return { success: true, data: order.value }
+    }
 
     if (!silent) statusPending.value = true
     statusError.value = null
@@ -198,6 +218,7 @@ export const useCustomerOrder = () => {
       }
 
       order.value = mapOrderResponse(raw)
+      lastOrderStatusFetchTime = Date.now()
       return { success: true, data: order.value }
     } catch (err) {
       // Saat polling background, JANGAN hapus tampilan valid hanya karena error transien
