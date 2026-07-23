@@ -558,32 +558,32 @@ onMounted(async () => {
       }
 
       // ── New CTA section: left heading + right cards ──────────────
-      const ctaSec = mainRef.value?.querySelector('[aria-label="Bergabung bersama Santap"]')
+      const ctaSec = mainRef.value?.querySelector<HTMLElement>('[aria-label="Bergabung bersama Santap"]')
       if (ctaSec) {
-        const leftCol = ctaSec.parentElement?.querySelector('.lg\\:col-span-5')
-        const rightCards = ctaSec.parentElement?.querySelectorAll('.lg\\:col-span-7 > div > div')
+        const leftCol = ctaSec.querySelector<HTMLElement>('.lg\\:col-span-5')
+        const rightCards = ctaSec.querySelectorAll<HTMLElement>('.lg\\:col-span-7 > div > div')
 
         if (leftCol) {
           gsap.set(leftCol, { opacity: 0, y: 32 })
           gsap.to(leftCol, {
-            scrollTrigger: { trigger: leftCol, start: 'top 72%' },
+            scrollTrigger: { trigger: leftCol, start: 'top 80%' },
             opacity: 1,
             y: 0,
-            duration: 1.4,
+            duration: 1.2,
             ease: 'power3.out',
           })
         }
 
-        if (rightCards) {
+        if (rightCards.length) {
           const cardsArray = Array.from(rightCards)
-          gsap.set(cardsArray, { opacity: 0, x: 50 })
+          gsap.set(cardsArray, { opacity: 0, x: 30 })
           gsap.to(cardsArray, {
-            scrollTrigger: { trigger: ctaSec, start: 'top 82%' },
+            scrollTrigger: { trigger: ctaSec, start: 'top 80%' },
             opacity: 1,
             x: 0,
-            duration: 1.1,
+            duration: 1.0,
             ease: 'power3.out',
-            stagger: 0.14,
+            stagger: 0.12,
           })
         }
       }

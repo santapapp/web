@@ -103,13 +103,13 @@
 
             <NuxtLink
               class="motion-btn inline-flex items-center justify-center w-[46px] h-[46px] rounded-full
-                     bg-[var(--color-primary)] text-white no-underline flex-shrink-0 shadow-lg
+                     bg-[var(--color-primary)] !text-white hover:!text-white no-underline flex-shrink-0 shadow-lg
                      hover:bg-[var(--color-primary-dark)]"
               to="/features"
               aria-label="Pelajari Fitur"
             >
               <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-                <path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 10h12M11 5l5 5-5 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </NuxtLink>
           </div>

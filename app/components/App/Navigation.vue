@@ -47,7 +47,7 @@
         rel="noopener noreferrer"
         class="motion-btn inline-flex items-center justify-center px-6 py-2 rounded-md
                text-[11px] font-bold no-underline uppercase tracking-[0.06em]
-               bg-[var(--color-primary)] text-white hover:bg-[var(--color-primary-dark)]"
+               bg-[var(--color-primary)] !text-white hover:!text-white hover:bg-[var(--color-primary-dark)]"
       >
         Download Sekarang
       </NuxtLink>
