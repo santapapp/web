@@ -93,14 +93,21 @@ const initials = computed(() => {
             </h1>
 
             <!-- Tagline -->
-            <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-white/75 mb-10">
-              PESAN, SANTAP, BAHAGIA
+            <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-white/75 mb-4">
+              SCAN, PESAN, SANTAP
             </p>
+
+            <!-- Plate Illustration -->
+            <img
+              src="/plate.avif"
+              alt="Plate illustration"
+              class="w-52 sm:w-52 h-auto object-contain mx-auto my-2 drop-shadow-md pointer-events-none select-none"
+            />
 
             <!-- Table/Bill Badge -->
             <div
               v-if="tableName"
-              class="mb-5 px-4 py-2 rounded-full bg-[#FFEAE2] text-[#7C2D12] font-bold text-xs flex items-center justify-center gap-1.5"
+              class="my-5 px-4 py-2 rounded-full bg-[#FFEAE2] text-[#7C2D12] font-bold text-xs flex items-center justify-center gap-1.5"
             >
               <UIcon name="i-lucide-armchair" class="size-3.5" />
               <span>{{ tableName.toLowerCase().includes('meja') ? tableName : 'Meja ' + tableName }}</span>
