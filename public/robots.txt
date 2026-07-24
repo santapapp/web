@@ -1,0 +1,9 @@
+# robots.txt for Santap (https://santap.app)
+User-agent: *
+Allow: /
+
+# Disallow indexing sensitive customer ordering session and payment pages
+Disallow: /o/*/orders
+Disallow: /o/*/payments
+
+Sitemap: https://santap.app/sitemap.xml

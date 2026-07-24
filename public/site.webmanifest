@@ -1,0 +1,31 @@
+{
+  "name": "Santap — Aplikasi Kasir POS Restoran & Cafe",
+  "short_name": "Santap",
+  "description": "Aplikasi kasir (POS) cloud untuk restoran dan cafe Indonesia: pesanan digital dari meja, open bill, dan pembayaran QRIS.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#e87722",
+  "lang": "id",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
