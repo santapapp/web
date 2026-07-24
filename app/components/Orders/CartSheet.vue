@@ -172,18 +172,20 @@ onUnmounted(() => {
           </header>
 
           <!-- Scrollable content -->
-          <div class="flex-1 overflow-y-auto px-4 pt-4 pb-8 space-y-5">
+          <div
+            class="flex-1 overflow-y-auto px-4 pt-4 pb-8 space-y-5 flex flex-col"
+            :class="{ 'justify-center': items.length === 0 }"
+          >
             <!-- Empty State -->
             <div
               v-if="items.length === 0"
-              class="flex flex-col items-center justify-center gap-4 py-20 text-center"
+              class="bg-white rounded-2xl border border-gray-100 shadow-xs p-8 flex flex-col items-center justify-center gap-2 text-center"
             >
-              <div class="size-14 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-300">
-                <UIcon name="i-lucide-shopping-cart" class="size-6" />
+              <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-1 shrink-0">
+                <UIcon name="i-lucide-shopping-bag" class="size-7 text-amber-700/60" />
               </div>
-              <p class="text-sm text-gray-500 font-semibold max-w-[220px]">
-                Keranjang masih kosong. Pilih menu untuk mulai memesan.
-              </p>
+              <p class="text-sm font-bold text-stone-800">Keranjang Masih Kosong</p>
+              <p class="text-xs text-stone-400 font-normal max-w-[220px] leading-relaxed">Pilih menu favoritmu dari daftar untuk mulai membuat pesanan.</p>
             </div>
 
             <template v-else>

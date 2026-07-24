@@ -113,12 +113,13 @@ onUnmounted(() => {
           </header>
 
           <!-- Scrollable body -->
-          <div class="flex-1 overflow-y-auto px-4 py-4 space-y-6">
+          <div
+            class="flex-1 overflow-y-auto px-4 py-4 space-y-6 flex flex-col"
+            :class="{ 'justify-center': !activeOrder.order.value && history.items.value.length === 0 }"
+          >
 
             <!-- Active orders section -->
             <div>
-              <h3 class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3 px-1">Sesi Aktif</h3>
-
               <OrdersActiveOrderCard
                 :order="activeOrder.order.value"
                 :org-slug="orgSlug"

@@ -56,8 +56,11 @@ const statusRoute = computed(() => ({
 
     <!-- No active order -->
     <div v-else-if="!order" class="empty-state">
-      <UIcon name="i-lucide-clipboard-list" class="size-8 text-gray-200" />
-      <p>Belum ada pesanan aktif</p>
+      <div class="empty-icon-wrap">
+        <UIcon name="i-lucide-clipboard-list" class="size-8 text-amber-700/60" />
+      </div>
+      <p class="empty-title">Belum ada pesanan aktif</p>
+      <p class="empty-desc">Pesanan yang sedang diproses atau baru dibuat akan muncul di sini.</p>
     </div>
 
     <!-- Order detail -->
@@ -135,28 +138,55 @@ const statusRoute = computed(() => ({
   min-height: 80px;
 }
 
-.loading-state,
+.loading-state {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 0;
+  color: #c07b2a;
+  font-size: 13px;
+  text-align: center;
+}
+
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 16px 0;
-  color: #a09080;
-  font-size: 12px;
+  padding: 44px 20px;
+  min-height: 200px;
   text-align: center;
 }
 
-.loading-state {
-  flex-direction: row;
-  gap: 6px;
-  font-size: 13px;
-  color: #c07b2a;
+.empty-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background-color: #fdf8f3;
+  border: 1px solid rgba(232, 119, 34, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
 }
 
-.empty-state p {
+.empty-title {
   margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2c2520;
+}
+
+.empty-desc {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 400;
+  color: #8c827a;
+  max-width: 220px;
+  line-height: 1.45;
 }
 
 .mode-row {
