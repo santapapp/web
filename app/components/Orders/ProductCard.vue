@@ -48,7 +48,7 @@ const handleAction = () => {
     :class="{ 'opacity-75': isUnavailable }"
     @click="handleAction"
   >
-    <!-- Background Image / Aesthetic Placeholder -->
+    <!-- Background Image / Aesthetic Placeholder (Clean without dark gradient overlay) -->
     <div class="absolute inset-0 bg-stone-100 flex-shrink-0 overflow-hidden">
       <img
         v-if="product.image"
@@ -61,14 +61,6 @@ const handleAction = () => {
       <div v-else class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-orange-50 via-stone-100 to-stone-200">
         <UIcon name="i-lucide-utensils" class="size-8 text-stone-300" />
       </div>
-
-      <!-- Gradient overlay for readability — only needed when image present -->
-      <div
-        class="absolute inset-0"
-        :class="product.image
-          ? 'bg-gradient-to-t from-black/90 via-black/40 to-transparent'
-          : 'bg-gradient-to-t from-black/60 via-black/20 to-transparent'"
-      />
     </div>
 
     <!-- Badge: Out of stock -->
@@ -82,79 +74,79 @@ const handleAction = () => {
     <!-- Badge: Cart quantity -->
     <span
       v-if="cartQty && cartQty > 0 && !isUnavailable"
-      class="absolute top-2.5 right-2.5 size-6 rounded-full bg-orange-600 text-white text-[11px] font-black flex items-center justify-center shadow-lg border border-white/20 z-10 animate-scale-in"
+      class="absolute top-2.5 right-2.5 size-6 rounded-full bg-orange-600 text-white text-[11px] font-black flex items-center justify-center shadow-md border border-white/40 z-10 animate-scale-in"
     >
       {{ cartQty }}
     </span>
 
-    <!-- Overlay Content at bottom -->
-    <div class="absolute bottom-0 left-0 right-0 p-2.5 sm:p-3 flex flex-col justify-end z-10 gap-1.5 min-h-[55%]">
+    <!-- Content Panel at bottom: Transparent Overlay -->
+    <div class="absolute bottom-0 left-0 right-0 p-2.5 sm:p-3 flex flex-col justify-end z-10 gap-1 bg-transparent">
       <!-- Title & Description -->
       <div class="flex flex-col gap-0.5">
-        <h4 class="text-xs sm:text-sm font-black text-white leading-snug line-clamp-2 drop-shadow-sm">
+        <h4 class="text-xs sm:text-sm font-bold text-slate-900 leading-snug line-clamp-1">
           {{ product.name }}
         </h4>
-        <p v-if="product.description" class="text-[10px] sm:text-[11px] text-white/70 leading-normal line-clamp-1 font-medium">
+        <p v-if="product.description" class="text-[10px] sm:text-[11px] text-slate-600 leading-normal line-clamp-1 font-medium">
           {{ product.description }}
         </p>
       </div>
 
       <!-- Price & Actions Row -->
-      <div class="flex items-center justify-between gap-2 pt-1">
-        <span class="text-xs sm:text-sm font-black text-orange-400 whitespace-nowrap drop-shadow-sm">
+      <div class="flex items-center justify-between gap-2 pt-0.5">
+        <span class="text-xs sm:text-sm font-extrabold text-orange-600 whitespace-nowrap">
           {{ formatPrice(product.price) }}
         </span>
 
         <!-- Action Buttons -->
         <div v-if="!isUnavailable && !readOnly" class="flex-shrink-0" @click.stop>
-          <!-- Choose variant button (Solid gradient button) -->
+          <!-- Choose variant button -->
           <button
             v-if="hasVariants"
             type="button"
-            class="size-8 sm:size-auto sm:px-3.5 sm:py-1.5 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-black text-[10px] uppercase tracking-wider flex items-center justify-center sm:justify-start gap-1 transition-all duration-150 cursor-pointer shadow-md shadow-orange-950/20"
+            class="h-7 px-2.5 rounded-full bg-orange-600 hover:bg-orange-700 text-white font-bold text-[10px] leading-none flex items-center justify-center gap-0.5 transition-all duration-150 cursor-pointer shadow-xs shrink-0"
             @click="handleAction"
           >
-            <span class="hidden sm:inline">Pilih</span>
-            <UIcon name="i-lucide-chevron-right" class="size-4 sm:size-3.5 text-white" />
+            <span>Pilih</span>
+            <UIcon name="i-lucide-chevron-right" class="size-3 text-white" />
           </button>
 
-          <!-- Stepper for non-variant products (Glass stepper) -->
+          <!-- Stepper for non-variant products -->
           <div
             v-else-if="cartQty && cartQty > 0"
-            class="flex items-center gap-1 bg-black/40 backdrop-blur-md rounded-full px-1 py-0.5 border border-white/10 shadow-sm animate-scale-in"
+            class="flex items-center gap-1 bg-stone-100 rounded-full px-1 py-0.5 border border-stone-200 shadow-xs animate-scale-in"
           >
             <!-- Minus -->
             <button
               type="button"
-              class="size-7 rounded-full text-orange-400 hover:bg-white/10 active:scale-90 flex items-center justify-center transition-all cursor-pointer"
+              class="size-6 rounded-full text-orange-600 hover:bg-orange-100 active:scale-90 flex items-center justify-center transition-all cursor-pointer"
               aria-label="Kurangi"
               @click="emit('decrease', product)"
             >
-              <UIcon name="i-lucide-minus" class="size-3.5" />
+              <UIcon name="i-lucide-minus" class="size-3 text-orange-600" />
             </button>
-            <span class="text-xs font-black text-white w-4 text-center tabular-nums">
+            <span class="text-xs font-black text-stone-900 w-4 text-center tabular-nums">
               {{ cartQty }}
             </span>
             <!-- Plus -->
             <button
               type="button"
-              class="size-7 rounded-full text-orange-400 hover:bg-white/10 active:scale-90 flex items-center justify-center transition-all cursor-pointer"
+              class="size-6 rounded-full text-orange-600 hover:bg-orange-100 active:scale-90 flex items-center justify-center transition-all cursor-pointer"
               aria-label="Tambah"
               @click="emit('increase', product)"
             >
-              <UIcon name="i-lucide-plus" class="size-3.5" />
+              <UIcon name="i-lucide-plus" class="size-3 text-orange-600" />
             </button>
           </div>
 
-          <!-- Add to cart direct button (Solid gradient button) -->
+          <!-- Add to cart direct button -->
           <button
             v-else
             type="button"
-            class="size-8 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white flex items-center justify-center transition-all duration-150 cursor-pointer shadow-md shadow-orange-950/20"
+            class="size-7 rounded-full bg-orange-600 hover:bg-orange-700 text-white flex items-center justify-center transition-all duration-150 cursor-pointer shadow-xs"
             :aria-label="`Tambah ${product.name}`"
             @click="handleAction"
           >
-            <UIcon name="i-lucide-plus" class="size-4 text-white" />
+            <UIcon name="i-lucide-plus" class="size-3.5 text-white" />
           </button>
         </div>
       </div>

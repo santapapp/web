@@ -65,7 +65,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="mx-auto w-full max-w-5xl px-4 py-5 pb-32 lg:px-6 lg:pb-8">
+  <section class="mx-auto w-full max-w-5xl px-4 pt-0 pb-32 lg:px-6 lg:pb-8">
     <div ref="sentinelRef" class="h-0 w-full pointer-events-none"></div>
 
     <div
