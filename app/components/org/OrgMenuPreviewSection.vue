@@ -115,7 +115,7 @@ onUnmounted(() => {
       <USkeleton
         v-for="n in 10"
         :key="n"
-        class="aspect-[4/5] w-full rounded-2xl"
+        class="aspect-square w-full rounded-2xl"
       />
     </div>
 

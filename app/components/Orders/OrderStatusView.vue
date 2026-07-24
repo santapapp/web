@@ -154,6 +154,20 @@ const downloadReceipt = async () => {
     downloadLoading.value = false
   }
 }
+
+const history = useOrderHistory(props.orgSlug)
+const showDeleteConfirm = ref(false)
+
+const handleDeleteThisOrder = () => {
+  const queryOrder = String(router.currentRoute.value.query.order || '')
+  if (queryOrder) history.removeOne(queryOrder)
+  if (props.orderToken) history.removeOne(props.orderToken)
+  if (props.order?.order_number) history.removeOne(props.order.order_number)
+  if (props.order?.public_token) history.removeOne(props.order.public_token)
+
+  showDeleteConfirm.value = false
+  router.push(`/o/${props.orgSlug}/orders`)
+}
 </script>
 
 <template>
@@ -171,7 +185,16 @@ const downloadReceipt = async () => {
         <div class="flex flex-col items-center text-center">
           <div class="text-sm font-bold text-stone-900 leading-none">Detail Pesanan</div>
         </div>
-        <span class="size-8 flex-shrink-0" aria-hidden="true" />
+        <button
+          v-if="order || orderToken"
+          type="button"
+          class="size-8 rounded-lg flex items-center justify-center text-stone-400 hover:text-rose-600 hover:bg-rose-50 border border-stone-100 active:scale-95 transition-all duration-150 cursor-pointer shadow-xs"
+          title="Hapus pesanan ini dari riwayat"
+          @click="showDeleteConfirm = true"
+        >
+          <UIcon name="i-lucide-trash-2" class="size-4" />
+        </button>
+        <span v-else class="size-8 flex-shrink-0" aria-hidden="true" />
       </div>
     </header>
 
@@ -179,12 +202,32 @@ const downloadReceipt = async () => {
       <section class="mx-auto w-full max-w-md lg:max-w-5xl px-3 py-3 transition-all duration-300">
         <OrdersOrderSkeleton v-if="loading" />
 
-        <OrdersOrderErrorState
-          v-else-if="error || !order"
-          title="Order tidak ditemukan"
-          :description="error || 'Token order tidak valid atau akses sudah kedaluwarsa.'"
-          icon="i-lucide-file-warning"
-        />
+        <div v-else-if="error || !order" class="space-y-4">
+          <OrdersOrderErrorState
+            title="Order tidak ditemukan"
+            :description="error || 'Token order tidak valid atau pesanan telah dihapus dari database.'"
+            icon="i-lucide-file-warning"
+          />
+
+          <div class="flex flex-col gap-2.5 max-w-sm mx-auto pt-2">
+            <button
+              type="button"
+              class="w-full py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+              @click="showDeleteConfirm = true"
+            >
+              <UIcon name="i-lucide-trash-2" class="size-4" />
+              <span>Hapus Pesanan Ini dari Riwayat Cache</span>
+            </button>
+
+            <NuxtLink
+              :to="`/o/${orgSlug}/orders`"
+              class="w-full py-2.5 px-4 rounded-xl border border-stone-200 bg-white hover:bg-stone-50 text-stone-700 text-xs font-bold flex items-center justify-center gap-2 transition-all cursor-pointer no-underline text-center"
+            >
+              <UIcon name="i-lucide-arrow-left" class="size-4" />
+              <span>Kembali ke Daftar Menu</span>
+            </NuxtLink>
+          </div>
+        </div>
 
         <div v-else class="flex flex-col gap-3 lg:gap-4">
           <!-- Confirmation header -->
@@ -327,6 +370,16 @@ const downloadReceipt = async () => {
                   <UIcon name="i-lucide-plus" class="size-4" />
                   <span>{{ canPay ? 'Tambah Pesanan Lagi' : 'Buat Pesanan Lagi' }}</span>
                 </NuxtLink>
+
+                <button
+                  v-if="order"
+                  type="button"
+                  class="w-full min-h-[38px] px-3 py-2 rounded-lg bg-stone-50 hover:bg-rose-50 text-stone-500 hover:text-rose-600 border border-stone-200/60 hover:border-rose-200 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all duration-150 cursor-pointer mt-1"
+                  @click="showDeleteConfirm = true"
+                >
+                  <UIcon name="i-lucide-trash-2" class="size-3.5 text-stone-400 group-hover:text-rose-600" />
+                  <span>Hapus Pesanan dari Riwayat</span>
+                </button>
               </div>
 
               <!-- Footer note -->
@@ -339,5 +392,49 @@ const downloadReceipt = async () => {
         </div>
       </section>
     </div>
+
+    <!-- Delete Single Order Confirm Modal -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div
+          v-if="showDeleteConfirm"
+          class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
+          @click.self="showDeleteConfirm = false"
+        >
+          <div class="w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl border border-stone-100 flex flex-col items-center text-center gap-3">
+            <div class="size-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100">
+              <UIcon name="i-lucide-trash-2" class="size-6" />
+            </div>
+            <div>
+              <h4 class="text-base font-extrabold text-stone-900">Hapus Pesanan dari Riwayat?</h4>
+              <p class="text-xs text-stone-500 mt-1 leading-relaxed">
+                <template v-if="order?.order_number">
+                  Pesanan <strong class="font-bold text-stone-800">#{{ order.order_number }}</strong> akan dihapus dari cache riwayat lokal Anda.
+                </template>
+                <template v-else>
+                  Pesanan yang tidak ditemukan ini akan dihapus dari cache riwayat lokal Anda.
+                </template>
+              </p>
+            </div>
+            <div class="flex items-center gap-2.5 w-full mt-2">
+              <button
+                type="button"
+                class="flex-1 py-2.5 rounded-xl border border-stone-200 text-xs font-bold text-stone-600 hover:bg-stone-50 transition-all cursor-pointer"
+                @click="showDeleteConfirm = false"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                class="flex-1 py-2.5 rounded-xl bg-rose-600 text-xs font-bold text-white hover:bg-rose-700 transition-all cursor-pointer shadow-sm"
+                @click="handleDeleteThisOrder"
+              >
+                Ya, Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>

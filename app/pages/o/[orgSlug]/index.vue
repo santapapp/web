@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import OrgHeroSection from '~/components/org/OrgHeroSection.vue'
-import OrgTransactionInfoCard from '~/components/org/OrgTransactionInfoCard.vue'
 import OrgStartOrderCard from '~/components/org/OrgStartOrderCard.vue'
 import OrgMenuPreviewSection from '~/components/org/OrgMenuPreviewSection.vue'
 
@@ -136,7 +135,6 @@ useOutletSeo(orgSlug, {
       />
 
       <div class="space-y-5 pb-10">
-        <OrgTransactionInfoCard :org="org" :full-address="fullAddress" />
         <OrgStartOrderCard :order-to="orderPath" />
         
         <OrgMenuPreviewSection

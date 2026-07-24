@@ -44,7 +44,7 @@ const handleAction = () => {
 
 <template>
   <article
-    class="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-350 cursor-pointer flex flex-col group border border-stone-200/10"
+    class="relative aspect-square rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-350 cursor-pointer flex flex-col group border border-stone-200/10"
     :class="{ 'opacity-75': isUnavailable }"
     @click="handleAction"
   >
@@ -88,7 +88,7 @@ const handleAction = () => {
     </span>
 
     <!-- Overlay Content at bottom -->
-    <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-3.5 flex flex-col justify-end z-10 gap-2 min-h-[50%]">
+    <div class="absolute bottom-0 left-0 right-0 p-2.5 sm:p-3 flex flex-col justify-end z-10 gap-1.5 min-h-[55%]">
       <!-- Title & Description -->
       <div class="flex flex-col gap-0.5">
         <h4 class="text-xs sm:text-sm font-black text-white leading-snug line-clamp-2 drop-shadow-sm">

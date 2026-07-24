@@ -87,7 +87,7 @@ onUnmounted(() => {
     <!-- Skeletons Loader -->
     <div v-if="loading" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
       <div v-for="n in 8" :key="n" class="overflow-hidden rounded-2xl bg-white shadow-sm">
-        <USkeleton class="aspect-[4/3] w-full" />
+        <USkeleton class="aspect-square w-full" />
         <div class="space-y-2 p-3">
           <USkeleton class="h-4 w-3/4 rounded-lg" />
           <USkeleton class="h-3.5 w-1/2 rounded-lg" />

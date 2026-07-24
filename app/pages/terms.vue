@@ -173,7 +173,7 @@
                   Santap mengintegrasikan pembayaran digital QRIS melalui gerbang pembayaran (payment gateway) berlisensi resmi Bank Indonesia.
                 </p>
                 <p>
-                  Santap tidak mengambil komisi transaksi penjualan kasir (0% tambahan komisi). Potongan MDR (Merchant Discount Rate) merupakan potongan murni dari penyedia payment gateway sesuai regulasi Bank Indonesia.
+                  Setiap transaksi digital (seperti QRIS) dikenakan potongan MDR (Merchant Discount Rate) sesuai dengan ketentuan resmi penyedia payment gateway dan regulasi Bank Indonesia. Santap tidak mengenakan biaya komisi tersembunyi di luar tarif MDR resmi tersebut.
                 </p>
                 <p>
                   <strong>Pembatalan Layanan:</strong> Anda berhak menonaktifkan langganan kapan saja tanpa dikenakan biaya denda pembatalan. Tagihan pro-rata akan disesuaikan otomatis pada sisa hari masa aktif berjalan jika Anda melakukan downgrade paket.

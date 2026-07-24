@@ -110,6 +110,18 @@ const formatDate = (iso: string) => {
 // Label & warna status riwayat → sumber tunggal di useOrderStatus.
 const statusConfig = historyStatusConfig
 
+const orderHistory = useOrderHistory(props.orgSlug)
+const showDeleteAllModal = ref(false)
+
+const handleRemoveOne = (orderPublicId: string) => {
+  orderHistory.removeOne(orderPublicId)
+}
+
+const handleClearAll = () => {
+  orderHistory.removeAll()
+  showDeleteAllModal.value = false
+}
+
 const orderDetailRoute = (item: OrderHistoryItem) => ({
   path: `/o/${props.orgSlug}/orders`,
   query: { order: item.order_public_id }
@@ -128,9 +140,22 @@ const orderDetailRoute = (item: OrderHistoryItem) => ({
           Pesanan Terbaru
         </div>
       </div>
-      <span class="text-xs font-bold text-stone-400 tabular-nums">
-        {{ sortedItems.length }}
-      </span>
+
+      <div class="flex items-center gap-2">
+        <button
+          v-if="sortedItems.length > 0"
+          type="button"
+          class="inline-flex items-center gap-1 text-[11px] font-bold text-stone-400 hover:text-rose-600 px-2 py-1 rounded-lg hover:bg-rose-50 border border-transparent hover:border-rose-100 transition-all duration-150 cursor-pointer"
+          title="Hapus cache riwayat pesanan"
+          @click="showDeleteAllModal = true"
+        >
+          <UIcon name="i-lucide-trash-2" class="size-3.5" />
+          <span>Hapus Riwayat</span>
+        </button>
+        <span class="text-xs font-bold text-stone-400 tabular-nums">
+          {{ sortedItems.length }}
+        </span>
+      </div>
     </div>
 
     <!-- List -->
@@ -174,16 +199,26 @@ const orderDetailRoute = (item: OrderHistoryItem) => ({
             </span>
           </div>
 
-          <!-- Bottom: date + chevron -->
+          <!-- Bottom: date + actions -->
           <div class="flex items-center justify-between gap-2 mt-1.5">
             <span class="flex items-center gap-1 text-[11px] text-stone-400 font-medium">
               <UIcon name="i-lucide-clock" class="size-3" />
               {{ formatDate(item.created_at) }}
             </span>
-            <span class="flex items-center gap-0.5 text-[11px] font-bold text-amber-700">
-              Lihat
-              <UIcon name="i-lucide-chevron-right" class="size-3.5" />
-            </span>
+            <div class="flex items-center gap-2.5">
+              <button
+                type="button"
+                class="inline-flex items-center gap-1 text-[11px] font-medium text-stone-400 hover:text-rose-600 transition-colors cursor-pointer p-0.5"
+                title="Hapus dari riwayat"
+                @click.prevent.stop="handleRemoveOne(item.order_public_id)"
+              >
+                <UIcon name="i-lucide-trash-2" class="size-3.5" />
+              </button>
+              <span class="flex items-center gap-0.5 text-[11px] font-bold text-amber-700">
+                Lihat
+                <UIcon name="i-lucide-chevron-right" class="size-3.5" />
+              </span>
+            </div>
           </div>
         </NuxtLink>
       </li>
@@ -211,5 +246,44 @@ const orderDetailRoute = (item: OrderHistoryItem) => ({
         <UIcon name="i-lucide-chevron-up" class="size-4" />
       </button>
     </div>
+
+    <!-- Delete All Confirm Modal -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div
+          v-if="showDeleteAllModal"
+          class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs"
+          @click.self="showDeleteAllModal = false"
+        >
+          <div class="w-full max-w-sm rounded-2xl bg-white p-5 shadow-xl border border-stone-100 flex flex-col items-center text-center gap-3">
+            <div class="size-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100">
+              <UIcon name="i-lucide-trash-2" class="size-6" />
+            </div>
+            <div>
+              <h4 class="text-base font-extrabold text-stone-900">Hapus Riwayat Pesanan?</h4>
+              <p class="text-xs text-stone-500 mt-1 leading-relaxed">
+                Seluruh cache riwayat pesanan di kedai ini akan dihapus dari perangkat Anda.
+              </p>
+            </div>
+            <div class="flex items-center gap-2.5 w-full mt-2">
+              <button
+                type="button"
+                class="flex-1 py-2.5 rounded-xl border border-stone-200 text-xs font-bold text-stone-600 hover:bg-stone-50 transition-all cursor-pointer"
+                @click="showDeleteAllModal = false"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                class="flex-1 py-2.5 rounded-xl bg-rose-600 text-xs font-bold text-white hover:bg-rose-700 transition-all cursor-pointer shadow-sm"
+                @click="handleClearAll"
+              >
+                Ya, Hapus Semua
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </section>
 </template>

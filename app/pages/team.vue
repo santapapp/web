@@ -427,18 +427,18 @@
               <!-- Proof stat row -->
               <div class="flex items-center gap-6 mt-10 mb-10">
                 <div>
-                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">10.000+</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Merchant Aktif</p>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">100%</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Cloud Real-Time</p>
                 </div>
                 <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
                 <div>
-                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">50+</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Kota di Indonesia</p>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">Up to Date</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Update Fitur Terbaru</p>
                 </div>
                 <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
                 <div>
                   <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">99.9%</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Uptime</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Uptime Sistem</p>
                 </div>
               </div>
             </div>
@@ -558,7 +558,7 @@
                     </div>
                     <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Tentang Santap</h3>
                     <p class="text-[13px] leading-relaxed mb-6" style="color: rgba(255, 255, 255, 0.65);">
-                      Pelajari fitur, pricing, dan bagaimana Santap membantu ribuan merchant.
+                      Pelajari fitur, pricing, dan bagaimana Santap mendukung operasional bisnis kuliner Anda.
                     </p>
                   </div>
                   <NuxtLink

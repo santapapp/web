@@ -25,7 +25,7 @@ const emit = defineEmits<{
         :key="n"
         class="bg-white rounded-2xl overflow-hidden border border-gray-100"
       >
-        <USkeleton class="aspect-[4/3] w-full" />
+        <USkeleton class="aspect-square w-full" />
         <div class="p-3 space-y-2">
           <USkeleton class="h-4 w-3/4 rounded" />
           <USkeleton class="h-3 w-1/2 rounded" />

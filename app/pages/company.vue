@@ -127,56 +127,109 @@
         
         <!-- Left Column: Heading -->
         <div class="lg:col-span-4 lg:sticky lg:top-28 self-start cmp-left">
-          <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">Ekosistem Kuliner</p>
+          <p class="text-[11px] font-bold uppercase tracking-[0.18em] mb-4" style="color: var(--color-text-tertiary);">Ekosistem & Kemitraan</p>
           <h2
             class="font-medium tracking-tight leading-[1.1] mb-8"
             style="font-size: clamp(28px, 3.5vw, 42px); color: var(--color-text-primary);"
           >
-            Tumbuh Bersama Mitra Kami
+            Tim Pengembang & Mitra Kami
           </h2>
           <p class="text-[14.5px] leading-[1.7] text-[var(--color-text-secondary)] mb-12 max-w-sm">
-            Dari kedai kopi lokal hingga jaringan resto multi-cabang, kami bangga menjadi bagian dari perjalanan sukses mereka.
+            Santap dikembangkan secara penuh oleh Sekeco Studio. Kami terus membangun teknologi POS cloud modern dan membuka peluang kemitraan dengan bisnis F&B Indonesia.
           </p>
         </div>
 
-        <!-- Right Column: Cards & Grid -->
-        <div class="lg:col-span-8">
-          <!-- Featured Skeleton Card -->
-          <div class="featured-cafe-card p-8 md:p-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-surface)] flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12 relative overflow-hidden transition-all duration-300 hover:shadow-lg">
-            <div class="flex-1 z-10 space-y-4">
-              <div class="h-4 w-32 rounded bg-[var(--color-bg-subtle)] animate-pulse"></div>
-              <div class="h-8 w-48 rounded bg-[var(--color-bg-subtle)] animate-pulse"></div>
-              <div class="space-y-2">
-                <div class="h-4 w-full rounded bg-[var(--color-bg-subtle)] animate-pulse"></div>
-                <div class="h-4 w-5/6 rounded bg-[var(--color-bg-subtle)] animate-pulse"></div>
+        <!-- Right Column: Sekeco Developer (Top) & Coming Soon Mitra (Bottom) -->
+        <div class="lg:col-span-8 space-y-8">
+          <!-- Featured Developer Card: Sekeco Studio -->
+          <div class="featured-cafe-card p-8 md:p-10 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-surface)] flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative overflow-hidden transition-all duration-300 hover:border-[var(--color-primary)]/40 hover:shadow-xl">
+            <div class="flex-1 z-10 space-y-3">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-primary-light)] text-[var(--color-primary)] text-[11px] font-bold uppercase tracking-wider">
+                <span class="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
+                Tim Pengembang Utama
               </div>
-              <div class="h-4 w-40 rounded bg-[var(--color-bg-subtle)] animate-pulse mt-6"></div>
+              <h3 class="text-[24px] font-semibold text-[var(--color-text-primary)] tracking-tight">
+                Sekeco Studio
+              </h3>
+              <p class="text-[14px] leading-relaxed text-[var(--color-text-secondary)]">
+                Sekeco adalah tim product engineer & digital studio di balik <strong>Santap POS</strong>. Berbasis di Sleman, Yogyakarta, kami merancang arsitektur cloud, antarmuka intuitif, dan stabilitas tinggi untuk operasional kasir bisnis kuliner Indonesia.
+              </p>
+              <div class="flex flex-wrap items-center gap-4 pt-2">
+                <a
+                  href="https://sekeco.github.io"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-wider text-[var(--color-primary)] hover:underline"
+                >
+                  Kunjungi Sekeco
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/>
+                  </svg>
+                </a>
+                <span class="text-xs text-[var(--color-text-tertiary)]">• Sleman, Yogyakarta</span>
+              </div>
             </div>
-            <!-- Featured Logo Skeleton -->
-            <div class="w-28 h-28 rounded-xl bg-[var(--color-bg-subtle)] flex-shrink-0 z-10 transition-transform duration-300 hover:scale-105 animate-pulse"></div>
-            <div class="absolute bottom-0 right-0 w-48 h-48 bg-gradient-to-br from-[var(--color-primary-light)] to-transparent opacity-40 rounded-full blur-2xl -mr-16 -mb-16 pointer-events-none"></div>
+
+            <!-- Logo Sekeco -->
+            <div class="w-28 h-28 md:w-32 md:h-32 rounded-2xl bg-[var(--color-bg-subtle)] border border-[var(--color-border)] p-4 flex items-center justify-center flex-shrink-0 z-10 shadow-sm transition-transform duration-300 hover:scale-105">
+              <img
+                src="/images/sekeco.avif"
+                alt="Sekeco Studio Logo"
+                class="w-full h-full object-contain"
+              />
+            </div>
+            <div class="absolute bottom-0 right-0 w-56 h-56 bg-gradient-to-br from-[var(--color-primary-light)] to-transparent opacity-40 rounded-full blur-2xl -mr-16 -mb-16 pointer-events-none"></div>
           </div>
 
-          <!-- Logo Grid Skeleton -->
-          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            <div
-              v-for="i in 6"
-              :key="i"
-              class="partner-logo-card"
-            >
-              <!-- Glowing effect on hover -->
-              <div class="card-glow"></div>
-              
-              <!-- Border corners -->
-              <div class="corner-line top-left"></div>
-              <div class="corner-line top-right"></div>
-              <div class="corner-line bottom-left"></div>
-              <div class="corner-line bottom-right"></div>
- 
-              <div class="card-content">
-                <div class="logo-wrapper">
-                  <div class="w-full h-full bg-[var(--color-bg-subtle)] rounded animate-pulse"></div>
+          <!-- Bottom Section: Coming Soon — Masih Mencari Mitra -->
+          <div class="p-8 rounded-2xl border border-dashed border-[var(--color-primary)]/30 bg-[var(--color-bg-surface)] relative overflow-hidden space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-[var(--color-primary-light)] text-[var(--color-primary)] text-[10.5px] font-bold uppercase tracking-widest mb-2">
+                  Coming Soon
                 </div>
+                <h4 class="text-[20px] font-semibold text-[var(--color-text-primary)]">
+                  Terbuka untuk Mitra
+                </h4>
+                <p class="text-[13.5px] text-[var(--color-text-secondary)] mt-1 max-w-lg">
+                  Kami aktif membuka peluang kolaborasi dengan merchant restoran perintis, mitra hardware kasir, dan penyedia integrasi pembayaran.
+                </p>
+              </div>
+              <NuxtLink
+                to="/contact"
+                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[var(--color-primary)] !text-white text-[12px] font-bold uppercase tracking-wider hover:opacity-90 transition-all flex-shrink-0 self-start sm:self-center no-underline"
+              >
+                Ajukan Kemitraan
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </NuxtLink>
+            </div>
+
+            <!-- Grid Coming Soon Slots -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div
+                v-for="(slot, i) in comingSoonSlots"
+                :key="i"
+                class="partner-logo-card p-5 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-subtle)] flex flex-col justify-between min-h-[150px] relative overflow-hidden group hover:border-[var(--color-primary)]/40 transition-all"
+              >
+                <div class="z-10 flex flex-col items-start gap-1">
+                  <span class="inline-block text-[9px] font-semibold uppercase px-2 py-0.5 rounded bg-[var(--color-primary-light)] text-[var(--color-primary)] border border-[var(--color-primary)]/20 mb-0.5">
+                    Coming Soon
+                  </span>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--color-text-tertiary)]">
+                    {{ slot.category }}
+                  </span>
+                </div>
+                <div class="z-10 my-auto pt-1">
+                  <p class="text-[13.5px] font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-primary)] transition-colors">
+                    {{ slot.title }}
+                  </p>
+                  <p class="text-[11px] text-[var(--color-text-tertiary)] mt-0.5">
+                    Slot Terbuka
+                  </p>
+                </div>
+                
               </div>
             </div>
           </div>
@@ -218,7 +271,7 @@
                   style="background-color: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1);"
                 >
                   <div class="w-2 h-2 rounded-sm flex-shrink-0" style="background-color: var(--color-primary);"></div>
-                  <span class="text-[10.5px] font-bold uppercase tracking-[0.16em]" style="color: rgba(255,255,255,0.8);">Bergabung Bersama Kami</span>
+                  <span class="text-[10.5px] font-bold uppercase tracking-[0.16em]" style="color: rgba(255,255,255,0.8);">Solusi Handal & Scalable</span>
                 </div>
               </div>
 
@@ -226,34 +279,34 @@
                 class="font-medium leading-[1.05] tracking-tight mb-6"
                 style="font-size: clamp(30px, 4.5vw, 56px); color: #FFFFFF;"
               >
-                Bergabunglah dengan <span
+                Solusi Kasir Cloud <span
                   style="
                     background: linear-gradient(100deg, #FFFFFF 0%, var(--color-primary) 55%, #FFA550 100%);
                     -webkit-background-clip: text;
                     -webkit-text-fill-color: transparent;
                     background-clip: text;
                   "
-                >10.000+ merchant.</span>
+                >Terpercaya & Handal.</span>
               </h2>
               <p class="text-[14.5px] leading-[1.75] max-w-sm" style="color: rgba(255,255,255,0.55);">
-                Ratusan restoran dan kafe telah mempercayai Santap untuk operasional kasir harian mereka.
+                Santap hadir dengan arsitektur cloud modern untuk memastikan transaksi bisnis F&B Anda berjalan cepat dan tanpa kendala.
               </p>
 
               <!-- Proof stat row -->
               <div class="flex items-center gap-6 mt-8">
                 <div>
-                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">10.000+</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Merchant Aktif</p>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">100%</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Cloud Real-Time</p>
                 </div>
                 <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
                 <div>
-                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">50+</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Kota di Indonesia</p>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">Up To Date</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Update Fitur Terbaru</p>
                 </div>
                 <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
                 <div>
                   <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">99.9%</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Uptime</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Uptime Sistem</p>
                 </div>
               </div>
             </div>
@@ -508,17 +561,23 @@ onMounted(async () => {
   }, 800)
 })
 
+const comingSoonSlots = [
+  { category: 'Mitra Restoran', title: 'Merchant F&B Perintis' },
+  { category: 'Hardware POS', title: 'Integrasi Kasir & Printer' },
+  { category: 'Rekan Pemasaran', title: 'Affiliate & Promoter' },
+]
+
 onUnmounted(() => { ctx?.revert() })
 useSeoMeta({
-  title: 'Mitra & Perusahaan Santap — Solusi POS Merchant F&B',
-  description: 'Kenali visi, komitmen, dan pilar kerja Santap dalam memberdayakan jutaan merchant F&B di seluruh Indonesia lewat teknologi POS modern.',
+  title: 'Mitra & Perusahaan Santap — Solusi POS Merchant F&B oleh Sekeco',
+  description: 'Kenali visi, komitmen, dan pilar kerja Santap dalam memberdayakan merchant F&B di seluruh Indonesia lewat teknologi POS cloud modern.',
   ogTitle: 'Mitra & Perusahaan — Santap',
-  ogDescription: 'Bergabunglah dengan 10.000+ merchant F&B Indonesia. Santap adalah partner teknologi POS cloud yang terpercaya.',
+  ogDescription: 'Solusi POS cloud terpercaya & handal untuk F&B Indonesia oleh Sekeco Studio.',
   ogImage: '/images/og-image.jpg',
   ogType: 'website',
   twitterCard: 'summary_large_image',
   twitterTitle: 'Mitra & Perusahaan — Santap',
-  twitterDescription: 'Bergabunglah dengan 10.000+ merchant F&B Indonesia. Santap, partner teknologi POS cloud terpercaya.',
+  twitterDescription: 'Solusi POS cloud terpercaya & handal untuk F&B Indonesia oleh Sekeco Studio.',
 })
 
 // Breadcrumb JSON-LD — jejak navigasi untuk rich result + konteks AI crawler.
@@ -546,61 +605,6 @@ const values = [
   }
 ]
 
-const stats = [
-  {
-    value: '10,000+',
-    label: 'Merchant Aktif',
-    desc: 'Dari kedai kopi hingga franchise besar.'
-  },
-  {
-    value: '99.99%',
-    label: 'Uptime POS',
-    desc: 'Tanpa khawatir kehilangan data transaksi.'
-  },
-  {
-    value: '50+',
-    label: 'Kota di Indonesia',
-    desc: 'Sabang sampai Merauke, kami siap.'
-  },
-  {
-    value: 'Rp 1.2T+',
-    label: 'Volume Transaksi',
-    desc: 'Jutaan transaksi F&B per tahun.'
-  }
-]
-
-const cafes = [
-  {
-    name: 'Kopi Janji Jiwa',
-    type: 'Espresso & Toast',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/ec/Janji_Jiwa_Logo.svg'
-  },
-  {
-    name: 'Starbucks',
-    type: 'Coffeehouse Chain',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/en/d/d3/Starbucks_Corporation_Logo_2011.svg'
-  },
-  {
-    name: 'Chatime',
-    type: 'Fresh Tea & Boba',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/07/Chatime_logo.svg'
-  },
-  {
-    name: 'Costa Coffee',
-    type: 'Specialty Coffee',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Costa_Coffee.svg'
-  },
-  {
-    name: 'McCafé',
-    type: 'Coffee & Dessert',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/4/4e/McCaf%C3%A9_logo.svg'
-  },
-  {
-    name: 'Subway',
-    type: 'Sandwich & Salad',
-    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Subway_2016_logo.svg'
-  }
-]
 </script>
 
 <style scoped>

@@ -87,22 +87,22 @@
         <div class="lg:col-span-8">
           <div class="flex flex-col gap-12">
             <div class="cmp-right-item">
-              <h3 class="text-[20px] font-semibold text-[var(--color-text-primary)] mb-4">Dari Masalah Nyata</h3>
+              <h3 class="text-[20px] font-semibold text-[var(--color-text-primary)] mb-4">Inovasi Produk Baru 2026</h3>
               <p class="text-[15px] leading-[1.8] text-[var(--color-text-secondary)] mb-4">
-                Tahun 2020-2021, kami lihat pola yang sama di puluhan restoran: Excel chaos, nota tercecer, kasir manual, inventory tidak clear, dan staff confusion. Solusi yang ada terlalu mahal, terlalu kompleks, terlalu lambat.
+                Santap lahir di tahun 2026 dari program riset & pengembangan tim magang di Sekeco Studio. Kami melihat langsung tantangan nyata operasional kasir UMKM F&B: alur pesan manual yang lambat, kerumitan pencatatan, dan sistem lama yang kaku.
               </p>
               <p class="text-[15px] leading-[1.8] text-[var(--color-text-secondary)]">
-                Kami memutuskan: bangun sistem POS yang dibuat khusus untuk Indonesia. Tidak port dari sistem luar. Untuk realita operasional restoran lokal yang sebenarnya. Sederhana. Cepat. Bekerja.
+                Dari temuan riset tersebut, Sekeco memutuskan untuk membangun produk POS mobile berbasis cloud yang dirancang khusus dari nol untuk bisnis kuliner Indonesia — ringan, cepat, dan mudah digunakan.
               </p>
             </div>
 
             <div class="cmp-right-item">
-              <h3 class="text-[20px] font-semibold text-[var(--color-text-primary)] mb-4">Hari Ini: Digunakan 1000+ Merchant</h3>
+              <h3 class="text-[20px] font-semibold text-[var(--color-text-primary)] mb-4">Hari Ini: Siap Memberdayakan Bisnis F&B</h3>
               <p class="text-[15px] leading-[1.8] text-[var(--color-text-secondary)] mb-4">
-                Santap kini melayani 1000+ restoran, cafe, dan F&B businesses di Indonesia. Dari kedai kopi lokal sampai chain restaurants dengan puluhan outlets. Kami proses jutaan transaksi setiap bulannya.
+                Santap hadir dan dirancang khusus untuk membantu restoran, kafe, dan UMKM F&B di Indonesia agar dapat mengelola operasional kasir secara modern, cepat, dan efisien sejak hari pertama.
               </p>
               <p class="text-[15px] leading-[1.8] text-[var(--color-text-secondary)]">
-                Dan yang paling penting? Kami masih simple. Masih cepat. Masih bekerja. Semua karena fokus kami tetap sama: bagaimana bikin operasi restoran lebih mudah?
+                Dan yang paling penting? Kami tetap simple. Tetap cepat. Tetap dapat diandalkan. Semua karena fokus kami tetap sama: bagaimana bikin operasi restoran Anda menjadi jauh lebih mudah.
               </p>
             </div>
           </div>
@@ -178,7 +178,7 @@
             Milestone Kami
           </h2>
           <p class="text-[14.5px] leading-[1.7] text-[var(--color-text-secondary)] max-w-sm">
-            Dari ideasi kecil hingga dipercaya oleh ribuan merchant di seluruh Indonesia.
+            Perjalanan riset dan pengembangan Santap hingga siap digunakan oleh perintis F&B di seluruh Indonesia.
           </p>
         </div>
 
@@ -303,35 +303,35 @@
                     -webkit-text-fill-color: transparent;
                     background-clip: text;
                   "
-                >10.000+ merchant.</span>
+                >Terpercaya & Handal.</span>
               </h2>
-              <p class="text-[14.5px] leading-[1.75] max-w-sm mb-10" style="color: rgba(255,255,255,0.55);">
+              <p class="text-[14.5px] leading-[1.75] max-w-sm" style="color: rgba(255,255,255,0.55);">
                 Santap bukan hanya kasir, tapi sistem complete untuk manage outlets, staff, inventory, dan decision-making berbasis data real-time.
               </p>
 
               <!-- Proof stat row -->
-              <div class="flex items-center gap-6 mb-10">
+              <div class="flex items-center gap-6 mt-8">
                 <div>
-                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">10.000+</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Merchant Aktif</p>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">100%</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Cloud Real-Time</p>
                 </div>
                 <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
                 <div>
-                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">50+</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Kota di Indonesia</p>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">Up to Date</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Update Fitur Terbaru</p>
                 </div>
                 <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
                 <div>
                   <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">99.9%</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Uptime</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Uptime Sistem</p>
                 </div>
               </div>
             </div>
 
             <!-- Contact info -->
-            <div class="hidden lg:flex flex-col gap-5">
+            <div class="hidden lg:flex flex-col mt-8">
               <div class="h-px" style="background-color: rgba(255,255,255,0.08);"></div>
-              <div class="flex items-center gap-8">
+              <div class="flex items-center gap-8 pt-8">
                 <div>
                   <p class="text-[10px] font-bold uppercase tracking-[0.15em] mb-1.5" style="color: rgba(255, 255, 255, 0.5);">Email Kami</p>
                   <a href="mailto:info@sekeco.id" class="text-[14px] font-medium hover:text-[var(--color-primary)] transition-colors no-underline" style="color: #ffffff;">
@@ -360,14 +360,15 @@
                 <!-- Glow accent -->
                 <div class="absolute top-0 right-0 w-48 h-48 pointer-events-none" style="background: radial-gradient(circle at top right, rgba(232,119,34,0.12) 0%, transparent 70%);"></div>
                 
+                <!-- Huge Faint Background Icon -->
+                <div class="absolute -top-8 -right-8 w-36 h-36 text-[var(--color-primary)] opacity-[0.08] pointer-events-none select-none z-0">
+                  <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+
                 <div class="flex-1 relative z-10">
                   <div class="flex items-center gap-2 mb-3">
-                    <!-- Icon -->
-                    <div class="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: var(--color-primary);">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                        <path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="currentColor"/>
-                      </svg>
-                    </div>
                     <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-[var(--color-primary)]">Gratis 14 Hari</span>
                   </div>
                   <h3 class="text-[20px] font-medium mb-2 leading-tight" style="color: #ffffff;">Gratis 14 Hari Trial</h3>
@@ -393,16 +394,18 @@
 
                 <!-- Sub-card A: Konsultasi Gratis -->
                 <div
-                  class="border rounded-2xl p-7 flex flex-col justify-between"
+                  class="border rounded-2xl p-7 flex flex-col justify-between relative overflow-hidden"
                   style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
                 >
-                  <div>
+                  <!-- Huge Faint Background Icon -->
+                  <div class="absolute -top-6 -right-6 w-28 h-28 text-white opacity-[0.03] pointer-events-none select-none z-0">
+                    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+
+                  <div class="relative z-10">
                     <div class="flex items-center gap-2 mb-3">
-                      <div class="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style="background-color: rgba(255,255,255,0.08);">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-9a9 9 0 11-18 0 9 9 0 0118 0z" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Konsultasi</span>
                     </div>
                     <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Konsultasi Kebutuhan</h3>
@@ -412,7 +415,7 @@
                   </div>
                   <NuxtLink
                     to="/contact"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white relative z-10"
                     style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Jadwalkan Konsultasi
@@ -424,16 +427,18 @@
 
                 <!-- Sub-card B: Hubungi Perwakilan -->
                 <div
-                  class="border rounded-2xl p-7 flex flex-col justify-between"
+                  class="border rounded-2xl p-7 flex flex-col justify-between relative overflow-hidden"
                   style="background-color: rgba(255, 255, 255, 0.02); border-color: rgba(255, 255, 255, 0.08);"
                 >
-                  <div>
+                  <!-- Huge Faint Background Icon -->
+                  <div class="absolute -top-6 -right-6 w-28 h-28 text-white opacity-[0.03] pointer-events-none select-none z-0">
+                    <svg width="100%" height="100%" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zM22 6l-10 7L2 6" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+
+                  <div class="relative z-10">
                     <div class="flex items-center gap-2 mb-3">
-                      <div class="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0" style="background-color: rgba(255,255,255,0.08);">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                          <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke="rgba(255,255,255,0.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      </div>
                       <span class="text-[10px] font-bold uppercase tracking-[0.15em] text-white/40">Hubungi</span>
                     </div>
                     <h3 class="text-[17px] font-medium mb-2 leading-snug" style="color: #ffffff;">Chat dengan Tim Kami</h3>
@@ -444,7 +449,7 @@
                   <NuxtLink
                     to="https://wa.me/628986606000?text=Halo%20Santap!%20Saya%20ingin%20konsultasi%20%26%20demo%20produk%20untuk%20restoran%2Fcafe%20saya.%20Terima%20kasih."
                     target="_blank"
-                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white"
+                    class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.1em] no-underline transition-all hover:gap-3 hover:!text-white relative z-10"
                     style="color: rgba(255, 255, 255, 0.75);"
                   >
                     Chat WhatsApp
@@ -629,24 +634,24 @@ const pillars = [
 
 const milestones = [
   {
-    year: '2020-21',
-    title: 'Observasi & Riset',
-    desc: 'Kami lihat pola masalah yang sama di puluhan restoran: Excel chaos, nota tercecer, inventory tidak clear. Sistem POS yang ada terlalu mahal, terlalu kompleks, terlalu lambat.'
+    year: 'Awal 2026',
+    title: 'Riset Tim Magang Sekeco',
+    desc: 'Inisiasi produk Santap oleh tim magang di Sekeco Studio melalui observasi langsung terhadap kebutuhan dan masalah operasional kasir F&B.'
   },
   {
-    year: '2021-22',
-    title: 'Development & Beta',
-    desc: 'Mulai development Santap dari feedback langsung kasir dan pemilik. Beta testing dengan merchant mitra. Learn, iterate, improve berdasarkan real feedback.'
+    year: 'Mid 2026',
+    title: 'Pengembangan & Iterasi',
+    desc: 'Pengembangan arsitektur POS cloud, desain antarmuka intuitif, integrasi KDS, dan pengujian alur QRIS secara intensif.'
   },
   {
-    year: '2023-24',
-    title: 'Public Launch & Growth',
-    desc: 'Launch paket berbayar (Starter, Pro, Enterprise). Grow dari 0 → 1000+ merchants. KPI: focus pada retention dan user satisfaction, bukan vanity metrics.'
+    year: '2026',
+    title: 'Peluncuran Resmi Santap',
+    desc: 'Peluncuran resmi platform Santap POS di Play Store sebagai solusi kasir digital modern untuk bisnis kuliner Indonesia.'
   },
   {
-    year: '2025+',
-    title: 'Market Expansion',
-    desc: 'Rencana untuk neighboring countries. Santap Indonesia sudah mature dan stable. New features based pada user demand, tetap focus pada simplicity dan reliability.'
+    year: 'Masa Depan',
+    title: 'Pengembangan Berkelanjutan',
+    desc: 'Terus menghadirkan fitur-fitur baru dan menyempurnakan ekosistem Santap berdasarkan masukan langsung dari para merchant.'
   }
 ]
 </script>

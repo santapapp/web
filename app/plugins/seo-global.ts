@@ -49,12 +49,6 @@ export default defineNuxtPlugin(() => {
             priceCurrency: 'IDR',
             description: 'Gratis 14 hari trial, tanpa kartu kredit.',
           },
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: '4.8',
-            ratingCount: '1000',
-            bestRating: '5',
-          },
           publisher: {
             '@type': 'Organization',
             name: 'PT Sarwa Kalyana Cara',

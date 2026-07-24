@@ -51,7 +51,7 @@
         <AppTextWordReveal
           class="font-medium leading-[1.12] tracking-tight max-w-[950px]"
           style="font-size: clamp(26px, 4vw, 52px); color: #FFFFFF;"
-          text="Pencatatan pesanan, pembayaran multi-metode, dan laporan real-time dalam satu aplikasi. Kendali penuh atas operasional restoran Anda."
+          text="Pencatatan pesanan, pembayaran QRIS instan, dan laporan real-time dalam satu aplikasi. Kendali penuh atas operasional restoran Anda."
         />
       </div>
     </section>
@@ -298,18 +298,18 @@
               <!-- Proof stat row -->
               <div class="flex items-center gap-6 mt-8">
                 <div>
-                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">10.000+</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Merchant Aktif</p>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">100%</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Cloud Real-Time</p>
                 </div>
                 <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
                 <div>
-                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">50+</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Kota di Indonesia</p>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">Up To Date</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Update Fitur Terbaru</p>
                 </div>
                 <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
                 <div>
                   <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">99.9%</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Uptime</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Uptime Sistem</p>
                 </div>
               </div>
             </div>
@@ -661,14 +661,14 @@ onUnmounted(() => { ctx?.revert() })
 
 useSeoMeta({
   title: 'Fitur Aplikasi Kasir Santap — POS, QRIS & Laporan',
-  description: 'Semua fitur yang dibutuhkan kasir modern: manajemen pesanan, laporan real-time, multi pembayaran, dan lebih banyak lagi.',
+  description: 'Semua fitur yang dibutuhkan kasir modern: manajemen pesanan, laporan real-time, pembayaran QRIS instan, dan lebih banyak lagi.',
   ogTitle: 'Fitur Lengkap Santap — Aplikasi POS Cloud untuk Restoran',
-  ogDescription: 'Manajemen pesanan, KDS, multi pembayaran (QRIS, tunai, transfer), dashboard real-time, dan stok otomatis dalam satu aplikasi.',
+  ogDescription: 'Manajemen pesanan, KDS, pembayaran QRIS instan, dashboard real-time, dan stok otomatis dalam satu aplikasi.',
   ogImage: '/images/og-image.jpg',
   ogType: 'website',
   twitterCard: 'summary_large_image',
   twitterTitle: 'Fitur Lengkap Santap — Aplikasi POS Cloud',
-  twitterDescription: 'Manajemen pesanan, KDS, multi pembayaran, dashboard real-time, dan stok otomatis dalam satu aplikasi.',
+  twitterDescription: 'Manajemen pesanan, KDS, pembayaran QRIS instan, dashboard real-time, dan stok otomatis dalam satu aplikasi.',
 })
 
 // Breadcrumb JSON-LD — jejak navigasi untuk rich result + konteks AI crawler.
@@ -738,16 +738,16 @@ const categories: Category[] = [
   {
     id: 'payment',
     name: 'Pembayaran',
-    desc: 'Terima semua metode pembayaran modern dalam satu sistem terpadu — tanpa perangkat tambahan.',
+    desc: 'Fokus pada pembayaran digital QRIS instan yang praktis dan efisien — tanpa butuh mesin EDC.',
     features: [
       {
-        label: 'Multi Pembayaran',
-        desc: 'Tunai, QRIS, transfer bank, kartu debit/kredit, dan dompet digital semuanya diterima.',
-        icon: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z',
+        label: 'Pembayaran QRIS',
+        desc: 'Terima pembayaran digital dengan QRIS langsung dari HP pelanggan — cepat, aman, dan tercatat otomatis.',
+        icon: 'M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z',
         iconBg: '#FFF4E0',
         iconColor: '#B97B0A',
         core: true,
-        featured: false,
+        featured: true,
       },
       {
         label: 'Split Bill',
@@ -755,6 +755,7 @@ const categories: Category[] = [
         icon: 'M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4',
         iconBg: 'var(--color-primary-light)',
         iconColor: 'var(--color-primary)',
+        soon: true,
         featured: false,
       },
       {
@@ -763,6 +764,7 @@ const categories: Category[] = [
         icon: 'M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z',
         iconBg: '#E8F5EF',
         iconColor: '#2D8A4E',
+        soon: true,
         featured: false,
       },
     ],
@@ -787,6 +789,7 @@ const categories: Category[] = [
         icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6',
         iconBg: '#FFF4E0',
         iconColor: '#B97B0A',
+        soon: true,
         featured: false,
       },
       {
@@ -810,6 +813,7 @@ const categories: Category[] = [
         icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
         iconBg: '#E8F5EF',
         iconColor: '#2D8A4E',
+        soon: true,
         featured: false,
       },
       {

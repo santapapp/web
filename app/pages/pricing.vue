@@ -446,18 +446,18 @@
               <!-- Proof stat row -->
               <div class="flex items-center gap-6 mt-8">
                 <div>
-                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">10.000+</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Merchant Aktif</p>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">100%</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Cloud Real-Time</p>
                 </div>
                 <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
                 <div>
-                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">50+</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Kota di Indonesia</p>
+                  <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">Up to Date</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Update Fitur Terbaru</p>
                 </div>
                 <div class="w-px self-stretch" style="background-color: rgba(255,255,255,0.15);"></div>
                 <div>
                   <p class="text-[28px] font-bold tracking-tight text-white leading-none" style="color: #ffffff;">99.9%</p>
-                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Uptime</p>
+                  <p class="text-[11px] font-medium uppercase tracking-[0.1em] mt-1" style="color: rgba(255, 255, 255, 0.65);">Uptime Sistem</p>
                 </div>
               </div>
             </div>
@@ -872,8 +872,8 @@ const faqItems = [
     answer: 'Biaya flat per outlet per bulan. Contoh: 3 outlet paket Pro = 3 x Rp 119.200/bulan.'
   },
   {
-    question: 'Apakah ada biaya komisi QRIS?',
-    answer: 'Tidak. Santap tidak mengambil komisi penjualan. Biaya QRIS murni dari provider sesuai regulasi Bank Indonesia.'
+    question: 'Apakah ada potongan pada setiap transaksi pembayaran?',
+    answer: 'Ya. Setiap transaksi digital (seperti QRIS) dikenakan potongan MDR standar resmi dari penyedia payment gateway sesuai regulasi Bank Indonesia. Santap tidak menambahkan biaya komisi tersembunyi di luar tarif MDR resmi tersebut.'
   },
   {
     question: 'Bisa upgrade atau downgrade kapan saja?',
@@ -895,9 +895,9 @@ const focuses = [
   {
     id: 'hidden-fees',
     number: '01',
-    title: 'Tanpa Biaya Tersembunyi',
-    desc: 'Harga yang tertera adalah harga akhir. Tidak ada komisi penjualan, biaya administrasi, atau biaya aktivasi awal.',
-    tags: ['0% Komisi', 'Flat Rate', 'Transparan'],
+    title: 'Biaya Transparan & Jelas',
+    desc: 'Harga berlangganan aplikasi tetap flat. Potongan transaksi digital murni mengikuti tarif MDR resmi dari penyedia payment gateway.',
+    tags: ['MDR Standar BI', 'Flat Rate', 'Transparan'],
   },
   {
     id: 'guarantee',

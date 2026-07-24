@@ -203,6 +203,7 @@ function toggleMobile() {
 watch(() => route.path, () => { mobileOpen.value = false })
 
 const navItems = [
+  { to: '/about-us', label: 'Tentang kami' },
   { to: '/company', label: 'Mitra' },
   { to: '/features', label: 'Fitur' },
   { to: '/pricing', label: 'Harga' },

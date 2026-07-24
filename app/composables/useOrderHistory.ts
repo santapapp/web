@@ -71,18 +71,20 @@ function writeStorage(orgSlug: string, items: OrderHistoryItem[]): void {
 // ─── Composable ──────────────────────────────────────────────────────────────
 
 export const useOrderHistory = (orgSlug: string) => {
-  const items = ref<OrderHistoryItem[]>([])
-  const isRefreshing = ref(false)
+  const normalizedSlug = (orgSlug || '').trim().toLowerCase()
+
+  const items = useState<OrderHistoryItem[]>(`order_history_${normalizedSlug}`, () => [])
+  const isRefreshing = useState<boolean>(`order_history_refreshing_${normalizedSlug}`, () => false)
 
   // ── Load dari localStorage (SSR-safe) ──────────────────────────────────────
 
   const load = () => {
     if (!import.meta.client) return
-    items.value = readStorage(orgSlug)
+    items.value = readStorage(normalizedSlug)
   }
 
-  // Muat langsung saat composable diinisialisasi (client-only)
-  if (import.meta.client) {
+  // Muat langsung saat composable diinisialisasi jika state masih kosong (client-only)
+  if (import.meta.client && items.value.length === 0) {
     load()
   }
 
@@ -106,14 +108,17 @@ export const useOrderHistory = (orgSlug: string) => {
 
   /**
    * Tambah atau update satu item history.
-   * Jika order_public_id sudah ada → update.
+   * Jika order_public_id/public_token/order_code sudah ada → update.
    * Jika belum → tambah di awal list.
    */
   const addOrUpdate = (item: OrderHistoryItem) => {
     if (!import.meta.client) return
 
     const existing = items.value.findIndex(
-      (i) => i.order_public_id === item.order_public_id
+      (i) =>
+        (item.order_public_id && i.order_public_id === item.order_public_id) ||
+        (item.public_token && i.public_token === item.public_token) ||
+        (item.order_code && i.order_code === item.order_code)
     )
 
     if (existing !== -1) {
@@ -122,11 +127,11 @@ export const useOrderHistory = (orgSlug: string) => {
       items.value.unshift(item)
     }
 
-    writeStorage(orgSlug, items.value)
+    writeStorage(normalizedSlug, items.value)
   }
 
   /**
-   * Update status satu item berdasarkan order_public_id.
+   * Update status satu item berdasarkan order_public_id / token.
    */
   const updateStatus = (
     orderPublicId: string,
@@ -134,10 +139,15 @@ export const useOrderHistory = (orgSlug: string) => {
   ) => {
     if (!import.meta.client) return
 
-    const idx = items.value.findIndex((i) => i.order_public_id === orderPublicId)
+    const idx = items.value.findIndex(
+      (i) =>
+        i.order_public_id === orderPublicId ||
+        i.public_token === orderPublicId ||
+        i.order_code === orderPublicId
+    )
     if (idx !== -1) {
       items.value[idx] = { ...items.value[idx], ...patch } as OrderHistoryItem
-      writeStorage(orgSlug, items.value)
+      writeStorage(normalizedSlug, items.value)
     }
   }
 
@@ -145,10 +155,16 @@ export const useOrderHistory = (orgSlug: string) => {
    * Hapus satu item dari riwayat.
    */
   const removeOne = (orderPublicId: string) => {
-    if (!import.meta.client) return
+    if (!import.meta.client || !orderPublicId) return
 
-    items.value = items.value.filter((i) => i.order_public_id !== orderPublicId)
-    writeStorage(orgSlug, items.value)
+    const target = String(orderPublicId).trim()
+    items.value = items.value.filter(
+      (i) =>
+        i.order_public_id !== target &&
+        i.public_token !== target &&
+        i.order_code !== target
+    )
+    writeStorage(normalizedSlug, items.value)
   }
 
   /**
@@ -159,7 +175,7 @@ export const useOrderHistory = (orgSlug: string) => {
 
     items.value = []
     try {
-      localStorage.removeItem(storageKey(orgSlug))
+      localStorage.removeItem(storageKey(normalizedSlug))
     } catch {
       // abaikan
     }
@@ -194,7 +210,7 @@ export const useOrderHistory = (orgSlug: string) => {
           const identifier = item.public_token ?? item.order_public_id ?? item.order_code
 
           try {
-            const res = await api.getPublicOrder(orgSlug, identifier)
+            const res = await api.getPublicOrder(normalizedSlug, identifier)
             const raw = res?.data ?? res
 
             if (!raw) return
